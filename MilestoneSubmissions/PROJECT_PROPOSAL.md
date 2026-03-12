@@ -34,3 +34,51 @@ The target audience would be streaming users that have multiple subscriptions to
 ## Vision Statement
 
 *For the consumers of the planet, who strive for streamlined entertainment.*
+
+---
+
+## Development Methodology:
+
+[Trello Board](https://trello.com/invite/b/69b312d4a74241ffb2755130/ATTIb5ee3c8b57377507bf9b19cb584f37859080C955/pillarboxd)
+
+---
+
+## Communication Plan:
+
+- We will primarily use Slack to communicate within our team. 
+- Our secondary source of communication will be through text messaging
+
+---
+
+## Meeting Plan
+
+- Meet with TA every Sunday at 5 (Online)
+- Team meeting every Sunday 5 (In-person in ITLL)
+
+---
+
+## Case Diagram
+
+![Case Diagram](./assets/use_case.svg)
+
+---
+
+## Wireframe
+
+![Wireframe](./assets/wireframe.png)
+
+---
+
+## Potential Risks and Mitigations
+
+
+- API can change. 
+	- We can have backup options and research into api documentation.
+- Overuse of gen AI tools without proper documentation.
+	- Keep accountability between members.
+- As more users are registered, there might be issues with storage
+	- Use Supabase instead of shoving the DB into Docker image.
+- Scheduling issues with how big of a group we are
+	- If we have an idea or issues that we need to discuss in person, we can meet in a smaller group or just one person and then for the weekly meeting bring it up
+- Data risk or breaches 
+	- We will have sufficient user security
