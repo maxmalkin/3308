@@ -30,3 +30,7 @@ A large functionality of our application centers around recommendations. We focu
 The target audience would be streaming users that have multiple subscriptions to different websites. It can be hard for most people to find the right recommendations for shows as most of what they watch is tracked across multiple platforms. Pillarboxd aims to consolidate users into one platform to track what they watch with specific recommendations based on what they watched and reviewed before. Any newly discovered shows would have information on which streaming platform it is featured on. Pillarboxd would also have options to filter new content based on the users chosen streaming services.
 
 ---
+
+## Vision Statement
+
+*For the consumers of the planet, who strive for streamlined entertainment.*
