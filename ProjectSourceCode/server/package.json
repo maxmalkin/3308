@@ -9,5 +9,12 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"packageManager": "pnpm@10.18.3"
+	"packageManager": "pnpm@10.18.3",
+	"dependencies": {
+		"postgres": "^3.4.8"
+	},
+	"devDependencies": {
+		"@types/node": "^20.19.37",
+		"typescript": "^5.9.3"
+	}
 }
