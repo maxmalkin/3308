@@ -1,4 +1,6 @@
-export type StreamingServices = [
+import { z } from "zod";
+
+export const streamingServiceValues = [
 	"Apple TV",
 	"Prime Video",
 	"Paramount",
@@ -6,4 +8,8 @@ export type StreamingServices = [
 	"HBO Max",
 	"Disney+",
 	"Peacock",
-];
+] as const;
+
+export const StreamingServiceSchema = z.enum(streamingServiceValues);
+
+export type StreamingService = z.infer<typeof StreamingServiceSchema>;
