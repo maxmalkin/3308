@@ -149,9 +149,7 @@ describe("POST /api/auth/register", () => {
       }),
     );
     expect(res.status).toBe(500);
-    expect(mockSupabase.auth.admin.deleteUser).toHaveBeenCalledWith(
-      "uuid-456",
-    );
+    expect(mockSupabase.auth.admin.deleteUser).toHaveBeenCalledWith("uuid-456");
   });
 });
 

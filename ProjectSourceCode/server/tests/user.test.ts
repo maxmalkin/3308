@@ -85,9 +85,7 @@ describe("GET /api/user/log", () => {
       { ...sampleUserShowEntry, ...sampleShow, status: "Watched" },
     ]);
 
-    const res = await app.request(
-      new Request("http://localhost/api/user/log"),
-    );
+    const res = await app.request(new Request("http://localhost/api/user/log"));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.shows).toHaveLength(1);

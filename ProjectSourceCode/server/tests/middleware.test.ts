@@ -35,9 +35,7 @@ beforeEach(() => {
 describe("authMiddleware", () => {
   /** Should reject requests with no Authorization header. */
   it("returns 401 when no auth header", async () => {
-    const res = await app.request(
-      new Request("http://localhost/protected"),
-    );
+    const res = await app.request(new Request("http://localhost/protected"));
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error).toBe("Missing or invalid Authorization header");
