@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "setup:hooks": "git config core.hooksPath .githooks",
     "dev": "pnpm run server & pnpm run client",
     "client": "cd client && pnpm dev",
     "server": "cd server && pnpm dev",
