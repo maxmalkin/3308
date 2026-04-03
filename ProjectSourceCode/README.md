@@ -10,7 +10,7 @@
 
 ## Prereqs
 
-- [ ] bun
+- [ ] pnpm
 - [ ] Docker
 - [ ] ...
 

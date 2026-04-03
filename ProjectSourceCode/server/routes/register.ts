@@ -29,11 +29,6 @@ register.post("/", async (c) => {
     RETURNING id, username, owned_services
   `;
 
-  await sql`
-    INSERT INTO public.watchlist (username)
-    VALUES (${username})
-  `;
-
   return c.json({ user }, 201);
 });
 

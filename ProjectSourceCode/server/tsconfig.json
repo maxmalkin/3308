@@ -7,7 +7,9 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "rootDir": ".",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
