@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { StreamingServiceSchema } from "../models/enums.js";
+import { StreamingServiceSchema } from "../models/enums.ts";
 
 export const RegisterBodySchema = z.object({
   username: z
