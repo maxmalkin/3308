@@ -126,12 +126,20 @@ describe("POST /api/auth/register", () => {
 
   /** Should roll back Supabase user if public.user INSERT fails. */
   it("rolls back supabase user on db insert failure", async () => {
+    // First call (username check) returns empty, second call (INSERT) throws
     mockResults.push([]);
+    mockResults.push([]); // won't be reached — override below
     mockSupabase.auth.signUp.mockResolvedValue({
       data: { user: { id: "uuid-456" }, session: null },
       error: null,
     });
-    mockSql.mockRejectedValueOnce(new Error("unique constraint"));
+
+    let callCount = 0;
+    mockSql.mockImplementation(async () => {
+      callCount++;
+      if (callCount === 1) return []; // username check
+      throw new Error("unique constraint"); // INSERT fails
+    });
 
     const res = await app.request(
       jsonRequest("POST", "/api/auth/register", {
