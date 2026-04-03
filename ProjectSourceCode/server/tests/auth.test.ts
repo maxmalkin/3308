@@ -1,0 +1,198 @@
+/**
+ * @file Unit tests for the /api/auth routes (register and login).
+ * Mocks Supabase auth and the postgres database to test route logic in isolation.
+ */
+
+import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { Hono } from "hono";
+import { jsonRequest } from "./helpers.ts";
+
+/** Mock database — returns configurable rows per query. */
+const mockResults: Record<string, unknown>[][] = [];
+const mockSql: any = Object.assign(
+  jest.fn(async () => mockResults.shift() ?? []),
+  {
+    array: (arr: unknown[]) => arr,
+    json: (obj: unknown) => obj,
+  },
+);
+
+/** Mock Supabase auth client. */
+const mockSupabase = {
+  auth: {
+    signUp: jest.fn<any>(),
+    signInWithPassword: jest.fn<any>(),
+    admin: { deleteUser: jest.fn<any>() },
+  },
+};
+
+jest.unstable_mockModule("../db.ts", () => ({
+  default: mockSql,
+}));
+
+jest.unstable_mockModule("../utils/supabase.ts", () => ({
+  supabase: mockSupabase,
+}));
+
+/** Import auth routes AFTER mocks are registered. */
+const { default: auth } = await import("../routes/auth.ts");
+
+const app = new Hono();
+app.route("/api/auth", auth);
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  mockResults.length = 0;
+});
+
+describe("POST /api/auth/register", () => {
+  /** Should reject requests with missing or invalid fields. */
+  it("returns 400 on invalid body", async () => {
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/register", { email: "not-an-email" }),
+    );
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBeDefined();
+  });
+
+  /** Should reject when username is already taken in public.user. */
+  it("returns 409 when username is taken", async () => {
+    mockResults.push([{ "?column?": 1 }]);
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/register", {
+        email: "test@test.com",
+        password: "password123",
+        username: "taken",
+      }),
+    );
+    expect(res.status).toBe(409);
+    const body = await res.json();
+    expect(body.error).toBe("Username already taken");
+  });
+
+  /** Should return 400 when Supabase signUp fails. */
+  it("returns 400 when supabase signup fails", async () => {
+    mockResults.push([]);
+    mockSupabase.auth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: "Email already registered" },
+    });
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/register", {
+        email: "test@test.com",
+        password: "password123",
+        username: "newuser",
+      }),
+    );
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Email already registered");
+  });
+
+  /** Should create user in both Supabase and public.user on success. */
+  it("returns 201 on successful registration", async () => {
+    mockResults.push([]);
+    mockSupabase.auth.signUp.mockResolvedValue({
+      data: {
+        user: { id: "uuid-123" },
+        session: { access_token: "token-abc" },
+      },
+      error: null,
+    });
+    mockResults.push([
+      {
+        id: "uuid-123",
+        username: "newuser",
+        email: "test@test.com",
+        owned_services: [],
+      },
+    ]);
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/register", {
+        email: "test@test.com",
+        password: "password123",
+        username: "newuser",
+      }),
+    );
+    expect(res.status).toBe(201);
+    const body = await res.json();
+    expect(body.user.username).toBe("newuser");
+    expect(body.session.access_token).toBe("token-abc");
+  });
+
+  /** Should roll back Supabase user if public.user INSERT fails. */
+  it("rolls back supabase user on db insert failure", async () => {
+    mockResults.push([]);
+    mockSupabase.auth.signUp.mockResolvedValue({
+      data: { user: { id: "uuid-456" }, session: null },
+      error: null,
+    });
+    mockSql.mockRejectedValueOnce(new Error("unique constraint"));
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/register", {
+        email: "test@test.com",
+        password: "password123",
+        username: "newuser",
+      }),
+    );
+    expect(res.status).toBe(500);
+    expect(mockSupabase.auth.admin.deleteUser).toHaveBeenCalledWith(
+      "uuid-456",
+    );
+  });
+});
+
+describe("POST /api/auth/login", () => {
+  /** Should reject requests with missing fields. */
+  it("returns 400 on invalid body", async () => {
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/login", { email: "bad" }),
+    );
+    expect(res.status).toBe(400);
+  });
+
+  /** Should return 401 on bad credentials. */
+  it("returns 401 on failed login", async () => {
+    mockSupabase.auth.signInWithPassword.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: "Invalid login credentials" },
+    });
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/login", {
+        email: "test@test.com",
+        password: "wrong",
+      }),
+    );
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toBe("Invalid login credentials");
+  });
+
+  /** Should return session and user on successful login. */
+  it("returns session on successful login", async () => {
+    mockSupabase.auth.signInWithPassword.mockResolvedValue({
+      data: {
+        user: { id: "uuid-123", email: "test@test.com" },
+        session: { access_token: "token-xyz", refresh_token: "refresh-xyz" },
+      },
+      error: null,
+    });
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/login", {
+        email: "test@test.com",
+        password: "correct",
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.session.access_token).toBe("token-xyz");
+    expect(body.user.id).toBe("uuid-123");
+  });
+});
