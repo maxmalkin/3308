@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import sql from "../db.js";
-import { RegisterBodySchema } from "../schemas/register.js";
+import { RegisterBodySchema } from "../types/register.js";
 import z from "zod";
 
 const register = new Hono();

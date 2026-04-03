@@ -1,9 +1,9 @@
 import z from "zod";
 
 export const watchStatusValues = [
-	"Watched",
-	"In Progress",
-	"Want to Watch",
+  "Watched",
+  "In Progress",
+  "Want to Watch",
 ] as const;
 export type WatchStatus = (typeof watchStatusValues)[number];
 
