@@ -53,7 +53,6 @@ CREATE INDEX idx_user_shows_status ON public.user_shows (status);
 CREATE INDEX idx_shows_popularity ON public.shows (popularity DESC);
 CREATE INDEX idx_shows_name ON public.shows (name);
 
--- Migrate existing watchlist data (best-effort)
 INSERT INTO public.user_shows (username, show_id, status)
 SELECT w.username, s.id, 'Want to Watch'::public.watch_status
 FROM public.watchlist w, LATERAL unnest(w.show_ids) AS sid
