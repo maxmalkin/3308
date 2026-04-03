@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import sql from "../db.js";
+import sql from "../db.ts";
 
 async function migrate() {
   const migrationsDir = path.dirname(new URL(import.meta.url).pathname);
