@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "pnpm run server & pnpm run client",
     "client": "cd client && pnpm dev",
+    "server": "cd server && pnpm dev",
     "db:migrate:apply": "cd server && node --env-file=.env --import=tsx migrations/migrate.ts",
     "db:migrate:create": "cd server && node --import=tsx migrations/create.ts",
     "lint": "biome check",
