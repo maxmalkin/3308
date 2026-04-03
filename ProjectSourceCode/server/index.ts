@@ -1,8 +1,8 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import register from "./routes/register.js";
-import shows from "./routes/shows.js";
-import userShows from "./routes/userShows.js";
+import register from "./routes/register.ts";
+import shows from "./routes/shows.ts";
+import userShows from "./routes/userShows.ts";
 
 const app = new Hono();
 
