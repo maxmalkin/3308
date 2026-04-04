@@ -1,14 +1,35 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import register from "./routes/register.js";
+import { cors } from "hono/cors";
+import auth from "./routes/auth.ts";
+import shows from "./routes/shows.ts";
+import user from "./routes/user.ts";
+import { authMiddleware } from "./middleware/auth.ts";
 
 const app = new Hono();
 
-app.route("/api/register", register);
+const corsOrigins = process.env.CORS_ORIGIN
+  ? [process.env.CORS_ORIGIN]
+  : ["http://localhost:3000", "http://localhost:3001"];
+
+app.use(
+  "*",
+  cors({
+    origin: corsOrigins,
+    allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
-const port = Number(process.env.PORT) || 3000;
+app.route("/api/auth", auth);
+app.route("/api/shows", shows);
+
+app.use("/api/user/*", authMiddleware);
+app.route("/api/user", user);
+
+const port = Number(process.env.PORT) || 8000;
 
 serve({ fetch: app.fetch, port }, () => {
   console.log(`Server running on http://localhost:${port}`);

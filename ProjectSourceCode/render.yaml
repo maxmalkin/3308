@@ -1,1 +1,42 @@
-# render infra file for later
+#################################################
+###          THIS ISNT FINAL                  ###
+#################################################
+
+# services:
+#   - type: web
+#     name: pillarboxd-server
+#     runtime: node
+#     rootDir: ProjectSourceCode
+#     buildCommand: pnpm install && cd server && pnpm migrate
+#     startCommand: cd server && node --import=tsx index.ts
+#     envVars:
+#       - key: NODE_VERSION
+#         value: "22"
+#       - key: PORT
+#         value: "8000"
+#       - key: DATABASE_URL
+#         sync: false
+#       - key: SUPABASE_URL
+#         sync: false
+#       - key: SUPABASE_PUB
+#         sync: false
+#       - key: SUPABASE_SECRET
+#         sync: false
+#       - key: TVDB_READ_TOKEN
+#         sync: false
+#       - key: TVDB_KEY
+#         sync: false
+#       - key: CORS_ORIGIN
+#         sync: false
+
+#   - type: web
+#     name: pillarboxd-client
+#     runtime: node
+#     rootDir: ProjectSourceCode
+#     buildCommand: pnpm install && cd client && pnpm build
+#     startCommand: cd client && pnpm start
+#     envVars:
+#       - key: NODE_VERSION
+#         value: "22"
+#       - key: NEXT_PUBLIC_API_URL
+#         sync: false
