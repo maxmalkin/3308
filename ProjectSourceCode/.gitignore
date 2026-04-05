@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 
 # Local Supabase CLI Meta
 server/supabase
+
+# Scripts
+server/scripts
