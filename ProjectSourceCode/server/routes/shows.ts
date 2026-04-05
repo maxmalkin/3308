@@ -1,6 +1,9 @@
 import { Hono } from "hono";
 import z from "zod";
-import { ShowSearchQuerySchema, ShowIdParamSchema } from "../types/shows.ts";
+import {
+  ShowSearchQuerySchema,
+  ShowIdParamSchema,
+} from "../validators/shows.ts";
 import { searchTMDB, fetchAndCacheShow } from "../utils/tmdb.ts";
 
 const shows = new Hono();
