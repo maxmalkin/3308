@@ -32,6 +32,17 @@ export async function fetchAndCacheShow(showId: number) {
 
   const data = await res.json();
 
+  const originCountry: string[] = Array.isArray(data.origin_country)
+    ? data.origin_country
+    : data.origin_country
+      ? [data.origin_country]
+      : [];
+  const genreIds: number[] = (data.genres || []).map(
+    (g: { id: number }) => g.id,
+  );
+  const runTimes: number[] = data.episode_run_time || [];
+  const langs: string[] = data.languages || [];
+
   const [row] = await sql`
 		INSERT INTO public.shows (
 			id, name, original_name, overview, poster_path, backdrop_path,
@@ -55,8 +66,8 @@ export async function fetchAndCacheShow(showId: number) {
 			${data.vote_count},
 			${data.adult},
 			${data.original_language},
-			${sql.array(data.origin_country || [])},
-			${sql.array((data.genres || []).map((g: { id: number }) => g.id))},
+			${originCountry}::text[],
+			${genreIds}::integer[],
 			${data.status},
 			${data.type},
 			${data.number_of_seasons},
@@ -64,8 +75,8 @@ export async function fetchAndCacheShow(showId: number) {
 			${data.in_production},
 			${data.homepage},
 			${data.tagline},
-			${sql.array(data.episode_run_time || [])},
-			${sql.array(data.languages || [])},
+			${runTimes}::integer[],
+			${langs}::text[],
 			${sql.json(data.genres || [])},
 			${sql.json(data.created_by || [])},
 			${sql.json(data.networks || [])},
