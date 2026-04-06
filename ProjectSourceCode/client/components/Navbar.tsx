@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "next/link"; //general Navbar file -> Make it look different based on logged in versus not
 
 export default function Navbar() {
   return (
@@ -19,3 +19,4 @@ export default function Navbar() {
   );
 }
 
+//when logged out -> only login + register

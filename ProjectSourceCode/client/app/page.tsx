@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar";
 
-const activity = [
+const activity = [ //Temporary data for activity dashboard
   {
     id: 1,
     user: "melody",
