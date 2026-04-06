@@ -9,7 +9,8 @@
     "rootDir": ".",
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "composite": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
