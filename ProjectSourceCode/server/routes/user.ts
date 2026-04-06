@@ -4,7 +4,7 @@ import sql from "../db.ts";
 import {
   AddUserShowBodySchema,
   UpdateUserShowBodySchema,
-} from "../types/userShows.ts";
+} from "../validators/userShows.ts";
 import { fetchAndCacheShow } from "../utils/tmdb.ts";
 
 type AuthEnv = {
