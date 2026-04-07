@@ -39,7 +39,7 @@ export default function LoginPage() {
             </div>
 
             <button
-              type="button"
+              type="submit"
               className="w-full rounded-full bg-black px-4 py-3 text-white transition hover:bg-gray-800"
             >
               Log In
@@ -47,7 +47,7 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-sm text-gray-600">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link href="/register" className="font-medium text-black underline">
               Create one
             </Link>
