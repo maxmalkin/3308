@@ -15,6 +15,19 @@ type AuthEnv = {
 
 const user = new Hono<AuthEnv>();
 
+user.get("/profile", async (c) => {
+  const userId = c.get("userId");
+
+  const [profile] = await sql`
+    SELECT id, username, email, owned_services
+    FROM public."user"
+    WHERE id = ${userId}
+  `;
+
+  if (!profile) return c.json({ error: "User not found" }, 404);
+  return c.json({ user: profile });
+});
+
 user.get("/watchlist", async (c) => {
   const userId = c.get("userId");
   const rows = await sql`
