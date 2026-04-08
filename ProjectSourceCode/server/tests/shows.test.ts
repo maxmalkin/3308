@@ -52,8 +52,8 @@ describe("GET /api/shows/search", () => {
     );
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.results).toHaveLength(1);
-    expect(body.results[0].name).toBe("Breaking Bad");
+    expect(body).toHaveLength(1);
+    expect(body[0].name).toBe("Breaking Bad");
     expect(mockSearchTMDB).toHaveBeenCalledWith("breaking bad", 1);
   });
 

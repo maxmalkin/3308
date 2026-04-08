@@ -1,37 +1,37 @@
 {
-  "name": "pillarboxd",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "setup:hooks": "git config core.hooksPath .githooks",
-    "dev": "pnpm run server & pnpm run client",
-    "client": "cd client && pnpm dev",
-    "server": "cd server && pnpm dev",
-    "migrate:apply": "cd server && node --env-file=.env --import=tsx migrations/migrate.ts",
-    "migrate:create": "cd server && node --import=tsx migrations/create.ts",
-    "test:server": "cd server && NODE_OPTIONS='--experimental-vm-modules' pnpx jest",
-    "lint": "biome check",
-    "format": "biome format --write"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.2.0",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.18.3",
-  "pnpm": {
-    "ignoredBuiltDependencies": [
-      "sharp",
-      "unrs-resolver"
-    ]
-  }
+	"name": "pillarboxd",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"setup:hooks": "git config core.hooksPath .githooks",
+		"dev": "pnpm run server & pnpm run client",
+		"client": "cd client && pnpm dev",
+		"server": "cd server && pnpm dev",
+		"migrate:apply": "cd server && node --env-file=.env --import=tsx migrations/migrate.ts",
+		"migrate:create": "cd server && node --import=tsx migrations/create.ts",
+		"test:server": "cd server && NODE_OPTIONS='--experimental-vm-modules' pnpx jest",
+		"lint": "biome check",
+		"format": "biome format --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.2.0",
+		"@tailwindcss/postcss": "^4",
+		"@types/node": "^20",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"babel-plugin-react-compiler": "1.0.0",
+		"tailwindcss": "^4",
+		"typescript": "^5"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.18.3",
+	"pnpm": {
+		"ignoredBuiltDependencies": [
+			"sharp",
+			"unrs-resolver"
+		]
+	}
 }
