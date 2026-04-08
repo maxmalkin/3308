@@ -210,9 +210,7 @@ describe("POST /api/auth/login", () => {
 describe("POST /api/auth/signout", () => {
   /** Should return 401 when no Authorization header is provided. */
   it("returns 401 when no auth header", async () => {
-    const res = await app.request(
-      jsonRequest("POST", "/api/auth/signout"),
-    );
+    const res = await app.request(jsonRequest("POST", "/api/auth/signout"));
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error).toBe("Missing or invalid authorization header");
