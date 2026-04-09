@@ -16,6 +16,15 @@ export async function searchTMDB(query: string, page: number) {
   return res.json();
 }
 
+export async function fetchWatchProviders(showId: number) {
+  const res = await fetch(`${TMDB_BASE}/tv/${showId}/watch/providers`, {
+    headers: headers(),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.results?.US ?? null;
+}
+
 export async function fetchAndCacheShow(showId: number) {
   const [cached] = await sql`
 		SELECT * FROM public.shows
@@ -31,6 +40,7 @@ export async function fetchAndCacheShow(showId: number) {
   if (!res.ok) throw new Error(`TMDB returned ${res.status}`);
 
   const data = await res.json();
+  const watchProvidersUS = await fetchWatchProviders(showId);
 
   const originCountry: string[] = Array.isArray(data.origin_country)
     ? data.origin_country
@@ -51,7 +61,7 @@ export async function fetchAndCacheShow(showId: number) {
 			number_of_seasons, number_of_episodes, in_production, homepage, tagline,
 			episode_run_time, languages, genres, created_by, networks,
 			production_companies, production_countries, seasons, spoken_languages,
-			last_episode_to_air, next_episode_to_air, cached_at, updated_at
+			last_episode_to_air, next_episode_to_air, watch_providers_us, cached_at, updated_at
 		) VALUES (
 			${data.id},
 			${data.name},
@@ -86,6 +96,7 @@ export async function fetchAndCacheShow(showId: number) {
 			${sql.json(data.spoken_languages || [])},
 			${data.last_episode_to_air ? sql.json(data.last_episode_to_air) : null},
 			${data.next_episode_to_air ? sql.json(data.next_episode_to_air) : null},
+			${watchProvidersUS ? sql.json(watchProvidersUS) : null},
 			NOW(),
 			NOW()
 		)
@@ -104,6 +115,7 @@ export async function fetchAndCacheShow(showId: number) {
 			last_episode_to_air = EXCLUDED.last_episode_to_air,
 			next_episode_to_air = EXCLUDED.next_episode_to_air,
 			in_production = EXCLUDED.in_production,
+			watch_providers_us = EXCLUDED.watch_providers_us,
 			cached_at = NOW(),
 			updated_at = NOW()
 		RETURNING *
