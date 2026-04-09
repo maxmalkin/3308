@@ -1,0 +1,37 @@
+People in meeting: Kordell and Alex
+
+Prioritize pages that have implementations ready
+- Kordell’s
+    - Public 
+        - Easy
+    - Home 
+    - Log in 
+    - Exists
+        - Easy
+    - Register 
+        - Exists
+        - Easy
+
+- Alex
+  - Recommended 
+  - Queue 
+  - Navbar
+      - Easy
+
+Pages
+  - Home page
+      - Search bar at top
+      - Log, queue, recommendations
+      - Should be one page length
+  - Account
+  - Public page
+  - Log in
+  - Register
+  - Log
+      - Log is have watched
+      - Can specify season and episode
+      - When marking a season/series as complete will be prompted to write an entry for the entire season/series
+      - Each entry will involve 
+  - Queue
+      - Queue is will watch
+      - Queue will keep status of not started, in progress, completed
