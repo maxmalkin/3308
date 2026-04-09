@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
-import { RegisterBodySchema, LoginBodySchema } from "../validators/auth.ts";
 import { supabase } from "../utils/supabase.ts";
+import { LoginBodySchema, RegisterBodySchema } from "../validators/auth.ts";
 
 const auth = new Hono();
 

@@ -3,7 +3,7 @@
  * Verifies JWT token validation and rejection of unauthenticated requests.
  */
 
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Hono } from "hono";
 
 /** Mock Supabase auth client. */

@@ -3,7 +3,7 @@
  * Mocks Supabase auth and the postgres database to test route logic in isolation.
  */
 
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Hono } from "hono";
 import { jsonRequest } from "./helpers.ts";
 

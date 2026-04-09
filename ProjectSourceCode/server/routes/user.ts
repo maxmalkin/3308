@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
+import { fetchAndCacheShow } from "../utils/tmdb.ts";
 import {
   AddUserShowBodySchema,
   UpdateUserShowBodySchema,
 } from "../validators/userShows.ts";
-import { fetchAndCacheShow } from "../utils/tmdb.ts";
 
 type AuthEnv = {
   Variables: {
