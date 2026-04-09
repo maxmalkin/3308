@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import { login } from "./actions";
 
-export default function LoginPage() {
+export default function LoginPage({searchParams,}: { searchParams: { error?: string }; }) 
+{
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <Navbar />
@@ -13,33 +15,49 @@ export default function LoginPage() {
             Sign in to access your logged shows and watchlist.
           </p>
 
+          {searchParams?.error && (
+            <div className="mb-6 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+              {searchParams.error}
+            </div>
+          )}
+
           <form className="space-y-5">
             <div>
-              <label htmlFor="username" className="mb-2 block text-sm font-medium">
-                Username
+              <label
+                htmlFor="email"
+                className="mb-2 block text-sm font-medium"
+              >
+                Email Address
               </label>
               <input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="Enter your email"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-medium">
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium"
+              >
                 Password
               </label>
               <input
                 id="password"
+                name="password"
                 type="password"
+                required
                 placeholder="Enter your password"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
               />
             </div>
 
             <button
-              type="submit"
+              formAction={login}
               className="w-full rounded-full bg-black px-4 py-3 text-white transition hover:bg-gray-800"
             >
               Log In
@@ -57,4 +75,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
