@@ -12,15 +12,38 @@ const notifications = new Hono<AuthEnv>();
 notifications.get("/", async (c) => {
   const userId = c.get("userId");
 
+  // 1. Grab pagination values from the URL query string (default to page 1, 10 items)
+  const page = parseInt(c.req.query("page") || "1", 10);
+  const limit = parseInt(c.req.query("limit") || "10", 10);
+
+  // 2. Calculate the offset
+  const offset = (page - 1) * limit;
+
   try {
+    // 3. Update the SQL query with LIMIT and OFFSET
     const userNotifications = await sql`
       SELECT id, message, is_read, created_at 
       FROM public.notifications 
       WHERE user_id = ${userId}
       ORDER BY created_at DESC
+      LIMIT ${limit} 
+      OFFSET ${offset}
     `;
-
-    return c.json({ notifications: userNotifications }, 200);
+    
+    // Optional: Get the total count so the frontend knows how many pages exist
+    const [{ count }] = await sql`
+      SELECT count(*) FROM public.notifications WHERE user_id = ${userId}
+    `;
+    
+    return c.json({ 
+      notifications: userNotifications,
+      pagination: {
+        total: parseInt(count, 10),
+        page,
+        limit,
+        totalPages: Math.ceil(parseInt(count, 10) / limit)
+      }
+    }, 200);
   } catch (error) {
     console.error("Failed to fetch notifications:", error);
     return c.json({ error: "Internal server error" }, 500);
