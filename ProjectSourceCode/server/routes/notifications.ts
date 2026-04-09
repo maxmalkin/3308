@@ -19,7 +19,7 @@ notifications.get("/", async (c) => {
       WHERE user_id = ${userId}
       ORDER BY created_at DESC
     `;
-    
+
     return c.json({ notifications: userNotifications }, 200);
   } catch (error) {
     console.error("Failed to fetch notifications:", error);
@@ -47,7 +47,10 @@ notifications.patch("/:id/read", async (c) => {
       return c.json({ error: "Notification not found" }, 404);
     }
 
-    return c.json({ message: "Notification marked as read", notification: updated[0] }, 200);
+    return c.json(
+      { message: "Notification marked as read", notification: updated[0] },
+      200,
+    );
   } catch (error) {
     console.error("Failed to update notification:", error);
     return c.json({ error: "Internal server error" }, 500);

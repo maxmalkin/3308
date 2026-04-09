@@ -30,7 +30,9 @@ jest.unstable_mockModule("../utils/supabase.ts", () => ({
 }));
 
 /** Import router AFTER mocks are registered. */
-const { default: notificationsRouter } = await import("../routes/notifications.ts");
+const { default: notificationsRouter } = await import(
+  "../routes/notifications.ts"
+);
 
 /**
  * Build a test app that sets userId in context (simulating auth middleware)
@@ -62,13 +64,17 @@ describe("GET /api/notifications", () => {
     ]);
 
     // Act: Send the GET request
-    const res = await app.request(new Request("http://localhost/api/notifications"));
-    
+    const res = await app.request(
+      new Request("http://localhost/api/notifications"),
+    );
+
     // Assert: Check the response
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.notifications).toHaveLength(1);
-    expect(body.notifications[0].message).toBe("Season 2 of Severance just dropped!");
+    expect(body.notifications[0].message).toBe(
+      "Season 2 of Severance just dropped!",
+    );
   });
 });
 
@@ -85,7 +91,7 @@ describe("PATCH /api/notifications/:id/read", () => {
 
     // Act: Send the PATCH request
     const res = await app.request(
-      jsonRequest("PATCH", "/api/notifications/notif-123/read")
+      jsonRequest("PATCH", "/api/notifications/notif-123/read"),
     );
 
     // Assert: Check the response
@@ -100,7 +106,7 @@ describe("PATCH /api/notifications/:id/read", () => {
 
     // Act: Send the PATCH request
     const res = await app.request(
-      jsonRequest("PATCH", "/api/notifications/fake-id/read")
+      jsonRequest("PATCH", "/api/notifications/fake-id/read"),
     );
 
     // Assert

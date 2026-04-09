@@ -21,9 +21,9 @@ export default function NotificationBell() {
         // Fetching from your Hono backend!
         const res = await fetch("http://localhost:8000/api/notifications", {
           // Note: We will need to pass the JWT token here eventually!
-          headers: { "Content-Type": "application/json" }, 
+          headers: { "Content-Type": "application/json" },
         });
-        
+
         if (res.ok) {
           const data = await res.json();
           setNotifications(data.notifications);
@@ -42,12 +42,11 @@ export default function NotificationBell() {
   return (
     <div className="relative inline-block">
       {/* The Bell Button */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-full hover:bg-gray-200 transition"
       >
-        🔔
-        {/* The Red Dot Indicator */}
+        🔔{/* The Red Dot Indicator */}
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full">
             {unreadCount}
@@ -63,12 +62,14 @@ export default function NotificationBell() {
           </div>
           <ul className="max-h-60 overflow-y-auto">
             {notifications.length === 0 ? (
-              <li className="p-4 text-sm text-gray-500 text-center">No new notifications</li>
+              <li className="p-4 text-sm text-gray-500 text-center">
+                No new notifications
+              </li>
             ) : (
               notifications.map((notif) => (
-                <li 
-                  key={notif.id} 
-                  className={`p-3 text-sm border-b border-gray-100 ${notif.is_read ? 'text-gray-500' : 'text-black font-medium bg-blue-50'}`}
+                <li
+                  key={notif.id}
+                  className={`p-3 text-sm border-b border-gray-100 ${notif.is_read ? "text-gray-500" : "text-black font-medium bg-blue-50"}`}
                 >
                   {notif.message}
                 </li>
