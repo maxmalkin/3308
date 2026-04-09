@@ -9,6 +9,7 @@ import { Hono } from "hono";
 /** Mock Supabase auth client. */
 const mockSupabase = {
   auth: {
+    // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
     getUser: jest.fn<any>(),
   },
 };

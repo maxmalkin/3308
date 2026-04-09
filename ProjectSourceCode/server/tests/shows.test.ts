@@ -8,7 +8,9 @@ import { Hono } from "hono";
 import { sampleShow } from "./helpers.ts";
 
 /** Mock TMDB utility functions. */
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockSearchTMDB = jest.fn<any>();
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockFetchAndCacheShow = jest.fn<any>();
 
 jest.unstable_mockModule("../utils/tmdb.ts", () => ({

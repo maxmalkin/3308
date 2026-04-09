@@ -12,6 +12,7 @@ const TEST_USER_ID = "test-user-id";
 
 /** Mock database — returns configurable rows per query. */
 const mockResults: Record<string, unknown>[][] = [];
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockSql: any = Object.assign(
   jest.fn(async () => mockResults.shift() ?? []),
   {
@@ -21,6 +22,7 @@ const mockSql: any = Object.assign(
 );
 
 /** Mock TMDB fetch-and-cache function. */
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockFetchAndCacheShow = jest.fn<any>();
 
 jest.unstable_mockModule("../db.ts", () => ({
