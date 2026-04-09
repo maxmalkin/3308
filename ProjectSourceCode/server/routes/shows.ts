@@ -18,7 +18,7 @@ shows.get("/search", async (c) => {
 
   try {
     const data = await searchTMDB(query, page);
-    return c.json(data);
+    return c.json(data.results);
   } catch {
     return c.json({ error: "Failed to fetch from TMDB" }, 502);
   }
