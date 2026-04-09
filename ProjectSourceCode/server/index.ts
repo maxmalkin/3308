@@ -5,6 +5,8 @@ import { authMiddleware } from "./middleware/auth.ts";
 import auth from "./routes/auth.ts";
 import shows from "./routes/shows.ts";
 import user from "./routes/user.ts";
+import { authMiddleware } from "./middleware/auth.ts";
+import notificationsRouter from "./routes/notifications.ts";
 
 const app = new Hono();
 
@@ -25,6 +27,9 @@ app.get("/health", (c) => c.json({ status: "ok" }));
 
 app.route("/api/auth", auth);
 app.route("/api/shows", shows);
+
+app.use("/api/notifications/*", authMiddleware);
+app.route("/api/notifications", notificationsRouter);
 
 app.use("/api/user/*", authMiddleware);
 app.route("/api/user", user);
