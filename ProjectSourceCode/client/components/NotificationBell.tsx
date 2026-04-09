@@ -19,20 +19,23 @@ export default function NotificationBell() {
   const fetchNotifications = async (pageToFetch: number) => {
     try {
       // Notice the new ?page= URL parameters!
-      const res = await fetch(`http://localhost:8000/api/notifications?page=${pageToFetch}&limit=5`, {
-        headers: { "Content-Type": "application/json" },
-      });
-      
+      const res = await fetch(
+        `http://localhost:8000/api/notifications?page=${pageToFetch}&limit=5`,
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
       if (res.ok) {
         const data = await res.json();
-        
+
         // If it's page 1, replace the list. Otherwise, stick the new alerts to the bottom.
         if (pageToFetch === 1) {
           setNotifications(data.notifications);
         } else {
           setNotifications((prev) => [...prev, ...data.notifications]);
         }
-        
+
         // Check if there are more pages left in the database
         setHasMore(data.pagination.page < data.pagination.totalPages);
       }
@@ -56,7 +59,7 @@ export default function NotificationBell() {
 
   return (
     <div className="relative inline-block">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-full hover:bg-gray-200 transition"
       >
@@ -75,22 +78,24 @@ export default function NotificationBell() {
           </div>
           <ul className="max-h-64 overflow-y-auto">
             {notifications.length === 0 ? (
-              <li className="p-4 text-sm text-gray-500 text-center">No new notifications</li>
+              <li className="p-4 text-sm text-gray-500 text-center">
+                No new notifications
+              </li>
             ) : (
               <>
                 {notifications.map((notif) => (
-                  <li 
-                    key={notif.id} 
+                  <li
+                    key={notif.id}
                     className={`p-3 text-sm border-b border-gray-100 ${notif.is_read ? "text-gray-500" : "text-black font-medium bg-blue-50"}`}
                   >
                     {notif.message}
                   </li>
                 ))}
-                
+
                 {/* The new Load More Button */}
                 {hasMore && (
                   <li className="p-2 text-center bg-gray-50">
-                    <button 
+                    <button
                       onClick={loadMore}
                       className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition"
                     >

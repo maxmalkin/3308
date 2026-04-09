@@ -29,21 +29,24 @@ notifications.get("/", async (c) => {
       LIMIT ${limit} 
       OFFSET ${offset}
     `;
-    
+
     // Optional: Get the total count so the frontend knows how many pages exist
     const [{ count }] = await sql`
       SELECT count(*) FROM public.notifications WHERE user_id = ${userId}
     `;
-    
-    return c.json({ 
-      notifications: userNotifications,
-      pagination: {
-        total: parseInt(count, 10),
-        page,
-        limit,
-        totalPages: Math.ceil(parseInt(count, 10) / limit)
-      }
-    }, 200);
+
+    return c.json(
+      {
+        notifications: userNotifications,
+        pagination: {
+          total: parseInt(count, 10),
+          page,
+          limit,
+          totalPages: Math.ceil(parseInt(count, 10) / limit),
+        },
+      },
+      200,
+    );
   } catch (error) {
     console.error("Failed to fetch notifications:", error);
     return c.json({ error: "Internal server error" }, 500);
