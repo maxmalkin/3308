@@ -1,4 +1,5 @@
 import Image from "next/image";
+import NotificationBell from '../components/NotificationBell';
 
 export default function Home() {
   return (
