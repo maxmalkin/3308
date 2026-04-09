@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Notification = {
   id: string;
@@ -11,17 +11,18 @@ type Notification = {
 
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // We moved this out of useEffect so the Load More button can call it too
-  const fetchNotifications = async (pageToFetch: number) => {
+  const fetchNotifications = useCallback(async (pageToFetch: number) => {
     try {
-      // Notice the new ?page= URL parameters!
       const res = await fetch(
-        `http://localhost:8000/api/notifications?page=${pageToFetch}&limit=5`,
+        `/api/notifications?page=${pageToFetch}&limit=5`,
         {
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
         },
       );
@@ -29,24 +30,36 @@ export default function NotificationBell() {
       if (res.ok) {
         const data = await res.json();
 
-        // If it's page 1, replace the list. Otherwise, stick the new alerts to the bottom.
         if (pageToFetch === 1) {
           setNotifications(data.notifications);
         } else {
           setNotifications((prev) => [...prev, ...data.notifications]);
         }
 
-        // Check if there are more pages left in the database
         setHasMore(data.pagination.page < data.pagination.totalPages);
+        setUnreadCount(data.unreadCount);
       }
     } catch (error) {
       console.error("Failed to load notifications", error);
     }
-  };
+  }, []);
 
-  // Fetch Page 1 when the bell first loads
   useEffect(() => {
     fetchNotifications(1);
+  }, [fetchNotifications]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const loadMore = () => {
@@ -55,10 +68,26 @@ export default function NotificationBell() {
     fetchNotifications(nextPage);
   };
 
-  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  const markAsRead = async (id: string) => {
+    try {
+      const res = await fetch(`/api/notifications/${id}/read`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.ok) {
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)),
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
+    }
+  };
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-full hover:bg-gray-200 transition"
@@ -86,13 +115,13 @@ export default function NotificationBell() {
                 {notifications.map((notif) => (
                   <li
                     key={notif.id}
-                    className={`p-3 text-sm border-b border-gray-100 ${notif.is_read ? "text-gray-500" : "text-black font-medium bg-blue-50"}`}
+                    onClick={() => !notif.is_read && markAsRead(notif.id)}
+                    className={`p-3 text-sm border-b border-gray-100 cursor-pointer ${notif.is_read ? "text-gray-500" : "text-black font-medium bg-blue-50"}`}
                   >
                     {notif.message}
                   </li>
                 ))}
 
-                {/* The new Load More Button */}
                 {hasMore && (
                   <li className="p-2 text-center bg-gray-50">
                     <button
