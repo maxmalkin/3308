@@ -1,0 +1,153 @@
+# ─────────────────────────────────────────────────────────────
+# ci.yml  —  Continuous Integration for Pillarboxd
+#
+# Replaces test-server.yml (now deleted). Single source of truth
+# for all CI: lint, frontend build, backend tests, Discord alert.
+#
+# Runs on every push to any branch, and every PR to main.
+#
+# Stack:
+#   Linter    → Biome (biome.json at ProjectSourceCode root)
+#   Frontend  → Next.js 16 + TypeScript (ProjectSourceCode/client)
+#   Backend   → Hono + TypeScript, tested with Jest + ts-jest ESM
+#               (ProjectSourceCode/server)
+#   Auth/DB   → Supabase (credentials injected via GitHub Secrets)
+#   Monorepo  → pnpm workspaces
+# ─────────────────────────────────────────────────────────────
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+defaults:
+  run:
+    working-directory: ProjectSourceCode   # pnpm-workspace.yaml lives here
+
+jobs:
+
+  # ── 1. Lint ─────────────────────────────────────────────
+  # Biome checks the whole workspace (client + server) in one pass.
+  lint:
+    name: Lint · Biome
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.18.3              # matches "packageManager" in package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: ProjectSourceCode/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Biome lint
+        run: pnpm run lint              # calls "biome check" from root package.json
+
+  # ── 2. Frontend build ────────────────────────────────────
+  # Type-checks TypeScript then does a full Next.js production
+  # build to confirm the client is deployable.
+  build-frontend:
+    name: Build · Next.js
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.18.3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: ProjectSourceCode/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript type-check
+        run: pnpm --filter client exec tsc --noEmit
+
+      - name: Next.js production build
+        run: pnpm --filter client run build
+        env:
+          NODE_ENV: production
+          # Add any NEXT_PUBLIC_* vars your app needs at build time.
+          # Example:
+          # NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+  # ── 3. Backend tests ─────────────────────────────────────
+  # Runs Jest with ts-jest in ESM mode — matches test script
+  # exactly: NODE_OPTIONS='--experimental-vm-modules' pnpx jest
+  #
+  # Supabase credentials are injected as GitHub Secrets so tests
+  # that hit the DB can run against your real Supabase project.
+
+  test-backend:
+    name: Test · Hono + Jest (ESM)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.18.3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20              # ts-jest ESM requires Node 20+
+          cache: pnpm
+          cache-dependency-path: ProjectSourceCode/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Runs exactly what  package.json "test" script does.
+      # NODE_OPTIONS is required for Jest to handle ES modules.
+      # ts-jest compiles TypeScript on the fly — no separate build needed.
+      - name: Run Jest tests
+        run: pnpm --filter server run test
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          NODE_ENV: test
+          # Supabase — injected from GitHub Secrets
+          # These names must match exactly what your code reads via process.env
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET: ${{ secrets.SUPABASE_SECRET }}
+          # TMDB — your code reads this as TVDB_READ_TOKEN (Bearer token)
+          TVDB_READ_TOKEN: ${{ secrets.TVDB_READ_TOKEN }}
+
+  # ── 4. Discord notification on failure ───────────────────
+  # Replaces the notification that was in test-server.yml.
+  # Watches ALL jobs — fires if any one of them fails.
+  #
+  # Setup: add DISCORD_WEBHOOK to GitHub Secrets.
+  #   Name : DISCORD_WEBHOOK
+  #   Value: Discord webhook URL (channel settings →
+  #          Integrations → Webhooks → Copy Webhook URL)
+  notify-discord:
+    name: Notify · Discord
+    runs-on: ubuntu-latest
+    needs: [build-frontend, test-backend]
+    if: failure()
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"🚨 **Build Failed.** CI did not pass on \`${{ github.ref_name }}\` branch. Check the Actions tab for logs: https://github.com/${{ github.repository }}/actions\"}" \
+            $DISCORD_WEBHOOK
