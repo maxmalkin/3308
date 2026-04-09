@@ -53,8 +53,7 @@ beforeEach(() => {
 
 describe("GET /api/notifications", () => {
   it("returns a list of notifications for the user", async () => {
-    // Arrange: We need TWO mock responses now!
-    // First for the SELECT query, Second for the COUNT query.
+    // Arrange: three mock results — SELECT, COUNT, unread COUNT
     mockResults.push(
       [
         {
@@ -64,7 +63,8 @@ describe("GET /api/notifications", () => {
           created_at: "2026-04-06T12:00:00Z",
         },
       ],
-      [{ count: "1" }], // This satisfies the new total count query
+      [{ count: "1" }],
+      [{ count: "1" }],
     );
 
     // Act: Send the GET request
@@ -81,9 +81,9 @@ describe("GET /api/notifications", () => {
     expect(body.notifications[0].message).toBe(
       "Season 2 of Severance just dropped!",
     );
-
-    // Check that our new pagination object works!
+    expect(body.unreadCount).toBe(1);
     expect(body.pagination.total).toBe(1);
+    expect(body.pagination.totalPages).toBe(1);
   });
 });
 

@@ -27,7 +27,6 @@ app.get("/health", (c) => c.json({ status: "ok" }));
 app.route("/api/auth", auth);
 app.route("/api/shows", shows);
 
-app.route("/api/notifications", notificationsRouter);
 app.use("/api/notifications/*", authMiddleware);
 app.route("/api/notifications", notificationsRouter);
 
