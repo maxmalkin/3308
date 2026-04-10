@@ -89,6 +89,7 @@ export default function NotificationBell() {
   return (
     <div className="relative inline-block" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-full hover:bg-gray-200 transition"
       >
@@ -115,16 +116,22 @@ export default function NotificationBell() {
                 {notifications.map((notif) => (
                   <li
                     key={notif.id}
-                    onClick={() => !notif.is_read && markAsRead(notif.id)}
-                    className={`p-3 text-sm border-b border-gray-100 cursor-pointer ${notif.is_read ? "text-gray-500" : "text-black font-medium bg-blue-50"}`}
+                    className={`border-b border-gray-100 ${notif.is_read ? "text-gray-500" : "text-black font-medium bg-blue-50"}`}
                   >
-                    {notif.message}
+                    <button
+                      type="button"
+                      onClick={() => !notif.is_read && markAsRead(notif.id)}
+                      className="w-full text-left p-3 text-sm cursor-pointer"
+                    >
+                      {notif.message}
+                    </button>
                   </li>
                 ))}
 
                 {hasMore && (
                   <li className="p-2 text-center bg-gray-50">
                     <button
+                      type="button"
                       onClick={loadMore}
                       className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition"
                     >

@@ -3,10 +3,9 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { authMiddleware } from "./middleware/auth.ts";
 import auth from "./routes/auth.ts";
+import notificationsRouter from "./routes/notifications.ts";
 import shows from "./routes/shows.ts";
 import user from "./routes/user.ts";
-import { authMiddleware } from "./middleware/auth.ts";
-import notificationsRouter from "./routes/notifications.ts";
 
 const app = new Hono();
 
