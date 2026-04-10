@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import z from "zod";
+import { fetchAndCacheShow, searchTMDB } from "../utils/tmdb.ts";
 import {
-  ShowSearchQuerySchema,
   ShowIdParamSchema,
+  ShowSearchQuerySchema,
 } from "../validators/shows.ts";
-import { searchTMDB, fetchAndCacheShow } from "../utils/tmdb.ts";
 
 const shows = new Hono();
 

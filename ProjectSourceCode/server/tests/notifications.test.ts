@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Hono } from "hono";
 import { jsonRequest } from "./helpers.ts";
 
@@ -6,7 +6,7 @@ const TEST_USER_ID = "test-user-id";
 
 /** Mock database — returns configurable rows per query. */
 const mockResults: Record<string, unknown>[][] = [];
-const mockSql: any = Object.assign(
+const mockSql = Object.assign(
   jest.fn(async () => mockResults.shift() ?? []),
   {
     array: (arr: unknown[]) => arr,
@@ -17,7 +17,7 @@ const mockSql: any = Object.assign(
 /** Mock Supabase auth client to prevent .env crashes */
 const mockSupabase = {
   auth: {
-    getUser: jest.fn<any>(),
+    getUser: jest.fn<() => Promise<unknown>>(),
   },
 };
 

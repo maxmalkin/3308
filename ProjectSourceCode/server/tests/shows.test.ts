@@ -3,12 +3,14 @@
  * Mocks the TMDB utility functions to test route logic without external API calls.
  */
 
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Hono } from "hono";
 import { sampleShow } from "./helpers.ts";
 
 /** Mock TMDB utility functions. */
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockSearchTMDB = jest.fn<any>();
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockFetchAndCacheShow = jest.fn<any>();
 
 jest.unstable_mockModule("../utils/tmdb.ts", () => ({

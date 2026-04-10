@@ -3,12 +3,13 @@
  * Mocks Supabase auth and the postgres database to test route logic in isolation.
  */
 
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Hono } from "hono";
 import { jsonRequest } from "./helpers.ts";
 
 /** Mock database — returns configurable rows per query. */
 const mockResults: Record<string, unknown>[][] = [];
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockSql: any = Object.assign(
   jest.fn(async () => mockResults.shift() ?? []),
   {
@@ -20,11 +21,16 @@ const mockSql: any = Object.assign(
 /** Mock Supabase auth client. */
 const mockSupabase = {
   auth: {
+    // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
     signUp: jest.fn<any>(),
+    // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
     signInWithPassword: jest.fn<any>(),
+    // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
     getUser: jest.fn<any>(),
     admin: {
+      // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
       deleteUser: jest.fn<any>(),
+      // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
       signOut: jest.fn<any>(),
     },
   },
