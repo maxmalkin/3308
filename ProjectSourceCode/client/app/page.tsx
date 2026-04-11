@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Navbar from "../components/Navbar";
+import Image from "next/image";
+import NotificationBell from "../components/NotificationBell";
 
 // const activity = [ //Temporary data for activity dashboard
 //   {
