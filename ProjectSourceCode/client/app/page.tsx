@@ -27,15 +27,11 @@ import NotificationBell from "../components/NotificationBell";
 //   },
 // ];
 
-export default function Home() { //this page should be the pre-log-in page
+export default function Home() {
+  //this page should be the pre-log-in page
   return (
     <main className="min-h-screen bg-[#f5f1ea] text-neutral-900">
       <Navbar />
-
-    
-
-
-
 
       {/* <div className="mx-auto max-w-4xl px-6 py-10">
         <div className="mb-10">
@@ -47,7 +43,7 @@ export default function Home() { //this page should be the pre-log-in page
           </h1>
         </div> */}
 
-        {/* <div className="space-y-6">
+      {/* <div className="space-y-6">
           {activity.map((item) => (
             <article
               key={item.id}
@@ -69,4 +65,3 @@ export default function Home() { //this page should be the pre-log-in page
     </main>
   );
 }
-

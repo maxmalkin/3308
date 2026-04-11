@@ -34,10 +34,7 @@ export default function RecommendationsPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {recommendedShows.map((show) => (
-            <div
-              key={show.id}
-              className="rounded-2xl bg-white p-6 shadow-sm"
-            >
+            <div key={show.id} className="rounded-2xl bg-white p-6 shadow-sm">
               <h2 className="mb-2 text-xl font-semibold">{show.title}</h2>
               <p className="mb-2 text-sm text-gray-700">
                 <span className="font-medium">Genre:</span> {show.genre}
@@ -53,4 +50,3 @@ export default function RecommendationsPage() {
     </main>
   );
 }
-

@@ -15,7 +15,10 @@ export default function RegisterPage() {
 
           <form className="space-y-5">
             <div>
-              <label htmlFor="username" className="mb-2 block text-sm font-medium">
+              <label
+                htmlFor="username"
+                className="mb-2 block text-sm font-medium"
+              >
                 Username
               </label>
               <input
@@ -27,7 +30,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-medium">
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium"
+              >
                 Password
               </label>
               <input
@@ -57,4 +63,3 @@ export default function RegisterPage() {
     </main>
   );
 }
-

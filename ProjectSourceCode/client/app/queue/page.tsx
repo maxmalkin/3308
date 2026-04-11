@@ -34,16 +34,13 @@ export default function WatchlistPage() {
 
         <div className="space-y-4">
           {watchlistItems.map((show) => (
-            <div
-              key={show.id}
-              className="rounded-2xl bg-white p-6 shadow-sm"
-            >
+            <div key={show.id} className="rounded-2xl bg-white p-6 shadow-sm">
               <div className="mb-3 flex items-start justify-between gap-4">
                 <h2 className="text-xl font-semibold">{show.title}</h2>
                 <span className="rounded-full border px-3 py-1 text-sm">
                   {show.added ? ( //make button to add/unadd
                     <p>Added</p>
-                  ):(
+                  ) : (
                     <p>Not Added</p>
                   )}
                 </span>
@@ -62,4 +59,3 @@ export default function WatchlistPage() {
     </main>
   );
 }
-
