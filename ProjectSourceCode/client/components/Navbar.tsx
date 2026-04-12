@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Link from "next/link"; //general Navbar file -> Make it look different based on logged in versus not
 
 const isLoggedIn = true;
-const userName = "temp_user";
 
 export default function Navbar() {
   return (
@@ -31,7 +31,7 @@ export default function Navbar() {
           </li>
           <li className="nav-item">
             <Link href="/account">
-              <img
+              <Image
                 src="/default-avatar.png"
                 alt="Account"
                 width={36}
