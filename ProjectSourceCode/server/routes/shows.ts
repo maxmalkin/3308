@@ -44,38 +44,42 @@ shows.get("/:id", async (c) => {
 
 /**
  * WEBHOOK: Daily Episode Alerts
- * This query now matches your Pro Watchlist schema perfectly.
+ * This query now matches  Watchlist schema
  */
 shows.post("/webhooks/daily-episodes", async (c) => {
   try {
-    const showName = "Shōgun";
-    const showId = "show-123";
+    // 1. Catch the dynamic data being sent to this webhook
+    const body = await c.req.json();
+    const showName = body.showName; 
+    const showId = body.showId;     
 
-    // 1. Fetch users from the REAL watchlists table we built.
-    // Notice 'In Progress' matches your Supabase enum exactly!
+    // Make sure the request actually included the required data
+    if (!showName || !showId) {
+      return c.json({ error: "Missing showName or showId" }, 400);
+    }
+
+    // 2. Query the CORRECT table dynamically
     const usersToNotify = await sql`
       SELECT user_id 
-      FROM public.watchlists 
+      FROM public.user_shows 
       WHERE show_id = ${showId} AND status = 'In Progress'
     `;
 
-    // 2. Fire notifications using our utility
+    // 3. Fire notifications
     let sentCount = 0;
     for (const row of usersToNotify) {
       const success = await createNotification(
         row.user_id,
-        `Get the popcorn ready! A new episode of ${showName} airs tonight.`,
+        `A new episode of ${showName} drops tonight.`
       );
       if (success) sentCount++;
     }
 
-    return c.json(
-      {
-        success: true,
-        message: `Fired ${sentCount} notifications for ${showName}`,
-      },
-      200,
-    );
+    return c.json({ 
+      success: true, 
+      message: `Fired ${sentCount} notifications for ${showName}` 
+    }, 200);
+
   } catch (error) {
     console.error("Failed to trigger daily episode alerts:", error);
     return c.json({ error: "Internal Server Error" }, 500);
@@ -87,7 +91,7 @@ shows.post("/:reviewId/like", async (c) => {
   const likerId = c.get("userId" as any); // Type cast for context
   const reviewId = c.req.param("reviewId");
 
-  // NOTE: This is an example. You'll need a real DB query to get the owner.
+  // NOTE: This is an example.need real db query
   // const reviewOwnerId = await getReviewOwner(reviewId);
 
   return c.json({ message: "Review likes coming soon!" });
