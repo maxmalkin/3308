@@ -3,12 +3,14 @@
  * Mocks the TMDB utility functions to test route logic without external API calls.
  */
 
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Hono } from "hono";
 import { sampleShow } from "./helpers.ts";
 
 /** Mock TMDB utility functions. */
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockSearchTMDB = jest.fn<any>();
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockFetchAndCacheShow = jest.fn<any>();
 
 jest.unstable_mockModule("../utils/tmdb.ts", () => ({
@@ -52,8 +54,8 @@ describe("GET /api/shows/search", () => {
     );
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.results).toHaveLength(1);
-    expect(body.results[0].name).toBe("Breaking Bad");
+    expect(body).toHaveLength(1);
+    expect(body[0].name).toBe("Breaking Bad");
     expect(mockSearchTMDB).toHaveBeenCalledWith("breaking bad", 1);
   });
 

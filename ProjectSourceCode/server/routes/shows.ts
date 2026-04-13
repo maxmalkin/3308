@@ -1,9 +1,12 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
-import { ShowSearchQuerySchema, ShowIdParamSchema } from "../types/shows.ts";
-import { searchTMDB, fetchAndCacheShow } from "../utils/tmdb.ts";
+import { fetchAndCacheShow, searchTMDB } from "../utils/tmdb.ts";
 import { createNotification } from "../utils/notifications.ts";
+import {
+  ShowIdParamSchema,
+  ShowSearchQuerySchema,
+} from "../validators/shows.ts";
 
 const shows = new Hono();
 
@@ -19,7 +22,7 @@ shows.get("/search", async (c) => {
 
   try {
     const data = await searchTMDB(query, page);
-    return c.json(data);
+    return c.json(data.results);
   } catch {
     return c.json({ error: "Failed to fetch from TMDB" }, 502);
   }

@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
+import { fetchAndCacheShow } from "../utils/tmdb.ts";
 import {
   AddUserShowBodySchema,
   UpdateUserShowBodySchema,
-} from "../types/userShows.ts";
-import { fetchAndCacheShow } from "../utils/tmdb.ts";
+} from "../validators/userShows.ts";
 
 type AuthEnv = {
   Variables: {
@@ -14,6 +14,19 @@ type AuthEnv = {
 };
 
 const user = new Hono<AuthEnv>();
+
+user.get("/profile", async (c) => {
+  const userId = c.get("userId");
+
+  const [profile] = await sql`
+    SELECT id, username, email, owned_services
+    FROM public."user"
+    WHERE id = ${userId}
+  `;
+
+  if (!profile) return c.json({ error: "User not found" }, 404);
+  return c.json({ user: profile });
+});
 
 user.get("/watchlist", async (c) => {
   const userId = c.get("userId");

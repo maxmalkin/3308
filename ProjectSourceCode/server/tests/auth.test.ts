@@ -3,12 +3,13 @@
  * Mocks Supabase auth and the postgres database to test route logic in isolation.
  */
 
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { Hono } from "hono";
 import { jsonRequest } from "./helpers.ts";
 
 /** Mock database — returns configurable rows per query. */
 const mockResults: Record<string, unknown>[][] = [];
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockSql: any = Object.assign(
   jest.fn(async () => mockResults.shift() ?? []),
   {
@@ -20,9 +21,18 @@ const mockSql: any = Object.assign(
 /** Mock Supabase auth client. */
 const mockSupabase = {
   auth: {
+    // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
     signUp: jest.fn<any>(),
+    // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
     signInWithPassword: jest.fn<any>(),
-    admin: { deleteUser: jest.fn<any>() },
+    // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
+    getUser: jest.fn<any>(),
+    admin: {
+      // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
+      deleteUser: jest.fn<any>(),
+      // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
+      signOut: jest.fn<any>(),
+    },
   },
 };
 
@@ -200,5 +210,71 @@ describe("POST /api/auth/login", () => {
     const body = await res.json();
     expect(body.session.access_token).toBe("token-xyz");
     expect(body.user.id).toBe("uuid-123");
+  });
+});
+
+describe("POST /api/auth/signout", () => {
+  /** Should return 401 when no Authorization header is provided. */
+  it("returns 401 when no auth header", async () => {
+    const res = await app.request(jsonRequest("POST", "/api/auth/signout"));
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toBe("Missing or invalid authorization header");
+  });
+
+  /** Should return 401 when token is invalid or expired. */
+  it("returns 401 when token is invalid", async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: null },
+      error: { message: "Invalid token" },
+    });
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/signout", undefined, {
+        Authorization: "Bearer bad-token",
+      }),
+    );
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toBe("Invalid token");
+  });
+
+  /** Should sign out successfully with a valid token. */
+  it("returns 200 on successful signout", async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: { id: "uuid-123" } },
+      error: null,
+    });
+    mockSupabase.auth.admin.signOut.mockResolvedValue({ error: null });
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/signout", undefined, {
+        Authorization: "Bearer valid-token",
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.message).toBe("Signed out successfully");
+    expect(mockSupabase.auth.admin.signOut).toHaveBeenCalledWith("uuid-123");
+  });
+
+  /** Should return 500 when Supabase admin signOut fails. */
+  it("returns 500 when supabase signout fails", async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: { id: "uuid-123" } },
+      error: null,
+    });
+    mockSupabase.auth.admin.signOut.mockResolvedValue({
+      error: { message: "Internal server error" },
+    });
+
+    const res = await app.request(
+      jsonRequest("POST", "/api/auth/signout", undefined, {
+        Authorization: "Bearer valid-token",
+      }),
+    );
+    expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error).toBe("Internal server error");
   });
 });

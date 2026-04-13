@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
-import { RegisterBodySchema, LoginBodySchema } from "../types/auth.ts";
 import { supabase } from "../utils/supabase.ts";
+import { LoginBodySchema, RegisterBodySchema } from "../validators/auth.ts";
 
 const auth = new Hono();
 
@@ -66,6 +66,28 @@ auth.post("/login", async (c) => {
   }
 
   return c.json({ session: data.session, user: data.user });
+});
+
+auth.post("/signout", async (c) => {
+  const authHeader = c.req.header("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return c.json({ error: "Missing or invalid authorization header" }, 401);
+  }
+
+  const token = authHeader.slice(7);
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data.user) {
+    return c.json({ error: "Invalid token" }, 401);
+  }
+
+  const { error: signOutError } = await supabase.auth.admin.signOut(
+    data.user.id,
+  );
+  if (signOutError) {
+    return c.json({ error: signOutError.message }, 500);
+  }
+
+  return c.json({ message: "Signed out successfully" });
 });
 
 export default auth;
