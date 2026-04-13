@@ -50,8 +50,8 @@ shows.post("/webhooks/daily-episodes", async (c) => {
   try {
     // 1. Catch the dynamic data being sent to this webhook
     const body = await c.req.json();
-    const showName = body.showName; 
-    const showId = body.showId;     
+    const showName = body.showName;
+    const showId = body.showId;
 
     // Make sure the request actually included the required data
     if (!showName || !showId) {
@@ -70,16 +70,18 @@ shows.post("/webhooks/daily-episodes", async (c) => {
     for (const row of usersToNotify) {
       const success = await createNotification(
         row.user_id,
-        `A new episode of ${showName} drops tonight.`
+        `A new episode of ${showName} drops tonight.`,
       );
       if (success) sentCount++;
     }
 
-    return c.json({ 
-      success: true, 
-      message: `Fired ${sentCount} notifications for ${showName}` 
-    }, 200);
-
+    return c.json(
+      {
+        success: true,
+        message: `Fired ${sentCount} notifications for ${showName}`,
+      },
+      200,
+    );
   } catch (error) {
     console.error("Failed to trigger daily episode alerts:", error);
     return c.json({ error: "Internal Server Error" }, 500);
