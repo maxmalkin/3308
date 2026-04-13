@@ -32,20 +32,153 @@ export default function RecommendationsPage() {
           Suggested shows based on your interests and saved platforms.
         </p>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {recommendedShows.map((show) => (
-            <div key={show.id} className="rounded-2xl bg-white p-6 shadow-sm">
-              <h2 className="mb-2 text-xl font-semibold">{show.title}</h2>
-              <p className="mb-2 text-sm text-gray-700">
-                <span className="font-medium">Genre:</span> {show.genre}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Available on:</span>{" "}
-                {show.platforms.join(", ")}
-              </p>
+
+        <h2 className="mb-2 text-2xl font-bold">Insert Genre</h2>
+        
+
+      {/* Need to adjust to work within my code, dependency issue? */}
+        {/* Multi-item Carosel */}
+        <section className="pt-5 pb-5">
+        <div className="container">
+            <div className="row">
+                <div className="col-6">
+                    <h3 className="mb-3">Multi Item Carousel cards</h3>
+                </div>
+                <div className="col-6 text-right">
+                    <a className="btn btn-primary mb-3 mr-1" 
+                       href="#carouselExampleIndicators2"
+                       role="button"
+                        data-slide="prev">
+                        <i className="fa fa-arrow-left"></i>
+                    </a>
+                    <a className="btn btn-primary mb-3"
+                       href="#carouselExampleIndicators2"
+                       role="button"
+                       data-slide="next">
+                        <i className="fa fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div className="col-12">
+                    <div id="carouselExampleIndicators2" 
+                         className="carousel slide"
+                         data-ride="carousel">
+
+                        <div className="carousel-inner">
+                            <div className="carousel-item active">
+                                <div className="row">
+
+                                    <div className="col-md-4 mb-3">
+                                        <div className="card">
+                                            <img className="img-fluid" 
+                                                 alt="100%x280"
+                                                src=
+"https://media.geeksforgeeks.org/wp-content/uploads/20240122184958/images2.jpg"/>
+                                            <div className="card-body">
+                                                <h4 className="card-title">
+                                                  Special title treatment</h4>
+                                                <p className="card-text">With supporting text
+                                                                       below as a natural lead-in</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 mb-3">
+                                        <div className="card">
+                                            <img className="img-fluid" 
+                                                 alt="100%x280"
+                                                src=
+"https://media.geeksforgeeks.org/wp-content/uploads/20240122184958/images2.jpg"/>
+                                            <div className="card-body">
+                                                <h4 className="card-title">Special title
+                                                                         treatment</h4>
+                                                <p className="card-text">With supporting 
+                                                                       text below as a natural
+                                                                       lead-in to additional 
+                                                                       content.</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 mb-3">
+                                        <div className="card">
+                                            <img className="img-fluid" 
+                                                 alt="100%x280"
+                                                src="https://media.geeksforgeeks.org/wp-content/uploads/20230407154213/gfg-bag.jpg"/>
+                                            <div className="card-body">
+                                                <h4 className="card-title">Special title treatment</h4>
+                                                <p className="card-text">With supporting text below
+                                                                       as a natural lead-in to
+                                                                     additional content.</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div className="carousel-item">
+                                <div className="row">
+
+                                    <div className="col-md-4 mb-3">
+                                        <div className="card">
+                                            <img className="img-fluid" 
+                                                 alt="100%x280"
+                                                src=
+"https://media.geeksforgeeks.org/wp-content/uploads/20240110011854/reading-925589_640.jpg"/>
+                                            <div className="card-body">
+                                                <h4 className="card-title">Special title treatment</h4>
+                                                <p className="card-text">With supporting text below 
+                                                                      as a natural lead-in to
+                                                                    additional content.</p>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 mb-3">
+                                        <div className="card">
+                                            <img className="img-fluid" alt="100%x280"
+                                                src=
+"https://media.geeksforgeeks.org/wp-content/uploads/20240122182422/images1.jpg"/>
+                                            <div className="card-body">
+                                                <h4 className="card-title">Special title treatment</h4>
+                                                <p className="card-text">With supporting text below 
+                                                                       as a natural lead-in to
+                                                                        additional content.</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 mb-3">
+                                        <div className="card">
+                                            <img className="img-fluid" alt="100%x280"
+                                                src=
+"https://media.geeksforgeeks.org/wp-content/uploads/20240110011854/reading-925589_640.jpg"/>
+                                            <div className="card-body">
+                                                <h4 className="card-title">Special title treatment</h4>
+                                                <p className="card-text">With supporting text below 
+                                                                      as a natural lead-in to
+                                                                       additional content.</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-          ))}
         </div>
+    </section>
+
+
+
+
+
+        <h2 className="mb-2 text-2xl font-bold">Insert Genre</h2>
       </div>
     </main>
   );
