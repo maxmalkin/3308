@@ -1,22 +1,23 @@
 import Navbar from "../../components/Navbar";
 
+
 const watchlistItems = [
   {
     id: 1,
     title: "The Bear",
-    added: true,
+    started: true,
     platforms: ["Hulu"],
   },
   {
     id: 2,
     title: "Stranger Things",
-    added: true,
+    started: false,
     platforms: ["Netflix"],
   },
   {
     id: 3,
     title: "Severance",
-    added: true,
+    started: true,
     platforms: ["Apple TV+"],
   },
 ];
@@ -36,12 +37,14 @@ export default function WatchlistPage() {
           {watchlistItems.map((show) => (
             <div key={show.id} className="rounded-2xl bg-white p-6 shadow-sm">
               <div className="mb-3 flex items-start justify-between gap-4">
+                {/* temp image for the queue -> translates to most other pages */}
+                <img src='not_found.jpg' alt='' className=''/>
                 <h2 className="text-xl font-semibold">{show.title}</h2>
                 <span className="rounded-full border px-3 py-1 text-sm">
-                  {show.added ? ( //make button to add/unadd
-                    <p>Added</p>
+                  {show.started ? ( //make button to add/unadd
+                    <p>Not Started</p>
                   ) : (
-                    <p>Not Added</p>
+                    <p>In Progress</p>
                   )}
                 </span>
               </div>
