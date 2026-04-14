@@ -15,3 +15,7 @@
 **Full Changelog**: https://github.com/maxmalkin/3308/compare/0.1.0...0.1.1
 
 Automatic Release notes generated 4.13
+
+## Additional Information not included in automatic release notes:
+* Work done on UI within feature/tv-ui-core by @Inline-Nova primarily within Recommendations/Queue/Log pages
+* Work done to make authentication work with UI and affect Navbar by @CamCM4 within user-authenticaiton
