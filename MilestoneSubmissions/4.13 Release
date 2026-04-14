@@ -1,0 +1,17 @@
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Changes
+* Add meeting notes for UI prioritization discussion by @Kordell-Sch in https://github.com/maxmalkin/3308/pull/127
+* Add signout, profile endpoints and simplify search response by @maxmalkin in https://github.com/maxmalkin/3308/pull/126
+* Feature/notifications by @Artfork in https://github.com/maxmalkin/3308/pull/128
+* backfill watch providers into db by @maxmalkin in https://github.com/maxmalkin/3308/pull/129
+* feat(ci): add discord webhook notification for failed test runs by @Artfork in https://github.com/maxmalkin/3308/pull/119
+* Deployment by @maxmalkin in https://github.com/maxmalkin/3308/pull/130
+
+## New Contributors
+* @Artfork made their first contribution in https://github.com/maxmalkin/3308/pull/128
+
+**Full Changelog**: https://github.com/maxmalkin/3308/compare/0.1.0...0.1.1
+
+Automatic Release notes generated 4.13
