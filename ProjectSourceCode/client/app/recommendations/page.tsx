@@ -80,7 +80,9 @@ export default function RecommendationsPage() {
                               height={280}
                             />
                             <div className="card-body">
-                              <h4 className="card-title">Special title treatment</h4>
+                              <h4 className="card-title">
+                                Special title treatment
+                              </h4>
                               <p className="card-text">
                                 With supporting text below as a natural lead-in.
                               </p>
@@ -97,9 +99,12 @@ export default function RecommendationsPage() {
                               height={280}
                             />
                             <div className="card-body">
-                              <h4 className="card-title">Special title treatment</h4>
+                              <h4 className="card-title">
+                                Special title treatment
+                              </h4>
                               <p className="card-text">
-                                With supporting text below as a natural lead-in to additional content.
+                                With supporting text below as a natural lead-in
+                                to additional content.
                               </p>
                             </div>
                           </div>
@@ -114,9 +119,12 @@ export default function RecommendationsPage() {
                               height={280}
                             />
                             <div className="card-body">
-                              <h4 className="card-title">Special title treatment</h4>
+                              <h4 className="card-title">
+                                Special title treatment
+                              </h4>
                               <p className="card-text">
-                                With supporting text below as a natural lead-in to additional content.
+                                With supporting text below as a natural lead-in
+                                to additional content.
                               </p>
                             </div>
                           </div>
@@ -135,9 +143,12 @@ export default function RecommendationsPage() {
                               height={280}
                             />
                             <div className="card-body">
-                              <h4 className="card-title">Special title treatment</h4>
+                              <h4 className="card-title">
+                                Special title treatment
+                              </h4>
                               <p className="card-text">
-                                With supporting text below as a natural lead-in to additional content.
+                                With supporting text below as a natural lead-in
+                                to additional content.
                               </p>
                             </div>
                           </div>
@@ -152,9 +163,12 @@ export default function RecommendationsPage() {
                               height={280}
                             />
                             <div className="card-body">
-                              <h4 className="card-title">Special title treatment</h4>
+                              <h4 className="card-title">
+                                Special title treatment
+                              </h4>
                               <p className="card-text">
-                                With supporting text below as a natural lead-in to additional content.
+                                With supporting text below as a natural lead-in
+                                to additional content.
                               </p>
                             </div>
                           </div>
@@ -169,9 +183,12 @@ export default function RecommendationsPage() {
                               height={280}
                             />
                             <div className="card-body">
-                              <h4 className="card-title">Special title treatment</h4>
+                              <h4 className="card-title">
+                                Special title treatment
+                              </h4>
                               <p className="card-text">
-                                With supporting text below as a natural lead-in to additional content.
+                                With supporting text below as a natural lead-in
+                                to additional content.
                               </p>
                             </div>
                           </div>

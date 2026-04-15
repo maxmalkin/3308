@@ -38,7 +38,7 @@ export default function WatchlistPage() {
             <div key={show.id} className="rounded-2xl bg-white p-6 shadow-sm">
               <div className="mb-3 flex items-start justify-between gap-4">
                 {/* temp image for the queue -> translates to most other pages */}
-                <Image src='not_found.jpg' alt='' className=''/>
+                <Image src="not_found.jpg" alt="" className="" />
                 <h2 className="text-xl font-semibold">{show.title}</h2>
                 <span className="rounded-full border px-3 py-1 text-sm">
                   {show.started ? ( //make button to add/unadd
