@@ -21,8 +21,7 @@ jobs:
 
             - uses: pnpm/action-setup@v4
               with:
-                  version: 10
-                  cache: true
+                  package_json_file: ProjectSourceCode/package.json
 
             - uses: actions/setup-node@v4
               with:
@@ -32,13 +31,3 @@ jobs:
 
             - run: pnpm test
               working-directory: ProjectSourceCode/server
-
-            - name: Send Discord Notification on Failure
-              if: failure()
-              env:
-                DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-              run: |
-                curl -H "Content-Type: application/json" \
-                -X POST \
-                -d "{\"content\": \"🚨 **Build Failed.** The CI tests did not pass on the \`${{ github.ref_name }}\` branch. Please check the Actions tab to review the logs.\"}" \
-                $DISCORD_WEBHOOK
