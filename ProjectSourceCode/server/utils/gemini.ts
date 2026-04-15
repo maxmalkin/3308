@@ -1,6 +1,6 @@
 import sql from "../db.ts";
 
-const EMBED_MODEL = "text-embedding-004";
+const EMBED_MODEL = "gemini-embedding-001";
 const EMBED_DIM = 768;
 
 function apiKey() {
