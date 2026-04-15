@@ -7,6 +7,11 @@ services:
     envVars:
       - key: PORT
         value: "8000"
+      - key: CORS_ORIGIN
+        fromService:
+          type: web
+          name: pillarboxd-client
+          property: host
       - key: DATABASE_URL
         sync: false
       - key: SUPABASE_URL
@@ -19,8 +24,6 @@ services:
         sync: false
       - key: TVDB_KEY
         sync: false
-      - key: CORS_ORIGIN
-        sync: false
 
   - type: web
     name: pillarboxd-client
@@ -29,4 +32,7 @@ services:
     dockerContext: .
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        sync: false
+        fromService:
+          type: web
+          name: pillarboxd-server
+          property: host
