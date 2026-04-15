@@ -2,6 +2,7 @@ services:
   - type: web
     name: pillarboxd-server
     runtime: docker
+    rootDir: ProjectSourceCode
     dockerfilePath: ./server/Dockerfile
     dockerContext: .
     envVars:
@@ -28,6 +29,7 @@ services:
   - type: web
     name: pillarboxd-client
     runtime: docker
+    rootDir: ProjectSourceCode
     dockerfilePath: ./client/Dockerfile
     dockerContext: .
     envVars:
