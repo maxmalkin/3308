@@ -46,3 +46,7 @@ Other useful scripts:
 - `pnpm test:server` — Jest tests
 - `pnpm lint` / `pnpm format` — Biome check/format
 - `pnpm migrate:create` — scaffold a new migration
+
+## Live
+
+[https://pillarboxd-client.onrender.com](https://pillarboxd-client.onrender.com)
