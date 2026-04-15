@@ -9,7 +9,21 @@ function apiKey() {
   return key;
 }
 
+const MAX_RPM = 90;
+const MIN_INTERVAL_MS = Math.ceil(60_000 / MAX_RPM);
+let nextAvailableAt = 0;
+
+async function throttle() {
+  const now = Date.now();
+  const wait = nextAvailableAt - now;
+  if (wait > 0) {
+    await new Promise((r) => setTimeout(r, wait));
+  }
+  nextAvailableAt = Math.max(now, nextAvailableAt) + MIN_INTERVAL_MS;
+}
+
 export async function embedText(text: string): Promise<number[]> {
+  await throttle();
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${EMBED_MODEL}:embedContent?key=${apiKey()}`;
   const res = await fetch(url, {
     method: "POST",
