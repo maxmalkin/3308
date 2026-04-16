@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
-import sql from "../db.ts";
 import { embedText, toPgVector } from "../utils/gemini.ts";
 import { fetchAndCacheShow, searchTMDB } from "../utils/tmdb.ts";
 import { createNotification } from "../utils/notifications.ts";
@@ -10,19 +9,13 @@ import {
   ShowSearchQuerySchema,
 } from "../validators/shows.ts";
 
-// Define context variables for strict TypeScript checking
-type Variables = {
-  userId: string;
-};
-
-// Initialize router with the defined types
 type AuthEnv = {
   Variables: {
     userId: string;
   };
 };
 
-const shows = new Hono<{ Variables: Variables }><AuthEnv>();
+const shows = new Hono<AuthEnv>();
 
 // --- TMDB ROUTES ---
 
