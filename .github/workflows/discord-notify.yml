@@ -1,0 +1,27 @@
+name: Discord Notify
+
+on:
+  workflow_call:
+    inputs:
+      message:
+        description: Message body to post to Discord
+        required: true
+        type: string
+    secrets:
+      DISCORD_WEBHOOK:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          MESSAGE: ${{ inputs.message }}
+        run: |
+          payload=$(jq -n --arg content "$MESSAGE" '{content: $content}')
+          curl -sS -H "Content-Type: application/json" \
+            -X POST \
+            -d "$payload" \
+            "$DISCORD_WEBHOOK"

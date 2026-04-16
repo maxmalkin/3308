@@ -1,4 +1,5 @@
 import sql from "../db.ts";
+import { embedAndStoreShow } from "./gemini.ts";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
@@ -120,5 +121,14 @@ export async function fetchAndCacheShow(showId: number) {
 			updated_at = NOW()
 		RETURNING *
 	`;
+
+  if (row && !row.embedding) {
+    try {
+      await embedAndStoreShow(row.id, row);
+    } catch (err) {
+      console.error(`Failed to embed show ${row.id}:`, err);
+    }
+  }
+
   return row;
 }
