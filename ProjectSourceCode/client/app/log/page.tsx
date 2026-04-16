@@ -41,10 +41,13 @@ export default function LogPage() {
                       <div className="mb-3 flex items-start justify-between gap-4">
                         {/* temp image for the queue -> translates to most other pages */}
                         
+
                         <div className="show-image">
-                           <Image src="https://placehold.co/600x400" alt="" fill style={{ objectFit: "cover" }} />
-                       </div>
-        
+                                          <Image src={`https://placehold.co/80x120?text=${encodeURIComponent(show.title)}`} alt={show.title} width={80}
+                                          height={120}
+                                          className="rounded"
+                                        />
+                        </div>
                         <h2 className="text-xl font-semibold">{show.title}</h2>
                         <p>
                           <span className="font-medium">Platforms:</span>{" "}
