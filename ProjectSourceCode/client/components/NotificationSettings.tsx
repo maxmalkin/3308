@@ -81,8 +81,12 @@ export default function NotificationSettings() {
         {/* Toggle 1: Episode Alerts */}
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Daily Episode Alerts</h3>
-            <p className="text-xs text-gray-500">Get notified when a tracked show airs a new episode.</p>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Daily Episode Alerts
+            </h3>
+            <p className="text-xs text-gray-500">
+              Get notified when a tracked show airs a new episode.
+            </p>
           </div>
           <button
             onClick={() => handleToggle("episode_alerts")}
@@ -102,8 +106,12 @@ export default function NotificationSettings() {
         {/* Toggle 2: Reply Alerts */}
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Review Replies</h3>
-            <p className="text-xs text-gray-500">Get notified when someone replies to your review.</p>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Review Replies
+            </h3>
+            <p className="text-xs text-gray-500">
+              Get notified when someone replies to your review.
+            </p>
           </div>
           <button
             onClick={() => handleToggle("reply_alerts")}
