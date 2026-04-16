@@ -1,15 +1,15 @@
-// client/app/api/shows/[id]/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const token = req.headers.get("Authorization");
 
-  const res = await fetch(`${API_URL}/api/shows/${params.id}`, {
+  const res = await fetch(`${API_URL}/api/shows/${id}`, {
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: token } : {}),

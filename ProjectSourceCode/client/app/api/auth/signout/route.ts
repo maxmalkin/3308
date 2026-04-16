@@ -1,5 +1,4 @@
-// client/app/api/auth/signout/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -10,7 +9,6 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // Forward the Bearer token from the frontend to the backend
       ...(authHeader ? { Authorization: authHeader } : {}),
     },
   });
