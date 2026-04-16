@@ -65,10 +65,14 @@ shows.post("/webhooks/daily-episodes", async (c) => {
       return c.json({ error: "Missing showName or showId" }, 400);
     }
 
+    // Query the CORRECT table dynamically AND check user preferences
     const usersToNotify = await sql`
-      SELECT user_id 
-      FROM public.user_shows 
-      WHERE show_id = ${showId} AND status = 'In Progress'
+      SELECT us.user_id 
+      FROM public.user_shows us
+      JOIN public.notification_settings ns ON us.user_id = ns.user_id
+      WHERE us.show_id = ${showId} 
+        AND us.status = 'In Progress'
+        AND ns.episode_alerts = TRUE
     `;
 
     let sentCount = 0;

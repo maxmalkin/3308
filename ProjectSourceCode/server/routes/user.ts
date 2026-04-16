@@ -124,4 +124,56 @@ user.delete("/shows/:showId", async (c) => {
   return c.json({ removed: true });
 });
 
+// --- NOTIFICATION SETTINGS ROUTES ---
+
+// 1. GET: Load the user's current preferences
+user.get("/settings", async (c) => {
+  const userId = c.get("userId");
+
+  try {
+    const settings = await sql`
+      SELECT episode_alerts, reply_alerts 
+      FROM public.notification_settings 
+      WHERE user_id = ${userId}
+    `;
+
+    // If they don't have a row yet, default to true
+    if (settings.length === 0) {
+      return c.json({ episode_alerts: true, reply_alerts: true });
+    }
+
+    return c.json(settings[0]);
+  } catch (error) {
+    console.error("Failed to fetch settings:", error);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
+});
+
+// 2. PATCH: Save the new preferences when a user toggles a switch
+user.patch("/settings", async (c) => {
+  const userId = c.get("userId");
+
+  try {
+    const body = await c.req.json();
+    const { episode_alerts, reply_alerts } = body;
+
+    // Use an UPSERT in case they don't have a row yet
+    const updatedSettings = await sql`
+      INSERT INTO public.notification_settings (user_id, episode_alerts, reply_alerts)
+      VALUES (${userId}, ${episode_alerts}, ${reply_alerts})
+      ON CONFLICT (user_id) 
+      DO UPDATE SET 
+        episode_alerts = EXCLUDED.episode_alerts,
+        reply_alerts = EXCLUDED.reply_alerts,
+        updated_at = NOW()
+      RETURNING episode_alerts, reply_alerts;
+    `;
+
+    return c.json({ success: true, settings: updatedSettings[0] }, 200);
+  } catch (error) {
+    console.error("Failed to update settings:", error);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
+});
+
 export default user;
