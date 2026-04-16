@@ -32,7 +32,7 @@ export default function Navbar() {
           <li className="nav-item">
             <Link href="/account">
               <Image
-                src="/default-avatar.png"
+                src="https://placehold.co/36x36?text=A"
                 alt="Account"
                 width={36}
                 height={36}
