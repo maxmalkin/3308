@@ -49,4 +49,4 @@ Other useful scripts:
 
 ## Live
 
-[https://pillarboxd-client.onrender.com](https://pillarboxd-client.onrender.com)
+[https://pillarboxd.malkin.io](https://pillarbox.malkin.io)
