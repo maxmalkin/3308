@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
         "Content-Type": "application/json",
         ...(token ? { Authorization: token } : {}),
       },
-    }
+    },
   );
 
   const data = await res.json();
