@@ -2,8 +2,10 @@ import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { login } from "./actions";
 
-export default function LoginPage({searchParams,}: { searchParams: { error?: string }; }) 
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) 
 {
+  const params = await searchParams;
+  
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <Navbar />
@@ -15,11 +17,11 @@ export default function LoginPage({searchParams,}: { searchParams: { error?: str
             Sign in to access your logged shows and watchlist.
           </p>
 
-          {searchParams?.error && (
-            <div className="mb-6 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-              {searchParams.error}
-            </div>
-          )}
+            {params?.error && (
+              <div className="text-sm font-medium text-red-600">
+                Invalid email or password
+              </div>
+            )}
 
           <form className="space-y-5">
             <div>

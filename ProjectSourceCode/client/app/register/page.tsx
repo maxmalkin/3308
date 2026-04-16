@@ -2,8 +2,11 @@ import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { signup } from "./actions";
 
-export default function RegisterPage({ searchParams, }: { searchParams: { error?: string };}) 
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) 
 {
+
+  const params = await searchParams;
+
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <Navbar />
@@ -15,9 +18,9 @@ export default function RegisterPage({ searchParams, }: { searchParams: { error?
             Sign up to start logging shows and building your watchlist.
           </p>
 
-          {searchParams?.error && (
+          {params?.error && (
             <div className="mb-6 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-              {searchParams.error}
+              {params.error}
             </div>
           )}
 

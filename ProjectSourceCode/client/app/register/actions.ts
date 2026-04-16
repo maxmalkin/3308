@@ -21,6 +21,9 @@ export async function signup(formData: FormData) {
   if (error) {
     redirect(`/register?error=${encodeURIComponent(error.message)}`)
   }
+  // Log them out immediately to kill the auto-login feature (why is that even there)
+  await supabase.auth.signOut()
+
 
   redirect('/login')
 }
