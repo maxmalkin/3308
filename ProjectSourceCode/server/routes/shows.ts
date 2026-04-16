@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
 import { embedText, toPgVector } from "../utils/gemini.ts";
-import { fetchAndCacheShow, searchTMDB } from "../utils/tmdb.ts";
 import { createNotification } from "../utils/notifications.ts";
+import { fetchAndCacheShow, searchTMDB } from "../utils/tmdb.ts";
 import {
   ShowIdParamSchema,
   ShowSearchQuerySchema,
@@ -209,18 +209,6 @@ shows.post("/webhooks/daily-episodes", async (c) => {
     console.error("Failed to trigger daily episode alerts:", error);
     return c.json({ error: "Internal Server Error" }, 500);
   }
-});
-
-// Example route for future expansion: Review Likes
-shows.post("/:reviewId/like", async (c) => {
-  // Safe extraction without "as any" thanks to the Variables type
-  const likerId = c.get("userId");
-  const reviewId = c.req.param("reviewId");
-
-  // NOTE: This is an example. Needs real DB query.
-  // const reviewOwnerId = await getReviewOwner(reviewId);
-
-  return c.json({ message: "Review likes coming soon!" });
 });
 
 export default shows;
