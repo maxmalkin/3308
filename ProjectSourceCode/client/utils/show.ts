@@ -1,13 +1,13 @@
 import type { WatchStatus } from "@/types/show";
 
-export function posterUrl(path: string | null): string | null {
-  if (!path) return null;
-  return `https://image.tmdb.org/t/p/w500${path}`;
-}
+export type TMDBImageSize = "w300" | "w500" | "w780" | "w1280" | "original";
 
-export function backdropUrl(path: string | null): string | null {
+export function tmdbImageUrl(
+  path: string | null,
+  size: TMDBImageSize,
+): string | null {
   if (!path) return null;
-  return `https://image.tmdb.org/t/p/w1280${path}`;
+  return `https://image.tmdb.org/t/p/${size}${path}`;
 }
 
 export function yearFrom(date: string | null): string | null {
