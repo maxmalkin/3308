@@ -69,7 +69,7 @@ function ShowDetail({ show }: { show: Show }) {
 
   return (
     <>
-      <section className="relative h-[320px] w-full overflow-hidden bg-gray-900 md:h-[420px]">
+      <section className="relative h-80 w-full overflow-hidden bg-gray-900 md:h-105">
         {backdrop ? (
           <Image
             src={backdrop}
@@ -80,7 +80,7 @@ function ShowDetail({ show }: { show: Show }) {
             className="object-cover opacity-70"
           />
         ) : null}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
         <div className="relative mx-auto flex h-full max-w-5xl items-end px-6 pb-8">
           <div>
             <h1 className="text-3xl font-bold text-white drop-shadow md:text-5xl">
@@ -97,8 +97,8 @@ function ShowDetail({ show }: { show: Show }) {
 
       <div className="mx-auto max-w-5xl px-6 py-12">
         <div className="grid gap-8 md:grid-cols-[220px_1fr]">
-          <div className="mx-auto w-full max-w-[220px] md:mx-0">
-            <div className="relative aspect-[2/3] w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5">
+          <div className="mx-auto w-full max-w-55 md:mx-0">
+            <div className="relative aspect-2/3 w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5">
               <Poster show={show} size="w500" sizes="220px" />
             </div>
           </div>
