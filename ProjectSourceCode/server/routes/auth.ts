@@ -68,6 +68,27 @@ auth.post("/login", async (c) => {
   return c.json({ session: data.session, user: data.user });
 });
 
+auth.post("/refresh", async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = z.object({ refresh_token: z.string() }).safeParse(body);
+  if (!parsed.success) {
+    return c.json({ error: "Missing or invalid refresh_token" }, 400);
+  }
+
+  const { data, error } = await supabase.auth.refreshSession({
+    refresh_token: parsed.data.refresh_token,
+  });
+
+  if (error || !data.session) {
+    return c.json(
+      { error: error?.message ?? "Failed to refresh session" },
+      401,
+    );
+  }
+
+  return c.json({ session: data.session, user: data.user });
+});
+
 auth.post("/signout", async (c) => {
   const authHeader = c.req.header("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
