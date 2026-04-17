@@ -4,7 +4,7 @@ import Poster from "@/components/Poster";
 describe("Poster", () => {
   it("renders an img with the TMDB URL when poster_path is set", () => {
     render(
-      <div className="relative aspect-[2/3] w-40">
+      <div className="relative aspect-2/3 w-40">
         <Poster
           show={{
             poster_path: "/abc.jpg",
@@ -53,7 +53,11 @@ describe("Poster", () => {
 
     rerender(
       <Poster
-        show={{ poster_path: "/a.jpg", name: null, original_name: null }}
+        show={{
+          poster_path: "/a.jpg",
+          name: null,
+          original_name: null,
+        }}
         size="w500"
       />,
     );
