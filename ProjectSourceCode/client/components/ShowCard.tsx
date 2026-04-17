@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Show, WatchStatus } from "@/types/show";
-import { posterUrl, statusPillClass, yearFrom } from "@/utils/show";
+import { statusPillClass, yearFrom } from "@/utils/show";
+import Poster from "./Poster";
 
 export default function ShowCard({
   show,
@@ -17,28 +17,19 @@ export default function ShowCard({
     typeof show.vote_average === "number" && show.vote_average > 0
       ? show.vote_average.toFixed(1)
       : null;
-  const poster = posterUrl(show.poster_path);
 
   return (
     <Link
       href={`/shows/${show.id}`}
       className="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md"
     >
-      <div className="relative w-full overflow-hidden bg-gray-100">
-        {poster ? (
-          <Image
-            src={poster}
-            alt={title}
-            width={300}
-            height={450}
-            sizes="(max-width: 768px) 50vw, 25vw"
-            className="h-auto w-full rounded-t-2xl object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-          />
-        ) : (
-          <div className="flex aspect-[2/3] w-full items-center justify-center rounded-t-2xl bg-gray-200 text-xs text-gray-500">
-            No poster
-          </div>
-        )}
+      <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-100">
+        <Poster
+          show={show}
+          size="w500"
+          sizes="(max-width: 768px) 50vw, 25vw"
+          className="transition-transform duration-300 group-hover:scale-[1.02]"
+        />
         {rating && (
           <span className="absolute top-2 right-2 rounded-full bg-black/70 px-2 py-0.5 text-xs font-medium text-white">
             {rating}
