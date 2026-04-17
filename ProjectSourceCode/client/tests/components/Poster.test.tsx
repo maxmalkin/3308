@@ -23,7 +23,7 @@ describe("Poster", () => {
 
   it('falls back to a "No poster" div when poster_path is null', () => {
     render(
-      <div className="relative aspect-[2/3] w-40">
+      <div className="relative aspect-2/3 w-40">
         <Poster
           show={{
             poster_path: null,
