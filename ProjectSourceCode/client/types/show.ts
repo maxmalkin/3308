@@ -50,7 +50,13 @@ export type Show = {
   last_episode_to_air: unknown | null;
   next_episode_to_air: unknown | null;
   watch_providers_us: WatchProvidersUS;
-  distance?: number;
-  added_at?: string;
+  cached_at?: string;
   updated_at?: string;
+  distance?: number;
+};
+
+export type UserShow = Show & {
+  user_status: WatchStatus;
+  user_added_at: string;
+  user_updated_at: string;
 };
