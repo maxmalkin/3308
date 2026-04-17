@@ -4,15 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import ShowCard from "@/components/ShowCard";
-import type { Show, WatchStatus } from "@/types/show";
+import type { UserShow } from "@/types/show";
 import { ApiError, apiFetch, isAuthenticated } from "@/utils/api";
 
 type PageStatus = "loading" | "unauth" | "ready" | "error";
 
-type LogShow = Show & { status: WatchStatus };
-
 export default function LogPage() {
-  const [shows, setShows] = useState<LogShow[]>([]);
+  const [shows, setShows] = useState<UserShow[]>([]);
   const [pageStatus, setPageStatus] = useState<PageStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -26,7 +24,7 @@ export default function LogPage() {
     setPageStatus("loading");
     setErrorMessage(null);
 
-    apiFetch<{ shows: LogShow[] }>("user/log")
+    apiFetch<{ shows: UserShow[] }>("user/log")
       .then((data) => {
         if (cancelled) return;
         setShows(data?.shows ?? []);
@@ -99,7 +97,7 @@ export default function LogPage() {
         {pageStatus === "ready" && shows.length > 0 && (
           <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
             {shows.map((show) => (
-              <ShowCard key={show.id} show={show} status={show.status} />
+              <ShowCard key={show.id} show={show} status={show.user_status} />
             ))}
           </div>
         )}
