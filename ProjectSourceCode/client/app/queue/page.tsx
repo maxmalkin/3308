@@ -4,15 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import ShowCard from "@/components/ShowCard";
-import type { Show, WatchStatus } from "@/types/show";
+import type { UserShow } from "@/types/show";
 import { ApiError, apiFetch, isAuthenticated } from "@/utils/api";
 
 type PageStatus = "loading" | "unauth" | "ready" | "error";
 
-type QueueShow = Show & { status: WatchStatus };
-
 export default function QueuePage() {
-  const [shows, setShows] = useState<QueueShow[]>([]);
+  const [shows, setShows] = useState<UserShow[]>([]);
   const [pageStatus, setPageStatus] = useState<PageStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -26,7 +24,7 @@ export default function QueuePage() {
     setPageStatus("loading");
     setErrorMessage(null);
 
-    apiFetch<{ shows: QueueShow[] }>("user/watchlist")
+    apiFetch<{ shows: UserShow[] }>("user/watchlist")
       .then((data) => {
         if (cancelled) return;
         setShows(data?.shows ?? []);
@@ -99,7 +97,7 @@ export default function QueuePage() {
         {pageStatus === "ready" && shows.length > 0 && (
           <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
             {shows.map((show) => (
-              <ShowCard key={show.id} show={show} status={show.status} />
+              <ShowCard key={show.id} show={show} status={show.user_status} />
             ))}
           </div>
         )}
