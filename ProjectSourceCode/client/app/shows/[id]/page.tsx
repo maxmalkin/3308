@@ -2,96 +2,63 @@
 
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import ErrorBanner from "@/components/ErrorBanner";
 import Navbar from "@/components/Navbar";
+import Poster from "@/components/Poster";
+import { ResourceView } from "@/components/ResourceView";
+import { useApiResource } from "@/hooks/useApiResource";
 import type { Show } from "@/types/show";
-import { ApiError, apiFetch } from "@/utils/api";
-import { backdropUrl, posterUrl, yearRange } from "@/utils/show";
-
-type PageStatus = "loading" | "ready" | "notfound" | "error";
+import { tmdbImageUrl, yearRange } from "@/utils/show";
 
 export default function ShowDetailPage() {
   const params = useParams<{ id: string }>();
-  const id = params?.id;
-
-  const [show, setShow] = useState<Show | null>(null);
-  const [status, setStatus] = useState<PageStatus>("loading");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!id) return;
-    let cancelled = false;
-    setStatus("loading");
-    setErrorMessage(null);
-
-    apiFetch<{ show: Show }>(`shows/${id}`)
-      .then((data) => {
-        if (cancelled) return;
-        if (!data?.show) {
-          setStatus("notfound");
-          return;
-        }
-        setShow(data.show);
-        setStatus("ready");
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        if (err instanceof ApiError && err.status === 404) {
-          setStatus("notfound");
-          return;
-        }
-        setErrorMessage(
-          err instanceof Error ? err.message : "Failed to load show",
-        );
-        setStatus("error");
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+  const id = params?.id ?? null;
+  const resource = useApiResource<{ show: Show }>(id ? `shows/${id}` : null);
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <Navbar />
-
-      {status === "loading" && (
-        <div className="mx-auto max-w-5xl px-6 py-12">
-          <p className="text-sm text-gray-500">Loading show...</p>
-        </div>
-      )}
-
-      {status === "notfound" && (
-        <div className="mx-auto max-w-5xl px-6 py-12">
-          <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5">
-            <h1 className="text-2xl font-bold">Show not found</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              We couldn't find that show. It may have been removed.
-            </p>
+      <ResourceView
+        resource={resource}
+        loading={
+          <div className="mx-auto max-w-5xl px-6 py-12">
+            <p className="text-sm text-gray-500">Loading show…</p>
           </div>
-        </div>
-      )}
-
-      {status === "error" && (
-        <div className="mx-auto max-w-5xl px-6 py-12">
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800">
-            <p className="font-semibold">Something went wrong</p>
-            <p className="mt-1 text-sm">
-              {errorMessage ?? "Please try again later."}
-            </p>
+        }
+        errorView={(err) => (
+          <div className="mx-auto max-w-5xl px-6 py-12">
+            {err?.status === 404 ? (
+              <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5">
+                <h1 className="text-2xl font-bold">Show not found</h1>
+                <p className="mt-2 text-sm text-gray-600">
+                  We couldn't find that show. It may have been removed.
+                </p>
+              </div>
+            ) : (
+              <ErrorBanner message={err?.message} />
+            )}
           </div>
-        </div>
-      )}
-
-      {status === "ready" && show && <ShowDetail show={show} />}
+        )}
+      >
+        {(data) =>
+          data.show ? (
+            <ShowDetail show={data.show} />
+          ) : (
+            <div className="mx-auto max-w-5xl px-6 py-12">
+              <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5">
+                <h1 className="text-2xl font-bold">Show not found</h1>
+              </div>
+            </div>
+          )
+        }
+      </ResourceView>
     </main>
   );
 }
 
 function ShowDetail({ show }: { show: Show }) {
   const title = show.name ?? show.original_name ?? "Untitled";
-  const backdrop = backdropUrl(show.backdrop_path);
-  const poster = posterUrl(show.poster_path);
+  const backdrop = tmdbImageUrl(show.backdrop_path, "w1280");
   const years = yearRange(show.first_air_date, show.last_air_date);
   const providers = show.watch_providers_us?.flatrate ?? [];
   const rating =
@@ -132,19 +99,7 @@ function ShowDetail({ show }: { show: Show }) {
         <div className="grid gap-8 md:grid-cols-[220px_1fr]">
           <div className="mx-auto w-full max-w-[220px] md:mx-0">
             <div className="relative aspect-[2/3] w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5">
-              {poster ? (
-                <Image
-                  src={poster}
-                  alt={title}
-                  fill
-                  sizes="220px"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-500">
-                  No poster
-                </div>
-              )}
+              <Poster show={show} size="w500" sizes="220px" />
             </div>
           </div>
 
