@@ -23,7 +23,7 @@ export default function ShowCard({
       href={`/shows/${show.id}`}
       className="group block overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md"
     >
-      <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-100">
+      <div className="relative aspect-2/3 w-full overflow-hidden bg-gray-100">
         <Poster
           show={show}
           size="w500"
