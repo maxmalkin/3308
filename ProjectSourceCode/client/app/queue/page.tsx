@@ -44,22 +44,20 @@ export default function WatchlistPage() {
                   className="rounded"
                 />
                 </div> */}
-                  <h2 className="text-xl font-semibold">{show.title}</h2>
-                  <p>
-                    <span className="font-medium">Platforms:</span>{" "}
-                    {show.platforms.join(", ")}
-                  </p>
-                  <span className="rounded-full border px-3 py-1 text-sm">
-                    {show.started ? ( //make button to add/unadd
-                      <p>Not Started</p>
-                    ) : (
-                      <p>In Progress</p>
-                    )}
-                  </span>
-                </div>
-                
+                <h2 className="text-xl font-semibold">{show.title}</h2>
+                <p>
+                  <span className="font-medium">Platforms:</span>{" "}
+                  {show.platforms.join(", ")}
+                </p>
+                <span className="rounded-full border px-3 py-1 text-sm">
+                  {show.started ? ( //make button to add/unadd
+                    <p>Not Started</p>
+                  ) : (
+                    <p>In Progress</p>
+                  )}
+                </span>
               </div>
-
+            </div>
           ))}
         </div>
       </div>

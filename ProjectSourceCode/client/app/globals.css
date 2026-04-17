@@ -25,16 +25,16 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.show-image{
-  position:relative;
-  background: rgb(0, 0, 0);  
-  width: 100px;  
-  height: 150px;  
-  padding: 1rem;  
-  font-size: 2rem; /* Large font causes overflow */  
+.show-image {
+  position: relative;
+  background: rgb(0, 0, 0);
+  width: 100px;
+  height: 150px;
+  padding: 1rem;
+  font-size: 2rem; /* Large font causes overflow */
   overflow: auto;
 }
 
-.show-information{
-  background: rgb(100,100,100);
+.show-information {
+  background: rgb(100, 100, 100);
 }
