@@ -9,7 +9,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   try {
-    const res = await fetch(`${API_URL}/shows/${id}`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${API_URL}/shows/${id}`, {
+      next: { revalidate: 3600 },
+    });
     if (!res.ok) throw new Error(String(res.status));
     const data = (await res.json()) as {
       show?: { name?: string; original_name?: string; overview?: string };
@@ -17,7 +19,9 @@ export async function generateMetadata({
     const title = data.show?.name ?? data.show?.original_name ?? "Show Details";
     return {
       title,
-      description: data.show?.overview ?? "Details, cast, and streaming info for this show.",
+      description:
+        data.show?.overview ??
+        "Details, cast, and streaming info for this show.",
     };
   } catch {
     return {
@@ -27,6 +31,10 @@ export async function generateMetadata({
   }
 }
 
-export default function ShowLayout({ children }: { children: React.ReactNode }) {
+export default function ShowLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }

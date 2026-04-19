@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   description: "Shows that are up next on your list.",
 };
 
-export default function QueueLayout({ children }: { children: React.ReactNode }) {
+export default function QueueLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }

@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   description: "Sign in to access your logged shows and watchlist.",
 };
 
-export default function LoginLayout({ children }: { children: React.ReactNode }) {
+export default function LoginLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }

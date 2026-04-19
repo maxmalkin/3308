@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Sign Up",
-  description: "Create an account to start logging shows and building your watchlist.",
+  description:
+    "Create an account to start logging shows and building your watchlist.",
 };
 
 export default function RegisterLayout({
