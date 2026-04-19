@@ -1,33 +1,37 @@
-import Image from "next/image";
-import Link from "next/link"; //general Navbar file -> Make it look different based on logged in versus not
+"use client";
 
-const isLoggedIn = true;
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { isAuthenticated } from "@/utils/api";
 
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(isAuthenticated());
+
+    const handleStorage = () => setIsLoggedIn(isAuthenticated());
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
   return (
     <nav className="border-b bg-white px-6 py-4 flex items-center justify-between">
-      {/* website name - to be always shown */}
       <Link href="/" className="text-xl font-bold">
         PillarBoxd
       </Link>
 
       {isLoggedIn ? (
-        // logged in
         <ul className="flex items-center gap-6">
           <li className="nav-item">
-            <Link className="nav-link" href="/log">
-              Log
-            </Link>
+            <Link className="nav-link" href="/log">Log</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" href="/queue">
-              Queue
-            </Link>
+            <Link className="nav-link" href="/queue">Queue</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" href="/recommendations">
-              Recommendations
-            </Link>
+            <Link className="nav-link" href="/recommendations">Recommendations</Link>
           </li>
           <li className="nav-item">
             <Link href="/account">
@@ -36,32 +40,21 @@ export default function Navbar() {
                 alt="Account"
                 width={36}
                 height={36}
-                style={{
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  cursor: "pointer",
-                }}
+                style={{ borderRadius: "50%", objectFit: "cover", cursor: "pointer" }}
               />
             </Link>
           </li>
         </ul>
       ) : (
-        // when not logged in
         <ul className="flex items-center gap-6">
           <li>
-            <Link className="nav-link" href="/login">
-              Log In
-            </Link>
+            <Link className="nav-link" href="/login">Log In</Link>
           </li>
           <li>
-            <Link href="/register" className="btn btn-outline-light">
-              Register
-            </Link>
+            <Link href="/register" className="btn btn-outline-light">Register</Link>
           </li>
         </ul>
       )}
     </nav>
   );
 }
-
-//when logged out -> only login + register
