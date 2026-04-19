@@ -3,7 +3,7 @@
 cd "$(git rev-parse --show-toplevel)/ProjectSourceCode" || exit 1
 
 echo "Running format check..."
-pnpm biome format 2>&1
+pnpm biome check 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Unformatted files detected. Run 'pnpm format' and commit before pushing."

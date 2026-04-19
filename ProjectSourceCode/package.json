@@ -11,8 +11,9 @@
     "migrate:apply": "cd server && node --env-file=.env --import=tsx migrations/migrate.ts",
     "migrate:create": "cd server && node --import=tsx migrations/create.ts",
     "test:server": "cd server && NODE_OPTIONS='--experimental-vm-modules' pnpx jest",
+    "test:client": "pnpm --filter client test",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome check --write"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",

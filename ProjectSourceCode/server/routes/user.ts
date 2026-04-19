@@ -31,7 +31,11 @@ user.get("/profile", async (c) => {
 user.get("/watchlist", async (c) => {
   const userId = c.get("userId");
   const rows = await sql`
-    SELECT us.status, us.added_at, us.updated_at, s.*
+    SELECT
+      us.status AS user_status,
+      us.added_at AS user_added_at,
+      us.updated_at AS user_updated_at,
+      s.*
     FROM public.user_shows us
     JOIN public.shows s ON s.id = us.show_id
     WHERE us.user_id = ${userId}
@@ -44,7 +48,11 @@ user.get("/watchlist", async (c) => {
 user.get("/log", async (c) => {
   const userId = c.get("userId");
   const rows = await sql`
-    SELECT us.status, us.added_at, us.updated_at, s.*
+    SELECT
+      us.status AS user_status,
+      us.added_at AS user_added_at,
+      us.updated_at AS user_updated_at,
+      s.*
     FROM public.user_shows us
     JOIN public.shows s ON s.id = us.show_id
     WHERE us.user_id = ${userId}
