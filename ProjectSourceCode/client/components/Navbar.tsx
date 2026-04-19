@@ -25,13 +25,19 @@ export default function Navbar() {
       {isLoggedIn ? (
         <ul className="flex items-center gap-6">
           <li className="nav-item">
-            <Link className="nav-link" href="/log">Log</Link>
+            <Link className="nav-link" href="/log">
+              Log
+            </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" href="/queue">Queue</Link>
+            <Link className="nav-link" href="/queue">
+              Queue
+            </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" href="/recommendations">Recommendations</Link>
+            <Link className="nav-link" href="/recommendations">
+              Recommendations
+            </Link>
           </li>
           <li className="nav-item">
             <Link href="/account">
@@ -40,7 +46,11 @@ export default function Navbar() {
                 alt="Account"
                 width={36}
                 height={36}
-                style={{ borderRadius: "50%", objectFit: "cover", cursor: "pointer" }}
+                style={{
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  cursor: "pointer",
+                }}
               />
             </Link>
           </li>
@@ -48,10 +58,14 @@ export default function Navbar() {
       ) : (
         <ul className="flex items-center gap-6">
           <li>
-            <Link className="nav-link" href="/login">Log In</Link>
+            <Link className="nav-link" href="/login">
+              Log In
+            </Link>
           </li>
           <li>
-            <Link href="/register" className="btn btn-outline-light">Register</Link>
+            <Link href="/register" className="btn btn-outline-light">
+              Register
+            </Link>
           </li>
         </ul>
       )}
