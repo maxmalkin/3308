@@ -36,8 +36,12 @@ shows.get("/search", async (c) => {
     return c.json({ error: z.treeifyError(parsed.error) }, 400);
   }
 
-  const userId = c.get("userId");
+  const userId = c.get("userId") as string | undefined;
   const { query, page } = parsed.data;
+  const limitParam = Number(c.req.query("limit") ?? SEMANTIC_LIMIT);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(Math.trunc(limitParam), 1), SEMANTIC_LIMIT)
+    : SEMANTIC_LIMIT;
 
   let queryVec: string | null = null;
   try {
@@ -46,11 +50,11 @@ shows.get("/search", async (c) => {
     console.error("Embedding query failed:", err);
   }
 
-  const owned = await getOwnedServices(userId);
+  const owned = userId ? await getOwnedServices(userId) : [];
   const hasOwnedFilter = owned.length > 0;
 
   let semanticResults: Array<Record<string, unknown>> = [];
-  if (queryVec) {
+  if (queryVec && userId) {
     semanticResults = await sql`
       SELECT
         s.*,
@@ -77,7 +81,17 @@ shows.get("/search", async (c) => {
           ELSE 0
         END,
         s.embedding <=> ${queryVec}::vector
-      LIMIT ${SEMANTIC_LIMIT}
+      LIMIT ${limit}
+    `;
+  } else if (queryVec) {
+    semanticResults = await sql`
+      SELECT
+        s.*,
+        (s.embedding <=> ${queryVec}::vector) AS distance
+      FROM public.shows s
+      WHERE s.embedding IS NOT NULL
+      ORDER BY s.embedding <=> ${queryVec}::vector
+      LIMIT ${limit}
     `;
   }
 
@@ -87,7 +101,7 @@ shows.get("/search", async (c) => {
 
   try {
     const data = await searchTMDB(query, page);
-    return c.json({ results: data.results, source: "tmdb" });
+    return c.json({ results: data.results.slice(0, limit), source: "tmdb" });
   } catch {
     return c.json({ error: "Failed to fetch from TMDB" }, 502);
   }

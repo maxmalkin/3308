@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import NavSearch from "@/components/NavSearch";
 import type { NavLink } from "@/types/ui";
 import { clearSession, isAuthenticated } from "@/utils/api";
 
@@ -34,7 +35,7 @@ export default function Navbar({ active }: { active?: string } = {}) {
 
   return (
     <nav className="sticky top-0 z-40 border-b border-rule bg-cream/85 backdrop-blur-md">
-      <div className="mx-auto grid max-w-[1520px] grid-cols-[auto_1fr_auto] items-center gap-7 px-6 py-4 md:px-12">
+      <div className="mx-auto grid max-w-[1520px] grid-cols-[auto_1fr_auto] items-center gap-5 px-6 py-4 md:gap-7 md:px-12">
         <Link href="/" className="flex items-center gap-2">
           <span className="font-mono text-[var(--accent)] text-base">[</span>
           <span className="font-display text-2xl font-medium leading-none tracking-tight text-ink">
@@ -43,18 +44,23 @@ export default function Navbar({ active }: { active?: string } = {}) {
           <span className="font-mono text-[var(--accent)] text-base">]</span>
         </Link>
 
-        <ul className="hidden items-center justify-center gap-1 text-sm md:flex">
-          {links.map((l) => (
-            <li key={l.key}>
-              <Link
-                href={l.href}
-                className={`nav-link ${active === l.key ? "active" : ""}`}
-              >
-                {l.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center gap-5 justify-self-center">
+          <ul className="hidden items-center gap-1 text-sm lg:flex">
+            {links.map((l) => (
+              <li key={l.key}>
+                <Link
+                  href={l.href}
+                  className={`nav-link ${active === l.key ? "active" : ""}`}
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden flex-1 sm:block sm:min-w-[240px] md:min-w-[320px]">
+            <NavSearch />
+          </div>
+        </div>
 
         <div className="flex items-center gap-2 justify-self-end">
           {isLoggedIn ? (

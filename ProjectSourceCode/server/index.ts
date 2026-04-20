@@ -26,7 +26,6 @@ app.get("/health", (c) => c.json({ status: "ok" }));
 
 app.route("/api/auth", auth);
 
-app.use("/api/shows/search", authMiddleware);
 app.use("/api/shows/recommendations", authMiddleware);
 app.route("/api/shows", shows);
 
