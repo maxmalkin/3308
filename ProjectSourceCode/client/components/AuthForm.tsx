@@ -10,9 +10,9 @@ import {
 } from "@/types/streaming";
 import { setSession } from "@/utils/api";
 
-type Mode = "login" | "signup";
+import type { AuthMode } from "@/types/ui";
 
-export default function AuthForm({ mode }: { mode: Mode }) {
+export default function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");

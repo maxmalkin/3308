@@ -6,13 +6,7 @@ import LoginPrompt from "@/components/LoginPrompt";
 import { ResourceView } from "@/components/ResourceView";
 import ShowCard from "@/components/ShowCard";
 import { useApiResource } from "@/hooks/useApiResource";
-import type { Show } from "@/types/show";
-
-type RecommendationsResponse = {
-  results: Show[];
-  message?: string;
-  source?: "embedding" | "popular";
-};
+import type { RecommendationsResponse } from "@/types/api";
 
 export default function RecommendationsPage() {
   const resource = useApiResource<RecommendationsResponse>(

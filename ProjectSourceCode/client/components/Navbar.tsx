@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { clearSession, isAuthenticated } from "@/utils/api";
 
-type NavLink = { href: string; label: string; key: string };
+import type { NavLink } from "@/types/ui";
 
 const LOGGED_IN_LINKS: NavLink[] = [
   { href: "/", label: "Home", key: "home" },

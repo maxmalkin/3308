@@ -1,6 +1,7 @@
+import type { TMDBImageSize } from "@/types/tmdb";
 import type { WatchStatus } from "@/types/show";
 
-export type TMDBImageSize = "w300" | "w500" | "w780" | "w1280" | "original";
+export type { TMDBImageSize } from "@/types/tmdb";
 
 export function tmdbImageUrl(
   path: string | null,

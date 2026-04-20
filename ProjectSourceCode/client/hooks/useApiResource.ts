@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Resource, ResourceStatus } from "@/types/api";
 import { ApiError, apiFetch, isAuthenticated } from "@/utils/api";
 
-export type ResourceStatus = "loading" | "unauth" | "ready" | "error";
-
-export type Resource<T> = {
-  data: T | null;
-  status: ResourceStatus;
-  error: ApiError | null;
-};
+export type { Resource, ResourceStatus } from "@/types/api";
 
 export function useApiResource<T>(
   path: string | null,

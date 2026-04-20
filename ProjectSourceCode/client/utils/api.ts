@@ -1,12 +1,7 @@
+import type { Session } from "@/types/api";
+
 const SESSION_KEY = "pillarboxd.session";
 const REFRESH_LEEWAY_SECONDS = 30;
-
-export type Session = {
-  access_token: string;
-  refresh_token: string;
-  expires_at: number;
-  user?: unknown;
-};
 
 export class ApiError extends Error {
   status: number;
