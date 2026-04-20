@@ -1,6 +1,11 @@
+"use client";
+
+import { Skeleton } from "boneyard-js/react";
 import Image from "next/image";
+import { useState } from "react";
 import type { Show } from "@/types/show";
 import { type TMDBImageSize, tmdbImageUrl } from "@/utils/show";
+import { BONE_PROPS } from "@/utils/skeleton";
 
 export default function Poster({
   show,
@@ -18,6 +23,7 @@ export default function Poster({
   const url = tmdbImageUrl(show.poster_path, size);
   const alt = show.name ?? show.original_name ?? "Untitled";
   const cls = className ?? "";
+  const [loaded, setLoaded] = useState(false);
 
   if (!url) {
     return (
@@ -30,13 +36,16 @@ export default function Poster({
   }
 
   return (
-    <Image
-      src={url}
-      alt={alt}
-      fill
-      sizes={sizes ?? "25vw"}
-      priority={priority}
-      className={`object-cover ${cls}`}
-    />
+    <Skeleton name="poster" loading={!loaded} {...BONE_PROPS}>
+      <Image
+        src={url}
+        alt={alt}
+        fill
+        sizes={sizes ?? "25vw"}
+        priority={priority}
+        onLoad={() => setLoaded(true)}
+        className={`object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"} ${cls}`}
+      />
+    </Skeleton>
   );
 }

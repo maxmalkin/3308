@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "boneyard-js/react";
 import CollectionShell from "@/components/CollectionShell";
 import EmptyState from "@/components/EmptyState";
 import LoginPrompt from "@/components/LoginPrompt";
@@ -7,6 +8,7 @@ import { ResourceView } from "@/components/ResourceView";
 import ShowCard from "@/components/ShowCard";
 import { useApiResource } from "@/hooks/useApiResource";
 import type { UserShow } from "@/types/show";
+import { BONE_PROPS } from "@/utils/skeleton";
 
 export default function LogPage() {
   const resource = useApiResource<{ shows: UserShow[] }>("user/log", {
@@ -78,10 +80,12 @@ export default function LogPage() {
 
 function PosterGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
-      {["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map((k) => (
-        <div key={k} className="aspect-2/3 animate-pulse rounded-2xl bg-oat" />
-      ))}
-    </div>
+    <Skeleton name="log-grid" loading={true} {...BONE_PROPS}>
+      <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
+        {["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map((k) => (
+          <div key={k} className="aspect-2/3 rounded-2xl bg-oat" />
+        ))}
+      </div>
+    </Skeleton>
   );
 }
