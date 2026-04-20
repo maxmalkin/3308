@@ -9,22 +9,11 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ShowCard from "@/components/ShowCard";
 import { useApiResource } from "@/hooks/useApiResource";
+import type { Profile, RecsResp, ShowsResp } from "@/types/api";
 import type { Show, UserShow } from "@/types/show";
+import type { SortKey } from "@/types/ui";
 import { apiFetch } from "@/utils/api";
 import { tmdbImageUrl } from "@/utils/show";
-
-type Profile = {
-  user: {
-    id: string;
-    username: string;
-    email: string;
-    owned_services: string[];
-  };
-};
-type ShowsResp = { shows: UserShow[] };
-type RecsResp = { results: Show[]; message?: string };
-
-type SortKey = "rec" | "rating" | "newest";
 
 export default function LoggedInHome() {
   const profile = useApiResource<Profile>("user/profile", {

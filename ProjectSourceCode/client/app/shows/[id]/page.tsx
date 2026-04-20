@@ -10,42 +10,11 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { ResourceView } from "@/components/ResourceView";
 import { useApiResource } from "@/hooks/useApiResource";
-import type { Show, UserShow, WatchStatus } from "@/types/show";
+import type { RelatedResp, ShowResp, UserShowResp } from "@/types/api";
+import type { Show, WatchStatus } from "@/types/show";
+import type { Creator, Episode, Season } from "@/types/tmdb";
 import { ApiError, apiFetch, isAuthenticated } from "@/utils/api";
 import { tmdbImageUrl, yearRange } from "@/utils/show";
-
-type ShowResp = { show: Show };
-type UserShowResp = { shows: UserShow[] };
-type RelatedResp = { results: Show[] };
-
-type Creator = {
-  id?: number;
-  name?: string;
-  profile_path?: string | null;
-};
-
-type Episode = {
-  id?: number;
-  name?: string | null;
-  overview?: string | null;
-  air_date?: string | null;
-  episode_number?: number | null;
-  season_number?: number | null;
-  runtime?: number | null;
-  still_path?: string | null;
-  vote_average?: number | null;
-};
-
-type Season = {
-  id?: number;
-  name?: string;
-  season_number?: number;
-  episode_count?: number | null;
-  air_date?: string | null;
-  overview?: string | null;
-  poster_path?: string | null;
-  vote_average?: number | null;
-};
 
 const BONE_PROPS = {
   animate: "shimmer",

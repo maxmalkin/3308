@@ -8,9 +8,8 @@ import {
   type StreamingService,
   streamingServiceValues,
 } from "@/types/streaming";
-import { setSession } from "@/utils/api";
-
 import type { AuthMode } from "@/types/ui";
+import { setSession } from "@/utils/api";
 
 export default function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();

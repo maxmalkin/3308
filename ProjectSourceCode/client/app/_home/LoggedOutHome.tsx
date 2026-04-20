@@ -6,10 +6,9 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { useApiResource } from "@/hooks/useApiResource";
+import type { ShowcaseResp } from "@/types/api";
 import type { Show } from "@/types/show";
 import { tmdbImageUrl } from "@/utils/show";
-
-type ShowcaseResp = { results: Show[] };
 
 const BONE_PROPS = {
   animate: "shimmer",

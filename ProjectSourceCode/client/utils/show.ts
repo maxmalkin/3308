@@ -1,5 +1,5 @@
-import type { TMDBImageSize } from "@/types/tmdb";
 import type { WatchStatus } from "@/types/show";
+import type { TMDBImageSize } from "@/types/tmdb";
 
 export type { TMDBImageSize } from "@/types/tmdb";
 
