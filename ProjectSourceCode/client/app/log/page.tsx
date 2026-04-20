@@ -80,10 +80,7 @@ function PosterGridSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
       {["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map((k) => (
-        <div
-          key={k}
-          className="aspect-2/3 animate-pulse rounded-2xl bg-oat"
-        />
+        <div key={k} className="aspect-2/3 animate-pulse rounded-2xl bg-oat" />
       ))}
     </div>
   );

@@ -4,10 +4,7 @@
  */
 
 import { describe, expect, it } from "@jest/globals";
-import {
-  LoginBodySchema,
-  RegisterBodySchema,
-} from "../validators/auth.ts";
+import { LoginBodySchema, RegisterBodySchema } from "../validators/auth.ts";
 import {
   ShowIdParamSchema,
   ShowSearchQuerySchema,
@@ -149,9 +146,9 @@ describe("AddUserShowBodySchema", () => {
   });
 
   it("rejects non-integer show ids", () => {
-    expect(
-      AddUserShowBodySchema.safeParse({ show_id: 1.5 }).success,
-    ).toBe(false);
+    expect(AddUserShowBodySchema.safeParse({ show_id: 1.5 }).success).toBe(
+      false,
+    );
   });
 
   it("rejects negative show ids", () => {
