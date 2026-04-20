@@ -71,7 +71,7 @@ export default function LoggedInHome() {
       <Navbar active="home" />
 
       <main className="flex-1">
-        <div className="mx-auto max-w-[1520px] px-6 pb-16 pt-6 md:px-12">
+        <div className="mx-auto max-w-380 px-6 pb-16 pt-6 md:px-12">
           <Greeter
             username={username}
             stats={stats}
@@ -230,7 +230,7 @@ function FeaturedCard({ show }: { show: Show }) {
 
   return (
     <section className="relative my-7 grid grid-cols-1 gap-6 overflow-hidden rounded-[14px] border border-line bg-oat p-5 lg:grid-cols-[160px_1fr_220px]">
-      <div className="relative aspect-2/3 w-full max-w-[160px] self-start overflow-hidden rounded-md bg-oat shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]">
+      <div className="relative aspect-2/3 w-full max-w-40 self-start overflow-hidden rounded-md bg-oat shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]">
         {posterUrl ? (
           <Image
             src={posterUrl}
