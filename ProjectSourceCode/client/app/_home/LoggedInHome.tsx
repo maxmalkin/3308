@@ -226,7 +226,7 @@ function FeaturedCard({ show }: { show: Show }) {
 
   return (
     <section className="relative my-7 grid grid-cols-1 gap-6 overflow-hidden rounded-[14px] border border-line bg-oat p-5 lg:grid-cols-[160px_1fr_220px]">
-      <div className="relative aspect-[2/3] w-full max-w-[160px] self-start overflow-hidden rounded-md bg-oat shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]">
+      <div className="relative aspect-2/3 w-full max-w-[160px] self-start overflow-hidden rounded-md bg-oat shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]">
         {posterUrl ? (
           <Image
             src={posterUrl}
@@ -242,7 +242,7 @@ function FeaturedCard({ show }: { show: Show }) {
         )}
       </div>
       <div className="px-1">
-        <div className="eyebrow !text-[var(--clay)]">
+        <div className="eyebrow !text-(--clay)">
           ◉ Featured today · picked for you
         </div>
         <h2 className="mt-2 font-medium text-[clamp(26px,2.8vw,38px)] leading-[1.05] tracking-[-0.025em]">
@@ -255,7 +255,7 @@ function FeaturedCard({ show }: { show: Show }) {
           {rating && (
             <>
               <span>·</span>
-              <span className="font-medium text-[var(--clay)]">★ {rating}</span>
+              <span className="font-medium text-(--clay)">★ {rating}</span>
             </>
           )}
           <span>·</span>
@@ -372,7 +372,7 @@ function QueueStrip({
             <Link
               key={s.id}
               href={`/shows/${s.id}`}
-              className="group relative aspect-[2/3] cursor-pointer overflow-hidden rounded-md shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]"
+              className="group relative aspect-2/3 cursor-pointer overflow-hidden rounded-md shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]"
             >
               <span className="absolute left-1.5 top-1.5 z-10 rounded bg-ink px-1.5 py-0.5 font-mono text-[10px] text-paper">
                 0{i + 1}
@@ -476,7 +476,7 @@ function RecsBlock({
         {["a", "b", "c", "d", "e", "f"].map((k) => (
           <div
             key={k}
-            className="aspect-[2/3] animate-pulse rounded-2xl bg-oat"
+            className="aspect-2/3 animate-pulse rounded-2xl bg-oat"
           />
         ))}
       </div>
@@ -627,7 +627,7 @@ function DiaryBlock({
                       {day}
                     </b>
                   </div>
-                  <div className="aspect-[2/3] w-[70px] overflow-hidden rounded-sm border border-line">
+                  <div className="aspect-2/3 w-[70px] overflow-hidden rounded-sm border border-line">
                     {url ? (
                       <Image
                         src={url}
@@ -650,7 +650,7 @@ function DiaryBlock({
                       {s.overview?.slice(0, 110)}
                       {s.overview && s.overview.length > 110 ? "…" : ""}
                     </div>
-                    <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted">
+                    <div className="mt-1.5 font-mono text-[10px] uppercase tracking-widest text-muted">
                       {s.user_status} · {s.networks?.[0]?.name ?? "—"} ·{" "}
                       {s.first_air_date?.slice(0, 4) ?? "—"}
                     </div>
@@ -683,7 +683,7 @@ function DiaryBlock({
                 <span>{gb.g}</span>
                 <span className="mx-3 h-1 max-w-[120px] flex-1 self-center overflow-hidden rounded-full bg-line">
                   <i
-                    className="block h-full bg-[var(--accent)]"
+                    className="block h-full bg-(--accent)"
                     style={{ width: `${gb.p}%` }}
                   />
                 </span>

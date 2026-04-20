@@ -40,7 +40,7 @@ export default function ShowDetailPage() {
             </Skeleton>
           }
           errorView={(err) => (
-            <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-12">
+            <div className="mx-auto max-w-300 px-6 py-16 md:px-12">
               {err?.status === 404 ? (
                 <div className="rounded-2xl border border-line bg-oat p-8">
                   <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
@@ -62,7 +62,7 @@ export default function ShowDetailPage() {
                 <ShowDetail show={data.show} />
               </Skeleton>
             ) : (
-              <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-12">
+              <div className="mx-auto max-w-300 px-6 py-16 md:px-12">
                 <div className="rounded-2xl border border-line bg-oat p-8">
                   <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
                     Show not found
@@ -82,10 +82,10 @@ function ShowDetailSkeleton() {
   return (
     <>
       <div className="h-72 w-full bg-oat md:h-96" />
-      <div className="mx-auto -mt-32 max-w-[1200px] px-6 pb-16 md:-mt-44 md:px-12">
+      <div className="mx-auto -mt-32 max-w-300 px-6 pb-16 md:-mt-44 md:px-12">
         <div className="grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-12">
           <div className="space-y-4">
-            <div className="aspect-[2/3] w-full max-w-[260px] rounded-md bg-oat" />
+            <div className="aspect-2/3 w-full max-w-65 rounded-md bg-oat" />
             <div className="h-10 w-full rounded-lg bg-oat" />
             <div className="h-10 w-full rounded-lg bg-oat" />
             <div className="h-10 w-full rounded-lg bg-oat" />
@@ -146,13 +146,13 @@ function ShowDetail({ show }: { show: Show }) {
             className="object-cover opacity-55"
           />
         ) : null}
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/0 via-ink/20 to-cream" />
+        <div className="absolute inset-0 bg-linear-to-b from-ink/0 via-ink/20 to-cream" />
       </section>
 
-      <div className="mx-auto -mt-32 max-w-[1200px] px-6 pb-16 md:-mt-44 md:px-12">
+      <div className="mx-auto -mt-32 max-w-300 px-6 pb-16 md:-mt-44 md:px-12">
         <div className="grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-12">
           <aside className="space-y-4">
-            <div className="relative aspect-[2/3] w-full max-w-[260px] overflow-hidden rounded-md border border-line bg-oat shadow-[0_30px_60px_-25px_rgba(20,22,20,0.45),0_2px_6px_rgba(20,22,20,0.18)]">
+            <div className="relative aspect-2/3 w-full max-w-65 overflow-hidden rounded-md border border-line bg-oat shadow-[0_30px_60px_-25px_rgba(20,22,20,0.45),0_2px_6px_rgba(20,22,20,0.18)]">
               {poster ? (
                 <Image
                   src={poster}
@@ -292,14 +292,14 @@ function ShowDetail({ show }: { show: Show }) {
                   {seasons.length > 0 && (
                     <div>
                       <div className="eyebrow mb-3">Seasons</div>
-                      <ul className="grid max-h-[420px] gap-2 overflow-y-auto pr-1">
+                      <ul className="grid max-h-105 gap-2 overflow-y-auto pr-1">
                         {seasons.map((s) => (
                           <li
                             key={s.id ?? s.season_number}
                             className="grid items-center gap-3 rounded-lg border border-line bg-oat px-3 py-2.5"
                             style={{ gridTemplateColumns: "44px 1fr auto" }}
                           >
-                            <div className="aspect-[2/3] w-11 overflow-hidden rounded-sm border border-line bg-oat">
+                            <div className="aspect-2/3 w-11 overflow-hidden rounded-sm border border-line bg-oat">
                               {s.poster_path ? (
                                 <Image
                                   src={
@@ -327,7 +327,7 @@ function ShowDetail({ show }: { show: Show }) {
                             </div>
                             {typeof s.vote_average === "number" &&
                               s.vote_average > 0 && (
-                                <span className="font-mono text-[11px] text-[var(--mustard)]">
+                                <span className="font-mono text-[11px] text-(--mustard)">
                                   ★ {s.vote_average.toFixed(1)}
                                 </span>
                               )}
@@ -400,7 +400,7 @@ function EpisodeCard({ episode }: { episode: Episode }) {
   return (
     <div className="overflow-hidden rounded-[10px] border border-line bg-oat">
       {still && (
-        <div className="relative aspect-[16/9] w-full bg-ink/10">
+        <div className="relative aspect-video w-full bg-ink/10">
           <Image
             src={still}
             alt=""
@@ -417,7 +417,7 @@ function EpisodeCard({ episode }: { episode: Episode }) {
             S{episode.season_number ?? "?"}·E{episode.episode_number ?? "?"}
           </span>
         </div>
-        <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.1em] text-muted">
+        <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted">
           {episode.air_date ?? "TBA"}
           {episode.runtime ? ` · ${episode.runtime} min` : ""}
         </div>
@@ -454,7 +454,7 @@ function RelatedSection({ showId }: { showId: number }) {
                   href={`/shows/${s.id}`}
                   className="group block transition hover:-translate-y-0.5"
                 >
-                  <div className="relative aspect-[2/3] overflow-hidden rounded border border-line bg-oat">
+                  <div className="relative aspect-2/3 overflow-hidden rounded border border-line bg-oat">
                     {url ? (
                       <Image
                         src={url}
@@ -500,7 +500,7 @@ function Stat({
         {label}
       </div>
       <div
-        className={`mt-1.5 font-display text-[28px] font-medium leading-none tracking-[-0.02em] ${accent ? "text-[var(--clay)]" : ""}`}
+        className={`mt-1.5 font-display text-[28px] font-medium leading-none tracking-[-0.02em] ${accent ? "text-(--clay)" : ""}`}
       >
         {value}
       </div>
@@ -605,7 +605,7 @@ function ActionBar({ showId }: { showId: number }) {
             onClick={() => setShowStatus(opt.status)}
             className={`flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
               active
-                ? "border-[var(--accent)] bg-[var(--accent)] text-paper"
+                ? "border-(--accent) bg-(--accent) text-paper"
                 : "border-line bg-oat text-ink-2 hover:border-ink hover:text-ink"
             }`}
           >
@@ -629,7 +629,7 @@ function ActionBar({ showId }: { showId: number }) {
       )}
 
       {err && (
-        <p className="text-xs text-[color:#a13b2a]" role="alert">
+        <p className="text-xs text-[#a13b2a]" role="alert">
           {err}
         </p>
       )}

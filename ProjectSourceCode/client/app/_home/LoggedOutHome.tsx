@@ -130,7 +130,7 @@ function PosterTile({ show, badge }: { show: Show; badge?: string }) {
   const url = tmdbImageUrl(show.poster_path, "w300");
   const title = show.name ?? show.original_name ?? "Untitled";
   return (
-    <div className="relative aspect-[2/3] overflow-hidden rounded border border-line bg-oat">
+    <div className="relative aspect-2/3 overflow-hidden rounded border border-line bg-oat">
       {url ? (
         <Image
           src={url}
@@ -199,7 +199,7 @@ function QueuePanel({ shows }: { shows: Show[] }) {
         {items.map((s, i) => (
           <PosterTile key={s.id} show={s} badge={`0${i + 1}`} />
         ))}
-        <div className="grid aspect-[2/3] place-items-center rounded border border-dashed border-line bg-cream font-mono text-xl text-muted">
+        <div className="grid aspect-2/3 place-items-center rounded border border-dashed border-line bg-cream font-mono text-xl text-muted">
           +
         </div>
       </div>
@@ -260,10 +260,10 @@ function RecsPanel({ shows }: { shows: Show[] }) {
               <Link
                 key={s.id}
                 href={`/shows/${s.id}`}
-                className="grid items-center gap-3 rounded-lg border border-line bg-cream p-2.5 transition hover:border-[var(--accent)] hover:bg-oat"
+                className="grid items-center gap-3 rounded-lg border border-line bg-cream p-2.5 transition hover:border-(--accent) hover:bg-oat"
                 style={{ gridTemplateColumns: "40px 1fr auto" }}
               >
-                <div className="aspect-[2/3] w-10 overflow-hidden rounded-sm border border-line">
+                <div className="aspect-2/3 w-10 overflow-hidden rounded-sm border border-line">
                   <PosterTile show={s} />
                 </div>
                 <div>
@@ -319,7 +319,7 @@ function LogPanel({ shows }: { shows: Show[] }) {
                   {day}
                 </b>
               </div>
-              <div className="aspect-[2/3] w-11 overflow-hidden rounded-sm border border-line">
+              <div className="aspect-2/3 w-11 overflow-hidden rounded-sm border border-line">
                 <PosterTile show={s} />
               </div>
               <div className="font-display text-[14px] font-medium tracking-[-0.015em]">
@@ -328,7 +328,7 @@ function LogPanel({ shows }: { shows: Show[] }) {
                   S1·E{i + 3}
                 </span>
               </div>
-              <div className="text-sm tracking-[0.05em] text-[var(--mustard)]">
+              <div className="text-sm tracking-[0.05em] text-(--mustard)">
                 {"★".repeat(rating)}
                 <span className="text-line">{"★".repeat(5 - rating)}</span>
               </div>
@@ -379,7 +379,7 @@ function TastePanel() {
               <span>{gb.g}</span>
               <span className="h-1.5 overflow-hidden rounded-full bg-oat">
                 <i
-                  className="block h-full rounded-full bg-[var(--accent)]"
+                  className="block h-full rounded-full bg-(--accent)"
                   style={{ width: `${gb.p}%` }}
                 />
               </span>

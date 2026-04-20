@@ -206,7 +206,7 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
               )}
 
               {error && (
-                <p role="alert" className="mb-3 text-sm text-[color:#a13b2a]">
+                <p role="alert" className="mb-3 text-sm text-[#a13b2a]">
                   {error}
                 </p>
               )}
