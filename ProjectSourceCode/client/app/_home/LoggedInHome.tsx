@@ -484,9 +484,9 @@ function RecsBlock({
   if (loadingState === "loading") {
     return (
       <div className="mb-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        {Array.from({ length: 6 }).map((_, i) => (
+        {["a", "b", "c", "d", "e", "f"].map((k) => (
           <div
-            key={i}
+            key={k}
             className="aspect-[2/3] animate-pulse rounded-2xl bg-paper"
           />
         ))}

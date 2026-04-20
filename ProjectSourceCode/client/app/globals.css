@@ -92,7 +92,9 @@ body {
 .font-display {
   font-family: var(--font-fraunces), ui-serif, Georgia, serif;
   font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 50, "WONK" 0;
+  font-variation-settings:
+    "SOFT" 50,
+    "WONK" 0;
   letter-spacing: -0.02em;
 }
 
@@ -161,7 +163,9 @@ h3 em,
   font-weight: 500;
   background: var(--ink);
   color: var(--paper);
-  transition: transform 120ms ease, background 120ms ease;
+  transition:
+    transform 120ms ease,
+    background 120ms ease;
   cursor: pointer;
   border: 0;
 }
@@ -199,7 +203,9 @@ h3 em,
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.02em;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
   cursor: pointer;
   border: 0;
 }
@@ -223,7 +229,9 @@ h3 em,
   border: 1px solid var(--ink);
   font-weight: 500;
   font-size: 0.875rem;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
   cursor: pointer;
 }
 .btn-ghost:hover {
@@ -239,7 +247,9 @@ h3 em,
   padding: 0.85rem 1rem;
   color: var(--ink);
   font-size: 0.95rem;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 .field::placeholder {
   color: var(--muted);
@@ -301,7 +311,9 @@ h3 em,
   color: var(--ink-2);
   padding: 8px 12px;
   border-radius: 999px;
-  transition: background 120ms ease, color 120ms ease;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
 }
 .nav-link:hover {
   background: var(--oat);
@@ -326,11 +338,21 @@ h3 em,
   opacity: 0;
   animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.1, 1) forwards;
 }
-.rise-1 { animation-delay: 0.05s; }
-.rise-2 { animation-delay: 0.18s; }
-.rise-3 { animation-delay: 0.32s; }
-.rise-4 { animation-delay: 0.46s; }
-.rise-5 { animation-delay: 0.6s; }
+.rise-1 {
+  animation-delay: 0.05s;
+}
+.rise-2 {
+  animation-delay: 0.18s;
+}
+.rise-3 {
+  animation-delay: 0.32s;
+}
+.rise-4 {
+  animation-delay: 0.46s;
+}
+.rise-5 {
+  animation-delay: 0.6s;
+}
 
 @keyframes marquee {
   from {
