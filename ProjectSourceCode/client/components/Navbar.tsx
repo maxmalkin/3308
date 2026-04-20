@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import NavSearch from "@/components/NavSearch";
-import type { NavLink } from "@/types/ui";
 import { clearApiResourceCache } from "@/hooks/useApiResource";
+import type { NavLink } from "@/types/ui";
 import { clearSession, isAuthenticated } from "@/utils/api";
 
 const LOGGED_IN_LINKS: NavLink[] = [

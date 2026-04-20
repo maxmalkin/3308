@@ -271,10 +271,7 @@ shows.get("/showcase", async (c) => {
         LIMIT ${limit}
       `;
 
-  c.header(
-    "Cache-Control",
-    "public, s-maxage=60, stale-while-revalidate=300",
-  );
+  c.header("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
   return c.json({ results });
 });
 

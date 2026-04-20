@@ -1,5 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { useApiResource } from "@/hooks/useApiResource";
+import {
+  clearApiResourceCache,
+  useApiResource,
+} from "@/hooks/useApiResource";
 import { ApiError } from "@/utils/api";
 
 jest.mock("@/utils/api", () => {
@@ -19,6 +22,7 @@ const api = jest.requireMock("@/utils/api") as {
 beforeEach(() => {
   api.apiFetch.mockReset();
   api.isAuthenticated.mockReset().mockReturnValue(true);
+  clearApiResourceCache();
 });
 
 describe("useApiResource", () => {
