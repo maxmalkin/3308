@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Navbar from "../../components/Navbar";
+import {
+  type StreamingService,
+  streamingServiceValues,
+} from "../../types/streaming";
 import { setSession } from "../../utils/api";
 
 export default function RegisterPage() {
@@ -11,8 +15,17 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [services, setServices] = useState<StreamingService[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  function toggleService(service: StreamingService) {
+    setServices((prev) =>
+      prev.includes(service)
+        ? prev.filter((s) => s !== service)
+        : [...prev, service],
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,7 +39,7 @@ export default function RegisterPage() {
           email,
           password,
           username,
-          owned_services: [],
+          owned_services: services,
         }),
       });
       const data = await res.json();
@@ -117,6 +130,35 @@ export default function RegisterPage() {
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
               />
             </div>
+
+            <fieldset>
+              <legend className="mb-2 block text-sm font-medium">
+                Streaming services
+              </legend>
+              <p className="mb-3 text-xs text-gray-500">
+                Pick the platforms you have so we can tailor recommendations.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {streamingServiceValues.map((service) => {
+                  const selected = services.includes(service);
+                  return (
+                    <button
+                      type="button"
+                      key={service}
+                      onClick={() => toggleService(service)}
+                      aria-pressed={selected}
+                      className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                        selected
+                          ? "border-black bg-black text-white"
+                          : "border-gray-300 bg-white text-gray-800 hover:border-gray-500"
+                      }`}
+                    >
+                      {service}
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
 
             {error ? (
               <p className="text-sm text-red-600" role="alert">
