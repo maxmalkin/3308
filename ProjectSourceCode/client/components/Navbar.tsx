@@ -13,9 +13,7 @@ const LOGGED_IN_LINKS: NavLink[] = [
   { href: "/recommendations", label: "Recs", key: "recs" },
 ];
 
-const LOGGED_OUT_LINKS: NavLink[] = [
-  { href: "/", label: "Home", key: "home" },
-];
+const LOGGED_OUT_LINKS: NavLink[] = [{ href: "/", label: "Home", key: "home" }];
 
 export default function Navbar({ active }: { active?: string } = {}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

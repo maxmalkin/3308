@@ -9,8 +9,8 @@ export default function Footer() {
             pillar<em className="text-[var(--accent)]">boxd</em>
           </h4>
           <p className="mt-3 max-w-sm">
-            A tidy home for everything you watch — track what you've seen,
-            queue what's next, and keep a quiet record of it all.
+            A tidy home for everything you watch — track what you've seen, queue
+            what's next, and keep a quiet record of it all.
           </p>
           <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
             © {new Date().getFullYear()} · PillarBoxd · CSCI 3308

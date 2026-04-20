@@ -517,18 +517,25 @@ function Marquee() {
     { text: "discover", italic: true },
     { text: "remember" },
   ];
-  const line = Array.from({ length: 4 })
-    .map((_, lineIdx) =>
-      words.map((w, i) => (
-        <span key={`${lineIdx}-${i}-${w.text}`} className="inline-flex items-center gap-[60px]">
-          <span className={w.italic ? "font-display italic text-[var(--accent)]" : "font-medium text-ink"}>
-            {w.text}
-          </span>
-          <span aria-hidden>·</span>
+  const line = Array.from({ length: 4 }).flatMap((_, lineIdx) =>
+    words.map((w, i) => (
+      <span
+        key={`${lineIdx}-${i}-${w.text}`}
+        className="inline-flex items-center gap-[60px]"
+      >
+        <span
+          className={
+            w.italic
+              ? "font-display italic text-[var(--accent)]"
+              : "font-medium text-ink"
+          }
+        >
+          {w.text}
         </span>
-      )),
-    )
-    .flat();
+        <span aria-hidden>·</span>
+      </span>
+    )),
+  );
   return (
     <div className="mt-5 overflow-hidden border-y border-line bg-paper">
       <div className="marquee-track py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
