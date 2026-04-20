@@ -22,9 +22,6 @@ export default function LoggedOutHome() {
         <section className="mx-auto max-w-[1520px] px-6 md:px-12">
           <div className="grid items-end gap-8 py-10 md:grid-cols-[1.3fr_auto] md:gap-12 md:py-14">
             <div>
-              <div className="eyebrow">
-                a tidy home for everything you watch
-              </div>
               <h1 className="mt-3 max-w-[16ch] text-[clamp(40px,5vw,72px)] font-medium leading-[0.98] tracking-[-0.03em]">
                 Keep track of <em>what you're watching.</em>
               </h1>
