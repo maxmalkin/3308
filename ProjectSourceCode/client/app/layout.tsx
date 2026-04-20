@@ -24,7 +24,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: {
     default: "PillarBoxd",
-    template: "%s • PillarBoxd",
+    template: "%s | PillarBoxd",
   },
   description:
     "A tidy home for everything you watch — track, queue, and log the shows you love.",
