@@ -228,7 +228,7 @@ function RecsPanel({ shows }: { shows: Show[] }) {
           Recommendations <em>you can trust.</em>
         </>
       }
-      lede="Based on the shows you've rated highly — not on what a studio paid us to surface."
+      lede="Based on the shows you've rated highly."
     >
       <div className="grid gap-3 md:grid-cols-[1.2fr_1fr]">
         <Link
@@ -250,7 +250,7 @@ function RecsPanel({ shows }: { shows: Show[] }) {
           )}
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgba(20,22,20,0.78)] to-transparent p-3.5 text-paper">
             <div className="font-mono text-[10px] tracking-[0.15em] text-[var(--olive-soft)]">
-              94% MATCH · BECAUSE YOU LOVED OUR SHELF
+             BECAUSE YOU LOVED OUR SHELF
             </div>
             <h4 className="mt-1 font-display text-[18px] font-medium tracking-[-0.02em]">
               {title}

@@ -1,8 +1,8 @@
 "use client";
 
+import CollectionShell from "@/components/CollectionShell";
 import EmptyState from "@/components/EmptyState";
 import LoginPrompt from "@/components/LoginPrompt";
-import Navbar from "@/components/Navbar";
 import { ResourceView } from "@/components/ResourceView";
 import ShowCard from "@/components/ShowCard";
 import { useApiResource } from "@/hooks/useApiResource";
@@ -14,43 +14,77 @@ export default function QueuePage() {
   });
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900">
-      <Navbar />
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <h1 className="mb-2 text-3xl font-bold">Your Queue</h1>
-        <p className="mb-8 text-sm text-gray-600">
-          Shows that are up next on your list
-        </p>
-
-        <ResourceView
-          resource={resource}
-          unauth={
-            <LoginPrompt
-              title="Log in to view your queue"
-              description="You need to be signed in to see shows you've added."
-            />
+    <ResourceView
+      resource={resource}
+      unauth={
+        <CollectionShell
+          active="queue"
+          eyebrow="your queue"
+          title={
+            <>
+              Up <em>next.</em>
+            </>
           }
         >
-          {(data) =>
-            data.shows.length === 0 ? (
-              <EmptyState
-                title="Your queue is empty"
-                description="Add shows to your queue to start tracking what you want to watch."
-              />
-            ) : (
-              <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
-                {data.shows.map((show) => (
-                  <ShowCard
-                    key={show.id}
-                    show={show}
-                    status={show.user_status}
-                  />
-                ))}
-              </div>
-            )
+          <LoginPrompt
+            title="Log in to view your queue"
+            description="You need to be signed in to see shows you've added."
+          />
+        </CollectionShell>
+      }
+      loading={
+        <CollectionShell
+          active="queue"
+          eyebrow="your queue"
+          title={
+            <>
+              Up <em>next.</em>
+            </>
           }
-        </ResourceView>
-      </div>
-    </main>
+        >
+          <PosterGridSkeleton />
+        </CollectionShell>
+      }
+    >
+      {(data) => (
+        <CollectionShell
+          active="queue"
+          eyebrow="your queue"
+          title={
+            <>
+              Up <em>next.</em>
+            </>
+          }
+          sub="Shows you've been meaning to start. Click any to open the show page or remove it from your queue."
+          meta={`${data.shows.length} ${data.shows.length === 1 ? "show" : "shows"}`}
+        >
+          {data.shows.length === 0 ? (
+            <EmptyState
+              title="Your queue is empty"
+              description="Add shows from search or recommendations to start tracking what you want to watch."
+            />
+          ) : (
+            <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
+              {data.shows.map((show) => (
+                <ShowCard key={show.id} show={show} status={show.user_status} />
+              ))}
+            </div>
+          )}
+        </CollectionShell>
+      )}
+    </ResourceView>
+  );
+}
+
+function PosterGridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
+      {["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map((k) => (
+        <div
+          key={k}
+          className="aspect-[2/3] animate-pulse rounded-2xl bg-paper"
+        />
+      ))}
+    </div>
   );
 }

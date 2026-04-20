@@ -26,6 +26,10 @@ async function getOwnedServices(userId: string): Promise<string[]> {
   return (row?.owned_services as string[] | undefined) ?? [];
 }
 
+function ownedLikePatterns(owned: string[]): string[] {
+  return owned.map((s) => `%${s.replace(/\+/g, "")}%`);
+}
+
 shows.get("/search", async (c) => {
   const parsed = ShowSearchQuerySchema.safeParse(c.req.query());
   if (!parsed.success) {
@@ -64,7 +68,7 @@ shows.get("/search", async (c) => {
             FROM jsonb_array_elements(
               COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
             ) p
-            WHERE p->>'provider_name' = ANY(${owned}::text[])
+            WHERE p->>'provider_name' ILIKE ANY(${ownedLikePatterns(owned)}::text[])
           )
         )
       ORDER BY
@@ -103,7 +107,7 @@ shows.get("/recommendations", async (c) => {
   `;
 
   if (userShowRows.length === 0) {
-    const fallback = await sql`
+    let fallback = await sql`
       SELECT * FROM (
         SELECT
           s.id, s.name, s.original_name, s.overview, s.poster_path,
@@ -119,7 +123,7 @@ shows.get("/recommendations", async (c) => {
               FROM jsonb_array_elements(
                 COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
               ) p
-              WHERE p->>'provider_name' = ANY(${owned}::text[])
+              WHERE p->>'provider_name' ILIKE ANY(${ownedLikePatterns(owned)}::text[])
             )
           )
         ORDER BY popularity DESC NULLS LAST
@@ -128,6 +132,22 @@ shows.get("/recommendations", async (c) => {
       ORDER BY random()
       LIMIT ${RECOMMENDATION_LIMIT}
     `;
+    if (fallback.length === 0) {
+      fallback = await sql`
+        SELECT * FROM (
+          SELECT
+            s.id, s.name, s.original_name, s.overview, s.poster_path,
+            s.backdrop_path, s.first_air_date, s.vote_average, s.genres,
+            s.networks, s.watch_providers_us
+          FROM public.shows s
+          WHERE s.poster_path IS NOT NULL
+          ORDER BY popularity DESC NULLS LAST
+          LIMIT 100
+        ) pool
+        ORDER BY random()
+        LIMIT ${RECOMMENDATION_LIMIT}
+      `;
+    }
     return c.json({ results: fallback, source: "popular" });
   }
 
@@ -140,31 +160,52 @@ shows.get("/recommendations", async (c) => {
   `;
 
   const avgVec = avgRow?.avg_embedding as string | null;
-  if (!avgVec) return c.json({ results: [] });
 
-  const results = await sql`
-    SELECT
-      s.*,
-      (s.embedding <=> ${avgVec}::vector) AS distance
-    FROM public.shows s
-    WHERE s.embedding IS NOT NULL
-      AND NOT (s.id = ANY(${excludeIds}::int[]))
-      AND (
-        ${!hasOwnedFilter}::boolean
-        OR s.watch_providers_us IS NULL
-        OR EXISTS (
-          SELECT 1
-          FROM jsonb_array_elements(
-            COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
-          ) p
-          WHERE p->>'provider_name' = ANY(${owned}::text[])
+  let results: Array<Record<string, unknown>> = [];
+  if (avgVec) {
+    results = await sql`
+      SELECT
+        s.*,
+        (s.embedding <=> ${avgVec}::vector) AS distance
+      FROM public.shows s
+      WHERE s.embedding IS NOT NULL
+        AND NOT (s.id = ANY(${excludeIds}::int[]))
+        AND (
+          ${!hasOwnedFilter}::boolean
+          OR s.watch_providers_us IS NULL
+          OR EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements(
+              COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+            ) p
+            WHERE p->>'provider_name' ILIKE ANY(${ownedLikePatterns(owned)}::text[])
+          )
         )
-      )
-    ORDER BY s.embedding <=> ${avgVec}::vector
+      ORDER BY s.embedding <=> ${avgVec}::vector
+      LIMIT ${RECOMMENDATION_LIMIT}
+    `;
+  }
+
+  if (results.length > 0) {
+    return c.json({ results, source: "embedding" });
+  }
+
+  const popular = await sql`
+    SELECT * FROM (
+      SELECT
+        s.id, s.name, s.original_name, s.overview, s.poster_path,
+        s.backdrop_path, s.first_air_date, s.vote_average, s.genres,
+        s.networks, s.watch_providers_us
+      FROM public.shows s
+      WHERE s.poster_path IS NOT NULL
+        AND NOT (s.id = ANY(${excludeIds}::int[]))
+      ORDER BY popularity DESC NULLS LAST
+      LIMIT 100
+    ) pool
+    ORDER BY random()
     LIMIT ${RECOMMENDATION_LIMIT}
   `;
-
-  return c.json({ results, source: "embedding" });
+  return c.json({ results: popular, source: "popular" });
 });
 
 shows.get("/showcase", async (c) => {

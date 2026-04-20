@@ -72,9 +72,12 @@ export default function LoggedInHome() {
   }, [watchlistShows, logShows]);
 
   const hasUserShows = watchlistShows.length + logShows.length > 0;
-  const showQueueStrip = watchlistShows.length > 0 || watchlist.status === "loading";
+  const showQueueStrip =
+    watchlistShows.length > 0 || watchlist.status === "loading";
   const showDiary = logShows.length > 0 || log.status === "loading";
-  const recsTitle = hasUserShows ? "Recommended this week" : "Picked for you to start with";
+  const recsTitle = hasUserShows
+    ? "Recommended this week"
+    : "Picked for you to start with";
   const recsEyebrow = hasUserShows ? "for you" : "popular this season";
 
   return (
@@ -185,8 +188,8 @@ function Greeter({
             </>
           ) : (
             <>
-              Your queue and log are empty for now — start by adding a show
-              from the picks below, and your recommendations will get smarter.
+              Your queue and log are empty for now. Start by adding a show from
+              the picks below, and your recommendations will get smarter.
             </>
           )}
         </p>
@@ -229,7 +232,10 @@ function FeaturedCard({ show }: { show: Show }) {
     try {
       await apiFetch("user/shows", {
         method: "POST",
-        body: JSON.stringify({ show_id: show.id, status: "Want to Watch" }),
+        body: JSON.stringify({
+          show_id: show.id,
+          status: "Want to Watch",
+        }),
       });
       setAdded(true);
     } catch (e) {
@@ -318,23 +324,6 @@ function FeaturedCard({ show }: { show: Show }) {
           </>
         )}
       </div>
-    </section>
-  );
-}
-
-function FeaturedEmpty() {
-  return (
-    <section className="my-7 rounded-[14px] border border-dashed border-line bg-paper p-8 text-center">
-      <h2 className="font-display text-2xl font-medium tracking-[-0.02em]">
-        No featured pick yet.
-      </h2>
-      <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-        Add a few shows you've watched and we'll start surfacing recommendations
-        tailored to your taste.
-      </p>
-      <Link href="/queue" className="btn mt-4 inline-flex">
-        Browse your queue
-      </Link>
     </section>
   );
 }
@@ -561,7 +550,10 @@ function RecsBlock({
               title={owned ? "On your services" : "Not in your services"}
               style={
                 owned && service !== s
-                  ? { borderColor: "var(--accent)", color: "var(--ink)" }
+                  ? {
+                      borderColor: "var(--accent)",
+                      color: "var(--ink)",
+                    }
                   : undefined
               }
             >
@@ -595,10 +587,17 @@ function RecsBlock({
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState
-          title="Nothing matches your filters"
-          description="Try widening the genre or service filters above."
-        />
+        shows.length === 0 ? (
+          <EmptyState
+            title="No recommendations yet"
+            description="Add a few shows to your queue or log and we'll start tailoring picks to your taste."
+          />
+        ) : (
+          <EmptyState
+            title="Nothing matches your filters"
+            description="Try widening the genre or service filters above."
+          />
+        )
       ) : (
         <div className="mb-12 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
           {filtered.slice(0, 12).map((s) => (
@@ -670,14 +669,18 @@ function DiaryBlock({
                 : null;
               const day = date?.getDate() ?? "—";
               const month = date
-                ?.toLocaleDateString(undefined, { month: "short" })
+                ?.toLocaleDateString(undefined, {
+                  month: "short",
+                })
                 .toUpperCase();
               return (
                 <Link
                   key={s.id}
                   href={`/shows/${s.id}`}
                   className="grid items-start gap-4 border-b border-line-soft py-4 last:border-0 hover:bg-paper/40"
-                  style={{ gridTemplateColumns: "60px 70px 1fr" }}
+                  style={{
+                    gridTemplateColumns: "60px 70px 1fr",
+                  }}
                 >
                   <div className="pt-1 text-center font-mono text-[11px] uppercase leading-[1.4] tracking-[0.06em] text-muted">
                     {month}
@@ -755,7 +758,10 @@ function DiaryBlock({
         {suggestion && (
           <div
             className="card p-5"
-            style={{ background: "var(--ink)", color: "var(--paper)" }}
+            style={{
+              background: "var(--ink)",
+              color: "var(--paper)",
+            }}
           >
             <div className="eyebrow mb-2" style={{ color: "var(--clay-soft)" }}>
               this week's suggestion
