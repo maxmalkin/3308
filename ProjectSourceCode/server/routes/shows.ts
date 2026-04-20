@@ -146,30 +146,38 @@ shows.get("/recommendations", async (c) => {
 });
 
 shows.get("/showcase", async (c) => {
-  const limitParam = Number(c.req.query("limit") ?? 12);
+  const limitParam = Number(c.req.query("limit") ?? 24);
   const limit = Number.isFinite(limitParam)
-    ? Math.min(Math.max(Math.trunc(limitParam), 1), 24)
-    : 12;
+    ? Math.min(Math.max(Math.trunc(limitParam), 1), 60)
+    : 24;
+  const random = c.req.query("random") !== "false";
+  const poolSize = Math.max(limit * 4, 100);
 
-  const results = await sql`
-    SELECT
-      id,
-      name,
-      original_name,
-      overview,
-      poster_path,
-      backdrop_path,
-      first_air_date,
-      vote_average,
-      genres,
-      networks,
-      watch_providers_us
-    FROM public.shows
-    WHERE poster_path IS NOT NULL
-    ORDER BY popularity DESC NULLS LAST
-    LIMIT ${limit}
-  `;
+  const results = random
+    ? await sql`
+        SELECT * FROM (
+          SELECT
+            id, name, original_name, overview, poster_path, backdrop_path,
+            first_air_date, vote_average, genres, networks, watch_providers_us
+          FROM public.shows
+          WHERE poster_path IS NOT NULL
+          ORDER BY popularity DESC NULLS LAST
+          LIMIT ${poolSize}
+        ) pool
+        ORDER BY random()
+        LIMIT ${limit}
+      `
+    : await sql`
+        SELECT
+          id, name, original_name, overview, poster_path, backdrop_path,
+          first_air_date, vote_average, genres, networks, watch_providers_us
+        FROM public.shows
+        WHERE poster_path IS NOT NULL
+        ORDER BY popularity DESC NULLS LAST
+        LIMIT ${limit}
+      `;
 
+  c.header("Cache-Control", "no-store");
   return c.json({ results });
 });
 
