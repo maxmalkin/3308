@@ -270,7 +270,7 @@ function ModeTab({
 }) {
   if (active) {
     return (
-      <span className="rounded-full bg-paper px-[18px] py-2 font-medium text-[13px] text-ink shadow-[0_1px_0_rgba(43,38,32,0.06),0_1px_2px_rgba(43,38,32,0.04)]">
+      <span className="rounded-full bg-cream px-[18px] py-2 font-medium text-[13px] text-ink shadow-[0_1px_0_rgba(43,38,32,0.06),0_1px_2px_rgba(43,38,32,0.04)]">
         {children}
       </span>
     );

@@ -73,7 +73,7 @@ export default function ShowDetailPage() {
           errorView={(err) => (
             <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-12">
               {err?.status === 404 ? (
-                <div className="rounded-2xl border border-line bg-paper p-8">
+                <div className="rounded-2xl border border-line bg-oat p-8">
                   <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
                     Show not found
                   </h1>
@@ -94,7 +94,7 @@ export default function ShowDetailPage() {
               </Skeleton>
             ) : (
               <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-12">
-                <div className="rounded-2xl border border-line bg-paper p-8">
+                <div className="rounded-2xl border border-line bg-oat p-8">
                   <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
                     Show not found
                   </h1>
@@ -112,29 +112,29 @@ export default function ShowDetailPage() {
 function ShowDetailSkeleton() {
   return (
     <>
-      <div className="h-72 w-full bg-paper md:h-96" />
+      <div className="h-72 w-full bg-oat md:h-96" />
       <div className="mx-auto -mt-32 max-w-[1200px] px-6 pb-16 md:-mt-44 md:px-12">
         <div className="grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-12">
           <div className="space-y-4">
-            <div className="aspect-[2/3] w-full max-w-[260px] rounded-md bg-paper" />
-            <div className="h-10 w-full rounded-lg bg-paper" />
-            <div className="h-10 w-full rounded-lg bg-paper" />
-            <div className="h-10 w-full rounded-lg bg-paper" />
+            <div className="aspect-[2/3] w-full max-w-[260px] rounded-md bg-oat" />
+            <div className="h-10 w-full rounded-lg bg-oat" />
+            <div className="h-10 w-full rounded-lg bg-oat" />
+            <div className="h-10 w-full rounded-lg bg-oat" />
           </div>
           <div className="space-y-6">
             <div className="lg:pt-12">
-              <div className="h-16 w-2/3 rounded bg-paper" />
-              <div className="mt-3 h-4 w-1/2 rounded bg-paper" />
+              <div className="h-16 w-2/3 rounded bg-oat" />
+              <div className="mt-3 h-4 w-1/2 rounded bg-oat" />
             </div>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {["a", "b", "c", "d"].map((k) => (
-                <div key={k} className="h-20 rounded bg-paper" />
+                <div key={k} className="h-20 rounded bg-oat" />
               ))}
             </div>
             <div className="space-y-2">
-              <div className="h-4 w-full rounded bg-paper" />
-              <div className="h-4 w-11/12 rounded bg-paper" />
-              <div className="h-4 w-10/12 rounded bg-paper" />
+              <div className="h-4 w-full rounded bg-oat" />
+              <div className="h-4 w-11/12 rounded bg-oat" />
+              <div className="h-4 w-10/12 rounded bg-oat" />
             </div>
           </div>
         </div>
@@ -526,7 +526,7 @@ function Stat({
   accent?: boolean;
 }) {
   return (
-    <div className="bg-paper px-4 py-4">
+    <div className="bg-oat px-4 py-4">
       <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
         {label}
       </div>
@@ -637,7 +637,7 @@ function ActionBar({ showId }: { showId: number }) {
             className={`flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
               active
                 ? "border-[var(--accent)] bg-[var(--accent)] text-paper"
-                : "border-line bg-paper text-ink-2 hover:border-ink hover:text-ink"
+                : "border-line bg-oat text-ink-2 hover:border-ink hover:text-ink"
             }`}
           >
             <span>{active ? `✓ ${opt.label}` : opt.label}</span>

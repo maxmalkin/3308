@@ -97,7 +97,7 @@ export default function LoggedInHome() {
           {featured ? (
             <FeaturedCard show={featured} />
           ) : recs.status === "loading" ? (
-            <div className="my-7 h-44 animate-pulse rounded-[14px] bg-paper" />
+            <div className="my-7 h-44 animate-pulse rounded-[14px] bg-oat" />
           ) : null}
 
           {showQueueStrip && (
@@ -197,7 +197,7 @@ function Greeter({
       {visibleStats.length > 0 && (
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-line bg-line md:grid-cols-4">
           {visibleStats.map((s) => (
-            <div key={s.l} className="bg-paper px-4 py-4">
+            <div key={s.l} className="bg-oat px-4 py-4">
               <div className="font-display text-[28px] font-medium leading-none tracking-[-0.02em]">
                 {s.n}
               </div>
@@ -246,7 +246,7 @@ function FeaturedCard({ show }: { show: Show }) {
   }
 
   return (
-    <section className="relative my-7 grid grid-cols-1 gap-6 overflow-hidden rounded-[14px] border border-line bg-paper p-5 lg:grid-cols-[160px_1fr_220px]">
+    <section className="relative my-7 grid grid-cols-1 gap-6 overflow-hidden rounded-[14px] border border-line bg-oat p-5 lg:grid-cols-[160px_1fr_220px]">
       <div className="relative aspect-[2/3] w-full max-w-[160px] self-start overflow-hidden rounded-md bg-oat shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]">
         {posterUrl ? (
           <Image
@@ -353,7 +353,7 @@ function QueueStrip({
   if (loading) {
     return (
       <section className="mb-10 rounded-[14px] border border-line-soft bg-oat px-6 py-5">
-        <div className="h-32 animate-pulse rounded bg-paper/60" />
+        <div className="h-32 animate-pulse rounded bg-oat/60" />
       </section>
     );
   }
@@ -507,7 +507,7 @@ function RecsBlock({
         {["a", "b", "c", "d", "e", "f"].map((k) => (
           <div
             key={k}
-            className="aspect-[2/3] animate-pulse rounded-2xl bg-paper"
+            className="aspect-[2/3] animate-pulse rounded-2xl bg-oat"
           />
         ))}
       </div>
@@ -651,7 +651,7 @@ function DiaryBlock({
         {loading ? (
           <div className="space-y-3">
             {["a", "b", "c", "d"].map((k) => (
-              <div key={k} className="h-20 animate-pulse rounded-md bg-paper" />
+              <div key={k} className="h-20 animate-pulse rounded-md bg-oat" />
             ))}
           </div>
         ) : recent.length === 0 ? (
@@ -677,7 +677,7 @@ function DiaryBlock({
                 <Link
                   key={s.id}
                   href={`/shows/${s.id}`}
-                  className="grid items-start gap-4 border-b border-line-soft py-4 last:border-0 hover:bg-paper/40"
+                  className="grid items-start gap-4 border-b border-line-soft py-4 last:border-0 hover:bg-oat/40"
                   style={{
                     gridTemplateColumns: "60px 70px 1fr",
                   }}

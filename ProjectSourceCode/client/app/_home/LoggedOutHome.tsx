@@ -82,7 +82,7 @@ export default function LoggedOutHome() {
             </div>
             <Link
               href="/register"
-              className="btn whitespace-nowrap !bg-paper !text-ink"
+              className="btn whitespace-nowrap !bg-cream !text-ink"
             >
               Start your queue
             </Link>
@@ -109,7 +109,7 @@ function PanelShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[360px] flex-col gap-4 rounded-[12px] border border-line bg-paper p-6">
+    <div className="flex min-h-[360px] flex-col gap-4 rounded-[12px] border border-line bg-oat p-6">
       <div className="flex items-baseline gap-3 border-b border-line-soft pb-3">
         <span className="font-mono text-[10px] tracking-[0.18em] text-[var(--accent)]">
           {idx}
@@ -264,7 +264,7 @@ function RecsPanel({ shows }: { shows: Show[] }) {
               <Link
                 key={s.id}
                 href={`/shows/${s.id}`}
-                className="grid items-center gap-3 rounded-lg border border-line bg-cream p-2.5 transition hover:border-[var(--accent)] hover:bg-paper"
+                className="grid items-center gap-3 rounded-lg border border-line bg-cream p-2.5 transition hover:border-[var(--accent)] hover:bg-oat"
                 style={{ gridTemplateColumns: "40px 1fr auto" }}
               >
                 <div className="aspect-[2/3] w-10 overflow-hidden rounded-sm border border-line">
@@ -450,7 +450,7 @@ function Marquee() {
     )),
   );
   return (
-    <div className="mt-14 overflow-hidden border-y border-line bg-paper">
+    <div className="mt-14 overflow-hidden border-y border-line bg-oat">
       <div className="marquee-track py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
         <span className="inline-flex items-center gap-[60px]">{line}</span>
         <span className="inline-flex items-center gap-[60px]">{line}</span>

@@ -104,7 +104,7 @@ function PosterGridSkeleton() {
       {["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map((k) => (
         <div
           key={k}
-          className="aspect-[2/3] animate-pulse rounded-2xl bg-paper"
+          className="aspect-[2/3] animate-pulse rounded-2xl bg-oat"
         />
       ))}
     </div>
