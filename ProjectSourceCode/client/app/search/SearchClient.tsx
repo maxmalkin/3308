@@ -18,7 +18,7 @@ type SearchResp = {
 
 type SortKey = "relevance" | "rating" | "newest" | "title";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 40;
 
 export default function SearchClient({
   q,
