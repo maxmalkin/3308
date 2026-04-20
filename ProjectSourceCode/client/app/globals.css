@@ -412,3 +412,39 @@ h3 em,
   background: var(--ink);
   color: var(--cream);
 }
+
+html {
+  scrollbar-color: var(--line) var(--cream);
+  scrollbar-width: auto;
+}
+* {
+  scrollbar-color: var(--line) var(--cream);
+}
+
+::-webkit-scrollbar {
+  width: 12px !important;
+  height: 12px !important;
+  background: var(--cream);
+}
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--line);
+  border-radius: 999px;
+  border: 3px solid var(--cream);
+  background-clip: padding-box;
+  min-height: 40px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ink-2);
+}
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--ink);
+}
+::-webkit-scrollbar-corner {
+  background: var(--cream);
+}
+::-webkit-scrollbar-button {
+  display: none;
+}

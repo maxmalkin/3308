@@ -159,7 +159,7 @@ function ShowcaseStrip({ shows }: { shows: Show[] }) {
     "linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%)";
   return (
     <div
-      className="-mx-6 overflow-x-auto px-6 md:-mx-12 md:px-12 [scrollbar-width:thin]"
+      className="-mx-6 overflow-x-auto px-6 md:-mx-12 md:px-12"
       style={{
         WebkitMaskImage: fadeMask,
         maskImage: fadeMask,
