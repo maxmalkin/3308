@@ -176,12 +176,12 @@ export default function AuthForm({ mode }: { mode: Mode }) {
                     />
                     Keep me signed in
                   </label>
-                  <a
-                    href="#"
+                  <button
+                    type="button"
                     className="text-ink-2 underline decoration-line underline-offset-[3px] transition hover:text-ink hover:decoration-[var(--accent)]"
                   >
                     Forgot password?
-                  </a>
+                  </button>
                 </div>
               )}
 
