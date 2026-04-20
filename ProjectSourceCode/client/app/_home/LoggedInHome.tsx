@@ -71,6 +71,12 @@ export default function LoggedInHome() {
     ];
   }, [watchlistShows, logShows]);
 
+  const hasUserShows = watchlistShows.length + logShows.length > 0;
+  const showQueueStrip = watchlistShows.length > 0 || watchlist.status === "loading";
+  const showDiary = logShows.length > 0 || log.status === "loading";
+  const recsTitle = hasUserShows ? "Recommended this week" : "Picked for you to start with";
+  const recsEyebrow = hasUserShows ? "for you" : "popular this season";
+
   return (
     <>
       <Navbar active="home" />
@@ -82,24 +88,25 @@ export default function LoggedInHome() {
             stats={stats}
             queueCount={watchlistShows.length}
             recCount={recShows.length}
+            hasUserShows={hasUserShows}
           />
 
           {featured ? (
             <FeaturedCard show={featured} />
           ) : recs.status === "loading" ? (
             <div className="my-7 h-44 animate-pulse rounded-[14px] bg-paper" />
-          ) : (
-            <FeaturedEmpty />
+          ) : null}
+
+          {showQueueStrip && (
+            <QueueStrip
+              initial={watchlistShows.slice(0, 7)}
+              loading={watchlist.status === "loading"}
+            />
           )}
 
-          <QueueStrip
-            initial={watchlistShows.slice(0, 7)}
-            loading={watchlist.status === "loading"}
-          />
-
           <SectionHead
-            eyebrow="for you"
-            title="Recommended this week"
+            eyebrow={recsEyebrow}
+            title={recsTitle}
             meta={`${recShows.length} shows · sorted by relevance`}
           />
 
@@ -110,11 +117,13 @@ export default function LoggedInHome() {
             error={recs.error?.message}
           />
 
-          <DiaryBlock
-            log={logShows}
-            suggestion={suggestion}
-            loading={log.status === "loading"}
-          />
+          {showDiary && (
+            <DiaryBlock
+              log={logShows}
+              suggestion={suggestion}
+              loading={log.status === "loading"}
+            />
+          )}
         </div>
       </main>
 
@@ -128,11 +137,13 @@ function Greeter({
   stats,
   queueCount,
   recCount,
+  hasUserShows,
 }: {
   username: string;
   stats: { n: number; l: string }[];
   queueCount: number;
   recCount: number;
+  hasUserShows: boolean;
 }) {
   const now = new Date();
   const day = now
@@ -143,37 +154,57 @@ function Greeter({
   const date = now
     .toLocaleDateString(undefined, { month: "short", day: "numeric" })
     .toLowerCase();
+  const visibleStats = hasUserShows ? stats : [];
 
   return (
-    <section className="grid items-end gap-8 pb-3.5 pt-7 lg:grid-cols-[1.3fr_1fr] lg:gap-12">
+    <section className="grid items-end gap-8 pb-3.5 pt-7 lg:gap-12 lg:grid-cols-[1.3fr_1fr]">
       <div>
         <div className="eyebrow">
           {day} {period} · {date}
         </div>
         <h1 className="mt-2.5 text-[clamp(38px,4.4vw,58px)] font-medium leading-[1.02] tracking-[-0.03em]">
-          Welcome back, <em>{username}</em>.
+          {hasUserShows ? (
+            <>
+              Welcome back, <em>{username}</em>.
+            </>
+          ) : (
+            <>
+              Hey <em>{username}</em>, let's begin.
+            </>
+          )}
         </h1>
         <p className="mt-3 max-w-[52ch] text-sm text-muted">
-          You've got{" "}
-          <b className="text-ink">
-            {queueCount} {queueCount === 1 ? "show" : "shows"} in your queue
-          </b>{" "}
-          and we've lined up {recCount} new recommendations based on your watch
-          history. Your sofa awaits.
+          {hasUserShows ? (
+            <>
+              You've got{" "}
+              <b className="text-ink">
+                {queueCount} {queueCount === 1 ? "show" : "shows"} in your queue
+              </b>{" "}
+              and we've lined up {recCount} recommendations tuned to what you've
+              watched.
+            </>
+          ) : (
+            <>
+              Your queue and log are empty for now — start by adding a show
+              from the picks below, and your recommendations will get smarter.
+            </>
+          )}
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-line bg-line md:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.l} className="bg-paper px-4 py-4">
-            <div className="font-display text-[28px] font-medium leading-none tracking-[-0.02em]">
-              {s.n}
+      {visibleStats.length > 0 && (
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-line bg-line md:grid-cols-4">
+          {visibleStats.map((s) => (
+            <div key={s.l} className="bg-paper px-4 py-4">
+              <div className="font-display text-[28px] font-medium leading-none tracking-[-0.02em]">
+                {s.n}
+              </div>
+              <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                {s.l}
+              </div>
             </div>
-            <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-              {s.l}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
