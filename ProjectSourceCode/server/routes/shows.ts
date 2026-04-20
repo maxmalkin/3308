@@ -145,6 +145,34 @@ shows.get("/recommendations", async (c) => {
   return c.json({ results });
 });
 
+shows.get("/showcase", async (c) => {
+  const limitParam = Number(c.req.query("limit") ?? 12);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(Math.trunc(limitParam), 1), 24)
+    : 12;
+
+  const results = await sql`
+    SELECT
+      id,
+      name,
+      original_name,
+      overview,
+      poster_path,
+      backdrop_path,
+      first_air_date,
+      vote_average,
+      genres,
+      networks,
+      watch_providers_us
+    FROM public.shows
+    WHERE poster_path IS NOT NULL
+    ORDER BY popularity DESC NULLS LAST
+    LIMIT ${limit}
+  `;
+
+  return c.json({ results });
+});
+
 shows.get("/:id", async (c) => {
   const parsed = ShowIdParamSchema.safeParse({ id: c.req.param("id") });
   if (!parsed.success) {
