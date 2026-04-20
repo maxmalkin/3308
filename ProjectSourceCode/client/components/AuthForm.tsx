@@ -101,19 +101,12 @@ export default function AuthForm({ mode }: { mode: Mode }) {
                 <h1 className="mb-2.5 text-[clamp(30px,3vw,42px)] font-medium leading-[1.02] tracking-[-0.03em]">
                   Welcome <em>back.</em>
                 </h1>
-                <p className="mx-auto mb-6 max-w-[46ch] text-sm leading-[1.55] text-ink-2">
-                  Pick up where you left off — your queue and log are waiting.
-                </p>
               </>
             ) : (
               <>
                 <h1 className="mb-2.5 text-[clamp(30px,3vw,42px)] font-medium leading-[1.02] tracking-[-0.03em]">
                   Make a <em>queue</em> that's yours.
                 </h1>
-                <p className="mx-auto mb-6 max-w-[46ch] text-sm leading-[1.55] text-ink-2">
-                  30 seconds. No ads, no spam. We'll never sell your watch
-                  history.
-                </p>
               </>
             )}
 
