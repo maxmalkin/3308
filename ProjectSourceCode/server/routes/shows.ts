@@ -26,6 +26,10 @@ async function getOwnedServices(userId: string): Promise<string[]> {
   return (row?.owned_services as string[] | undefined) ?? [];
 }
 
+function ownedLikePatterns(owned: string[]): string[] {
+  return owned.map((s) => `%${s.replace(/\+/g, "")}%`);
+}
+
 shows.get("/search", async (c) => {
   const parsed = ShowSearchQuerySchema.safeParse(c.req.query());
   if (!parsed.success) {
@@ -64,7 +68,7 @@ shows.get("/search", async (c) => {
             FROM jsonb_array_elements(
               COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
             ) p
-            WHERE p->>'provider_name' = ANY(${owned}::text[])
+            WHERE p->>'provider_name' ILIKE ANY(${ownedLikePatterns(owned)}::text[])
           )
         )
       ORDER BY
@@ -103,10 +107,48 @@ shows.get("/recommendations", async (c) => {
   `;
 
   if (userShowRows.length === 0) {
-    return c.json({
-      results: [],
-      message: "Add shows to your list to get recommendations",
-    });
+    let fallback = await sql`
+      SELECT * FROM (
+        SELECT
+          s.id, s.name, s.original_name, s.overview, s.poster_path,
+          s.backdrop_path, s.first_air_date, s.vote_average, s.genres,
+          s.networks, s.watch_providers_us
+        FROM public.shows s
+        WHERE s.poster_path IS NOT NULL
+          AND (
+            ${!hasOwnedFilter}::boolean
+            OR s.watch_providers_us IS NULL
+            OR EXISTS (
+              SELECT 1
+              FROM jsonb_array_elements(
+                COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+              ) p
+              WHERE p->>'provider_name' ILIKE ANY(${ownedLikePatterns(owned)}::text[])
+            )
+          )
+        ORDER BY popularity DESC NULLS LAST
+        LIMIT 100
+      ) pool
+      ORDER BY random()
+      LIMIT ${RECOMMENDATION_LIMIT}
+    `;
+    if (fallback.length === 0) {
+      fallback = await sql`
+        SELECT * FROM (
+          SELECT
+            s.id, s.name, s.original_name, s.overview, s.poster_path,
+            s.backdrop_path, s.first_air_date, s.vote_average, s.genres,
+            s.networks, s.watch_providers_us
+          FROM public.shows s
+          WHERE s.poster_path IS NOT NULL
+          ORDER BY popularity DESC NULLS LAST
+          LIMIT 100
+        ) pool
+        ORDER BY random()
+        LIMIT ${RECOMMENDATION_LIMIT}
+      `;
+    }
+    return c.json({ results: fallback, source: "popular" });
   }
 
   const excludeIds = userShowRows.map((r) => r.id as number);
@@ -118,30 +160,118 @@ shows.get("/recommendations", async (c) => {
   `;
 
   const avgVec = avgRow?.avg_embedding as string | null;
-  if (!avgVec) return c.json({ results: [] });
+
+  let results: Array<Record<string, unknown>> = [];
+  if (avgVec) {
+    results = await sql`
+      SELECT
+        s.*,
+        (s.embedding <=> ${avgVec}::vector) AS distance
+      FROM public.shows s
+      WHERE s.embedding IS NOT NULL
+        AND NOT (s.id = ANY(${excludeIds}::int[]))
+        AND (
+          ${!hasOwnedFilter}::boolean
+          OR s.watch_providers_us IS NULL
+          OR EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements(
+              COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+            ) p
+            WHERE p->>'provider_name' ILIKE ANY(${ownedLikePatterns(owned)}::text[])
+          )
+        )
+      ORDER BY s.embedding <=> ${avgVec}::vector
+      LIMIT ${RECOMMENDATION_LIMIT}
+    `;
+  }
+
+  if (results.length > 0) {
+    return c.json({ results, source: "embedding" });
+  }
+
+  const popular = await sql`
+    SELECT * FROM (
+      SELECT
+        s.id, s.name, s.original_name, s.overview, s.poster_path,
+        s.backdrop_path, s.first_air_date, s.vote_average, s.genres,
+        s.networks, s.watch_providers_us
+      FROM public.shows s
+      WHERE s.poster_path IS NOT NULL
+        AND NOT (s.id = ANY(${excludeIds}::int[]))
+      ORDER BY popularity DESC NULLS LAST
+      LIMIT 100
+    ) pool
+    ORDER BY random()
+    LIMIT ${RECOMMENDATION_LIMIT}
+  `;
+  return c.json({ results: popular, source: "popular" });
+});
+
+shows.get("/showcase", async (c) => {
+  const limitParam = Number(c.req.query("limit") ?? 24);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(Math.trunc(limitParam), 1), 60)
+    : 24;
+  const random = c.req.query("random") !== "false";
+  const poolSize = Math.max(limit * 4, 100);
+
+  const results = random
+    ? await sql`
+        SELECT * FROM (
+          SELECT
+            id, name, original_name, overview, poster_path, backdrop_path,
+            first_air_date, vote_average, genres, networks, watch_providers_us
+          FROM public.shows
+          WHERE poster_path IS NOT NULL
+          ORDER BY popularity DESC NULLS LAST
+          LIMIT ${poolSize}
+        ) pool
+        ORDER BY random()
+        LIMIT ${limit}
+      `
+    : await sql`
+        SELECT
+          id, name, original_name, overview, poster_path, backdrop_path,
+          first_air_date, vote_average, genres, networks, watch_providers_us
+        FROM public.shows
+        WHERE poster_path IS NOT NULL
+        ORDER BY popularity DESC NULLS LAST
+        LIMIT ${limit}
+      `;
+
+  c.header("Cache-Control", "no-store");
+  return c.json({ results });
+});
+
+shows.get("/:id/related", async (c) => {
+  const parsed = ShowIdParamSchema.safeParse({ id: c.req.param("id") });
+  if (!parsed.success) {
+    return c.json({ error: z.treeifyError(parsed.error) }, 400);
+  }
+  const limitParam = Number(c.req.query("limit") ?? 8);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(Math.trunc(limitParam), 1), 24)
+    : 8;
+
+  const [base] = await sql`
+    SELECT embedding FROM public.shows WHERE id = ${parsed.data.id}
+  `;
+  const baseVec = base?.embedding as string | null;
+  if (!baseVec) return c.json({ results: [] });
 
   const results = await sql`
     SELECT
-      s.*,
-      (s.embedding <=> ${avgVec}::vector) AS distance
+      s.id, s.name, s.original_name, s.poster_path, s.backdrop_path,
+      s.first_air_date, s.vote_average, s.genres, s.networks,
+      s.watch_providers_us,
+      (s.embedding <=> ${baseVec}::vector) AS distance
     FROM public.shows s
     WHERE s.embedding IS NOT NULL
-      AND NOT (s.id = ANY(${excludeIds}::int[]))
-      AND (
-        ${!hasOwnedFilter}::boolean
-        OR s.watch_providers_us IS NULL
-        OR EXISTS (
-          SELECT 1
-          FROM jsonb_array_elements(
-            COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
-          ) p
-          WHERE p->>'provider_name' = ANY(${owned}::text[])
-        )
-      )
-    ORDER BY s.embedding <=> ${avgVec}::vector
-    LIMIT ${RECOMMENDATION_LIMIT}
+      AND s.id <> ${parsed.data.id}
+    ORDER BY s.embedding <=> ${baseVec}::vector
+    LIMIT ${limit}
   `;
-
   return c.json({ results });
 });
 

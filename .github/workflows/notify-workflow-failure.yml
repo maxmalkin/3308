@@ -5,6 +5,7 @@ on:
     workflows:
       - Build & Lint
       - Server Tests
+      - Client Tests
     types: [completed]
 
 jobs:

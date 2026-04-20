@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
+    "boneyard-js": "^1.7.7",
     "next": "16.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -17,10 +20,16 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

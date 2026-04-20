@@ -1,13 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-
-type Notification = {
-  id: string;
-  message: string;
-  is_read: boolean;
-  created_at: string;
-};
+import type { Notification } from "@/types/api";
 
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
