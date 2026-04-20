@@ -2,7 +2,7 @@ import type { Show } from "@/types/show";
 import SearchClient from "./SearchClient";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 40;
 
 type SearchResp = {
   results: Show[];
