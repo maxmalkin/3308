@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import NavSearch from "@/components/NavSearch";
 import type { NavLink } from "@/types/ui";
+import { clearApiResourceCache } from "@/hooks/useApiResource";
 import { clearSession, isAuthenticated } from "@/utils/api";
 
 const LOGGED_IN_LINKS: NavLink[] = [
@@ -29,6 +30,7 @@ export default function Navbar({ active }: { active?: string } = {}) {
 
   function handleSignOut() {
     clearSession();
+    clearApiResourceCache();
     setIsLoggedIn(false);
     window.location.assign("/");
   }
