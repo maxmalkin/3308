@@ -39,11 +39,13 @@ export default function LoggedInHome() {
   const recRail = recShows.slice(2);
 
   const stats = useMemo(() => {
-    const tracked = watchlistShows.length + logShows.length;
-    const inQueue = watchlistShows.length;
-    const logged = logShows.length;
+    const wl = watchlist.data?.shows ?? [];
+    const lg = log.data?.shows ?? [];
+    const tracked = wl.length + lg.length;
+    const inQueue = wl.length;
+    const logged = lg.length;
     const yearNow = new Date().getFullYear();
-    const finishedThisYear = logShows.filter(
+    const finishedThisYear = lg.filter(
       (s) =>
         s.user_status === "Watched" &&
         s.user_updated_at &&
@@ -55,7 +57,7 @@ export default function LoggedInHome() {
       { n: finishedThisYear, l: `finished this year` },
       { n: logged, l: "logged entries" },
     ];
-  }, [watchlistShows, logShows]);
+  }, [watchlist.data, log.data]);
 
   const hasUserShows = watchlistShows.length + logShows.length > 0;
   const showQueueStrip =
