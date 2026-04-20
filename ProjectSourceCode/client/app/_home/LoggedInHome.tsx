@@ -3,7 +3,7 @@
 import { Skeleton } from "boneyard-js/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import EmptyState from "@/components/EmptyState";
 import ErrorBanner from "@/components/ErrorBanner";
 import Footer from "@/components/Footer";
@@ -547,13 +547,51 @@ function RecsBlock({
           />
         )
       ) : (
-        <div className="mb-12 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-          {filtered.slice(0, 12).map((s) => (
-            <ShowCard key={s.id} show={s} />
-          ))}
-        </div>
+        <RecsGrid shows={filtered} />
       )}
     </>
+  );
+}
+
+function RecsGrid({ shows }: { shows: Show[] }) {
+  const PAGE = 18;
+  const [visible, setVisible] = useState(PAGE);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setVisible(PAGE);
+  }, []);
+
+  useEffect(() => {
+    if (visible >= shows.length) return;
+    const node = sentinelRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisible((v) => Math.min(v + PAGE, shows.length));
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [visible, shows.length]);
+
+  return (
+    <div className="mb-12">
+      <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+        {shows.slice(0, visible).map((s) => (
+          <ShowCard key={s.id} show={s} />
+        ))}
+      </div>
+      <div ref={sentinelRef} className="h-10" />
+      {visible >= shows.length && shows.length > PAGE && (
+        <p className="mt-6 text-center font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+          End of recommendations
+        </p>
+      )}
+    </div>
   );
 }
 
