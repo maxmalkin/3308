@@ -18,7 +18,9 @@ const BONE_PROPS = {
 } as const;
 
 export default function LoggedOutHome() {
-  const showcase = useApiResource<ShowcaseResp>("shows/showcase?limit=12");
+  const showcase = useApiResource<ShowcaseResp>(
+    "shows/showcase?limit=24&random=true",
+  );
   const isLoading = showcase.status === "loading";
   const shows = showcase.data?.results ?? [];
 
@@ -153,13 +155,30 @@ function PosterTile({ show, badge }: { show: Show; badge?: string }) {
 }
 
 function ShowcaseStrip({ shows }: { shows: Show[] }) {
-  const strip = shows.slice(0, 8);
-  if (strip.length === 0) return null;
+  if (shows.length === 0) return null;
+  const fadeMask =
+    "linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%)";
   return (
-    <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 lg:grid-cols-8">
-      {strip.map((s) => (
-        <PosterTile key={s.id} show={s} />
-      ))}
+    <div
+      className="-mx-6 overflow-x-auto px-6 md:-mx-12 md:px-12 [scrollbar-width:thin]"
+      style={{
+        WebkitMaskImage: fadeMask,
+        maskImage: fadeMask,
+      }}
+    >
+      <ul className="flex w-max gap-3 pb-3">
+        {shows.map((s) => (
+          <li key={s.id} className="w-[140px] shrink-0 sm:w-[160px]">
+            <Link
+              href={`/shows/${s.id}`}
+              className="block transition hover:-translate-y-0.5"
+              aria-label={s.name ?? s.original_name ?? "Show"}
+            >
+              <PosterTile show={s} />
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
