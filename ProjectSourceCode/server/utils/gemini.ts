@@ -22,7 +22,23 @@ async function throttle() {
   nextAvailableAt = Math.max(now, nextAvailableAt) + MIN_INTERVAL_MS;
 }
 
+const QUERY_CACHE_MAX = 500;
+const QUERY_CACHE_TTL_MS = 10 * 60 * 1000;
+const queryCache = new Map<string, { values: number[]; ts: number }>();
+
+function cacheKey(text: string): string {
+  return text.trim().toLowerCase();
+}
+
 export async function embedText(text: string): Promise<number[]> {
+  const key = cacheKey(text);
+  const cached = queryCache.get(key);
+  const now = Date.now();
+  if (cached && now - cached.ts < QUERY_CACHE_TTL_MS) {
+    queryCache.delete(key);
+    queryCache.set(key, cached);
+    return cached.values;
+  }
   await throttle();
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${EMBED_MODEL}:embedContent?key=${apiKey()}`;
   const res = await fetch(url, {
@@ -43,6 +59,11 @@ export async function embedText(text: string): Promise<number[]> {
   if (!values || values.length === 0) {
     throw new Error("Gemini embedding response missing values");
   }
+  if (queryCache.size >= QUERY_CACHE_MAX) {
+    const oldest = queryCache.keys().next().value;
+    if (oldest !== undefined) queryCache.delete(oldest);
+  }
+  queryCache.set(key, { values, ts: now });
   return values;
 }
 

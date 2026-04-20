@@ -26,6 +26,9 @@ export default function ShowDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? null;
   const resource = useApiResource<ShowResp>(id ? `shows/${id}` : null);
+  const related = useApiResource<RelatedResp>(
+    id ? `shows/${id}/related?limit=8` : null,
+  );
   const isLoading = resource.status === "loading";
 
   return (
@@ -59,7 +62,7 @@ export default function ShowDetailPage() {
           {(data) =>
             data.show ? (
               <Skeleton name="show-detail" loading={isLoading} {...BONE_PROPS}>
-                <ShowDetail show={data.show} />
+                <ShowDetail show={data.show} related={related} />
               </Skeleton>
             ) : (
               <div className="mx-auto max-w-300 px-6 py-16 md:px-12">
@@ -112,7 +115,13 @@ function ShowDetailSkeleton() {
   );
 }
 
-function ShowDetail({ show }: { show: Show }) {
+function ShowDetail({
+  show,
+  related,
+}: {
+  show: Show;
+  related: import("@/types/api").Resource<RelatedResp>;
+}) {
   const title = show.name ?? show.original_name ?? "Untitled";
   const backdrop = tmdbImageUrl(show.backdrop_path, "w1280");
   const poster = tmdbImageUrl(show.poster_path, "w500");
@@ -385,7 +394,7 @@ function ShowDetail({ show }: { show: Show }) {
               </section>
             )}
 
-            <RelatedSection showId={show.id} />
+            <RelatedSection related={related} />
           </div>
         </div>
       </div>
