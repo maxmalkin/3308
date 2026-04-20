@@ -204,7 +204,7 @@ function ShowDetail({ show }: { show: Show }) {
             {(popularity !== null ||
               voteCount !== null ||
               runtime !== null) && (
-              <div className="rounded-lg border border-line bg-paper px-4 py-3 text-[13px] text-ink-2">
+              <div className="rounded-lg border border-line bg-oat px-4 py-3 text-[13px] text-ink-2">
                 {runtime !== null && (
                   <div className="flex justify-between border-b border-line-soft py-1.5 last:border-0">
                     <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
@@ -267,7 +267,7 @@ function ShowDetail({ show }: { show: Show }) {
           </aside>
 
           <div>
-            <div className="mb-6 lg:pt-12">
+            <div className="mb-4 lg:pt-12">
               <h1 className="font-display text-[clamp(48px,6vw,84px)] font-medium leading-[0.96] tracking-[-0.03em]">
                 {title}
               </h1>
@@ -277,6 +277,19 @@ function ShowDetail({ show }: { show: Show }) {
                 </p>
               )}
             </div>
+
+            {show.genres && show.genres.length > 0 && (
+              <div className="mb-7 flex flex-wrap gap-2">
+                {show.genres.map((g) => (
+                  <span
+                    key={g.id}
+                    className="rounded-full border border-line bg-oat px-3 py-1 text-sm text-ink-2"
+                  >
+                    {g.name}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div className="mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-line bg-line md:grid-cols-4">
               <Stat label="Aired" value={years ?? "—"} />
@@ -298,59 +311,69 @@ function ShowDetail({ show }: { show: Show }) {
               </section>
             )}
 
-            {(lastEp || nextEp) && (
+            {(lastEp || nextEp || seasons.length > 0) && (
               <section className="mb-10">
-                <div className="eyebrow mb-3">Episodes</div>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2">
                   {lastEp && (
-                    <EpisodeCard label="Last aired" episode={lastEp} />
+                    <div>
+                      <div className="eyebrow mb-3">Last aired</div>
+                      <EpisodeCard episode={lastEp} />
+                    </div>
                   )}
-                  {nextEp && <EpisodeCard label="Next up" episode={nextEp} />}
+                  {seasons.length > 0 && (
+                    <div>
+                      <div className="eyebrow mb-3">Seasons</div>
+                      <ul className="grid max-h-[420px] gap-2 overflow-y-auto pr-1">
+                        {seasons.map((s) => (
+                          <li
+                            key={s.id ?? s.season_number}
+                            className="grid items-center gap-3 rounded-lg border border-line bg-oat px-3 py-2.5"
+                            style={{ gridTemplateColumns: "44px 1fr auto" }}
+                          >
+                            <div className="aspect-[2/3] w-11 overflow-hidden rounded-sm border border-line bg-oat">
+                              {s.poster_path ? (
+                                <Image
+                                  src={
+                                    tmdbImageUrl(s.poster_path, "w300") ?? ""
+                                  }
+                                  alt={s.name ?? `Season ${s.season_number}`}
+                                  width={44}
+                                  height={66}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : null}
+                            </div>
+                            <div>
+                              <div className="font-display text-[14px] font-medium tracking-[-0.015em]">
+                                {s.name ?? `Season ${s.season_number}`}
+                              </div>
+                              <div className="mt-0.5 font-mono text-[10px] tracking-[0.06em] text-muted">
+                                {s.episode_count
+                                  ? `${s.episode_count} episodes`
+                                  : "—"}
+                                {s.air_date
+                                  ? ` · ${s.air_date.slice(0, 4)}`
+                                  : ""}
+                              </div>
+                            </div>
+                            {typeof s.vote_average === "number" &&
+                              s.vote_average > 0 && (
+                                <span className="font-mono text-[11px] text-[var(--mustard)]">
+                                  ★ {s.vote_average.toFixed(1)}
+                                </span>
+                              )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-              </section>
-            )}
-
-            {seasons.length > 0 && (
-              <section className="mb-10">
-                <div className="eyebrow mb-3">Seasons</div>
-                <ul className="grid gap-2">
-                  {seasons.map((s) => (
-                    <li
-                      key={s.id ?? s.season_number}
-                      className="grid items-center gap-3 rounded-lg border border-line bg-paper px-3 py-2.5"
-                      style={{ gridTemplateColumns: "44px 1fr auto" }}
-                    >
-                      <div className="aspect-[2/3] w-11 overflow-hidden rounded-sm border border-line bg-oat">
-                        {s.poster_path ? (
-                          <Image
-                            src={tmdbImageUrl(s.poster_path, "w300") ?? ""}
-                            alt={s.name ?? `Season ${s.season_number}`}
-                            width={44}
-                            height={66}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : null}
-                      </div>
-                      <div>
-                        <div className="font-display text-[14px] font-medium tracking-[-0.015em]">
-                          {s.name ?? `Season ${s.season_number}`}
-                        </div>
-                        <div className="mt-0.5 font-mono text-[10px] tracking-[0.06em] text-muted">
-                          {s.episode_count
-                            ? `${s.episode_count} episodes`
-                            : "—"}
-                          {s.air_date ? ` · ${s.air_date.slice(0, 4)}` : ""}
-                        </div>
-                      </div>
-                      {typeof s.vote_average === "number" &&
-                        s.vote_average > 0 && (
-                          <span className="font-mono text-[11px] text-[var(--mustard)]">
-                            ★ {s.vote_average.toFixed(1)}
-                          </span>
-                        )}
-                    </li>
-                  ))}
-                </ul>
+                {nextEp && (
+                  <div className="mt-6 max-w-[36rem]">
+                    <div className="eyebrow mb-3">Next up</div>
+                    <EpisodeCard episode={nextEp} />
+                  </div>
+                )}
               </section>
             )}
 
@@ -361,7 +384,7 @@ function ShowDetail({ show }: { show: Show }) {
                   {cast.map((c) => (
                     <li
                       key={c.id ?? c.name}
-                      className="flex items-center gap-2.5 rounded-full border border-line bg-paper py-1 pl-1 pr-3"
+                      className="flex items-center gap-2.5 rounded-full border border-line bg-oat py-1 pl-1 pr-3"
                     >
                       <span
                         className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-oat font-display text-sm text-ink-2"
@@ -386,22 +409,6 @@ function ShowDetail({ show }: { show: Show }) {
               </section>
             )}
 
-            {show.genres && show.genres.length > 0 && (
-              <section className="mb-10">
-                <div className="eyebrow mb-3">Genres</div>
-                <div className="flex flex-wrap gap-2">
-                  {show.genres.map((g) => (
-                    <span
-                      key={g.id}
-                      className="rounded-full border border-line bg-paper px-3 py-1 text-sm text-ink-2"
-                    >
-                      {g.name}
-                    </span>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {show.status && (
               <section className="mb-10">
                 <div className="eyebrow mb-1">Status</div>
@@ -417,14 +424,14 @@ function ShowDetail({ show }: { show: Show }) {
   );
 }
 
-function EpisodeCard({ label, episode }: { label: string; episode: Episode }) {
+function EpisodeCard({ episode }: { episode: Episode }) {
   const still = episode.still_path
     ? tmdbImageUrl(episode.still_path, "w780")
     : null;
   return (
-    <div className="overflow-hidden rounded-[10px] border border-line bg-paper">
+    <div className="overflow-hidden rounded-[10px] border border-line bg-oat">
       {still && (
-        <div className="relative aspect-[16/9] w-full bg-oat">
+        <div className="relative aspect-[16/9] w-full bg-ink/10">
           <Image
             src={still}
             alt=""
@@ -435,7 +442,6 @@ function EpisodeCard({ label, episode }: { label: string; episode: Episode }) {
         </div>
       )}
       <div className="p-4">
-        <div className="eyebrow mb-1">{label}</div>
         <div className="font-display text-[16px] font-medium tracking-[-0.02em]">
           {episode.name ?? "Untitled episode"}
           <span className="ml-2 font-mono text-[11px] font-normal text-muted">
