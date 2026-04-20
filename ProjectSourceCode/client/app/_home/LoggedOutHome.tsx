@@ -506,27 +506,35 @@ function PosterWall() {
 }
 
 function Marquee() {
-  const words = [
-    "track",
-    "queue",
-    "<i>recommend</i>",
-    "log",
-    "rate",
-    "revisit",
-    "organise",
-    "<i>discover</i>",
-    "remember",
+  const words: { text: string; italic?: boolean }[] = [
+    { text: "track" },
+    { text: "queue" },
+    { text: "recommend", italic: true },
+    { text: "log" },
+    { text: "rate" },
+    { text: "revisit" },
+    { text: "organise" },
+    { text: "discover", italic: true },
+    { text: "remember" },
   ];
-  const line = words.map((w) => `<b>${w}</b>`).join(" · ");
-  const repeated = `${line} · ${line} · ${line} · ${line}`;
+  const line = Array.from({ length: 4 })
+    .map((_, lineIdx) =>
+      words.map((w, i) => (
+        <span key={`${lineIdx}-${i}-${w.text}`} className="inline-flex items-center gap-[60px]">
+          <span className={w.italic ? "font-display italic text-[var(--accent)]" : "font-medium text-ink"}>
+            {w.text}
+          </span>
+          <span aria-hidden>·</span>
+        </span>
+      )),
+    )
+    .flat();
   return (
     <div className="mt-5 overflow-hidden border-y border-line bg-paper">
-      <div
-        className="marquee-track py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted"
-        dangerouslySetInnerHTML={{
-          __html: `<span>${repeated}</span><span>${repeated}</span>`,
-        }}
-      />
+      <div className="marquee-track py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+        <span className="inline-flex items-center gap-[60px]">{line}</span>
+        <span className="inline-flex items-center gap-[60px]">{line}</span>
+      </div>
     </div>
   );
 }
