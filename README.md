@@ -1,4 +1,8 @@
-# 3308
+# Pillarboxd
+
+[![Build & Lint](https://github.com/maxmalkin/3308/actions/workflows/build.yml/badge.svg)](https://github.com/maxmalkin/3308/actions/workflows/build.yml)
+[![Client Tests](https://github.com/maxmalkin/3308/actions/workflows/test-client.yml/badge.svg)](https://github.com/maxmalkin/3308/actions/workflows/test-client.yml)
+[![Server Tests](https://github.com/maxmalkin/3308/actions/workflows/test-server.yml/badge.svg)](https://github.com/maxmalkin/3308/actions/workflows/test-server.yml)
 
 Team Number: `012-2`
 
@@ -25,28 +29,58 @@ A large functionality of our application centers around recommendations. We focu
 
 ---
 
+## Stack
+
+- **Client:** Next.js
+- **Server:** Node.js
+- **Database / Auth:** Supabase
+- **External APIs:** TMDB
+- **Testing:** Jest
+- **CI:** GitHub Actions
+
+---
+
+## Prerequisites
+
+- Node.js
+- pnpm
+- Docker
+- Supabase keys
+- TMDB API key
+- Google API key
+
+Create a `server/.env` from the `server/.env.example` file.
+
+---
+
 ## Running the Project
-
-Prerequisites:
-
-- [ ] Node.js
-- [ ] pnpm
 
 ```bash
 cd ProjectSourceCode
 pnpm install
-# Create server/.env with needed keys
-pnpm migrate:apply     # optionally apply migrations 
+pnpm migrate:apply     # optionally apply migrations
 pnpm dev               # runs server and client together
 ```
 
 Other useful scripts:
 
 - `pnpm server` / `pnpm client` — run one side only
-- `pnpm test:server` — Jest tests
-- `pnpm lint` / `pnpm format` — Biome check/format
+- `pnpm lint` / `pnpm format` — check/format
 - `pnpm migrate:create` — scaffold a new migration
+
+---
+
+## Tests
+
+From `ProjectSourceCode/`:
+
+```bash
+pnpm test:client    
+pnpm test:server     
+```
+
+---
 
 ## Live
 
-[https://pillarboxd.malkin.io](https://pillarboxd.malkin.io)
+<https://pillarboxd.malkin.io/>
