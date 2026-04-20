@@ -1,130 +1,77 @@
-"use client";
-
-import { Skeleton } from "boneyard-js/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { notFound } from "next/navigation";
 import ErrorBanner from "@/components/ErrorBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { ResourceView } from "@/components/ResourceView";
-import {
-  clearApiResourceCache,
-  useApiResource,
-} from "@/hooks/useApiResource";
-import type { RelatedResp, ShowResp } from "@/types/api";
-import type { Show, WatchStatus } from "@/types/show";
+import type { Show } from "@/types/show";
 import type { Creator, Episode, Season } from "@/types/tmdb";
-import { ApiError, apiFetch, isAuthenticated } from "@/utils/api";
 import { tmdbImageUrl, yearRange } from "@/utils/show";
+import ActionBar from "./ActionBar";
 
-const BONE_PROPS = {
-  animate: "shimmer",
-  color: "var(--oat)",
-  shimmerColor: "var(--paper)",
-} as const;
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-export default function ShowDetailPage() {
-  const params = useParams<{ id: string }>();
-  const id = params?.id ?? null;
-  const resource = useApiResource<ShowResp>(id ? `shows/${id}` : null);
-  const related = useApiResource<RelatedResp>(
-    id ? `shows/${id}/related?limit=8` : null,
-  );
-  const isLoading = resource.status === "loading";
+type ShowResp = { show: Show };
+type RelatedResp = { results: Show[] };
+
+async function fetchShow(id: string): Promise<Show | null> {
+  const res = await fetch(`${API_URL}/api/shows/${id}`, {
+    next: { revalidate: 3600 },
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`Show fetch failed (${res.status})`);
+  const data = (await res.json()) as ShowResp;
+  return data.show ?? null;
+}
+
+async function fetchRelated(id: string): Promise<Show[]> {
+  try {
+    const res = await fetch(`${API_URL}/api/shows/${id}/related?limit=8`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const data = (await res.json()) as RelatedResp;
+    return data.results ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function ShowDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  let show: Show | null = null;
+  let related: Show[] = [];
+  let fatal: string | null = null;
+  try {
+    [show, related] = await Promise.all([fetchShow(id), fetchRelated(id)]);
+  } catch (e) {
+    fatal = e instanceof Error ? e.message : "Failed to load show";
+  }
+
+  if (!show && !fatal) notFound();
 
   return (
     <main className="flex min-h-screen flex-col bg-cream">
       <Navbar />
       <div className="flex-1">
-        <ResourceView
-          resource={resource}
-          loading={
-            <Skeleton name="show-detail" loading={true} {...BONE_PROPS}>
-              <ShowDetailSkeleton />
-            </Skeleton>
-          }
-          errorView={(err) => (
-            <div className="mx-auto max-w-300 px-6 py-16 md:px-12">
-              {err?.status === 404 ? (
-                <div className="rounded-2xl border border-line bg-oat p-8">
-                  <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
-                    Show not found
-                  </h1>
-                  <p className="mt-2 text-sm text-muted">
-                    We couldn't find that show. It may have been removed.
-                  </p>
-                </div>
-              ) : (
-                <ErrorBanner message={err?.message} />
-              )}
-            </div>
-          )}
-        >
-          {(data) =>
-            data.show ? (
-              <Skeleton name="show-detail" loading={isLoading} {...BONE_PROPS}>
-                <ShowDetail show={data.show} related={related} />
-              </Skeleton>
-            ) : (
-              <div className="mx-auto max-w-300 px-6 py-16 md:px-12">
-                <div className="rounded-2xl border border-line bg-oat p-8">
-                  <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
-                    Show not found
-                  </h1>
-                </div>
-              </div>
-            )
-          }
-        </ResourceView>
+        {fatal ? (
+          <div className="mx-auto max-w-300 px-6 py-16 md:px-12">
+            <ErrorBanner message={fatal} />
+          </div>
+        ) : show ? (
+          <ShowDetail show={show} related={related} />
+        ) : null}
       </div>
       <Footer />
     </main>
   );
 }
 
-function ShowDetailSkeleton() {
-  return (
-    <>
-      <div className="h-72 w-full bg-oat md:h-96" />
-      <div className="mx-auto -mt-32 max-w-300 px-6 pb-16 md:-mt-44 md:px-12">
-        <div className="grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-12">
-          <div className="space-y-4">
-            <div className="aspect-2/3 w-full max-w-65 rounded-md bg-oat" />
-            <div className="h-10 w-full rounded-lg bg-oat" />
-            <div className="h-10 w-full rounded-lg bg-oat" />
-            <div className="h-10 w-full rounded-lg bg-oat" />
-          </div>
-          <div className="space-y-6">
-            <div className="lg:pt-12">
-              <div className="h-16 w-2/3 rounded bg-oat" />
-              <div className="mt-3 h-4 w-1/2 rounded bg-oat" />
-            </div>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              {["a", "b", "c", "d"].map((k) => (
-                <div key={k} className="h-20 rounded bg-oat" />
-              ))}
-            </div>
-            <div className="space-y-2">
-              <div className="h-4 w-full rounded bg-oat" />
-              <div className="h-4 w-11/12 rounded bg-oat" />
-              <div className="h-4 w-10/12 rounded bg-oat" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function ShowDetail({
-  show,
-  related,
-}: {
-  show: Show;
-  related: import("@/types/api").Resource<RelatedResp>;
-}) {
+function ShowDetail({ show, related }: { show: Show; related: Show[] }) {
   const title = show.name ?? show.original_name ?? "Untitled";
   const backdrop = tmdbImageUrl(show.backdrop_path, "w1280");
   const poster = tmdbImageUrl(show.poster_path, "w500");
@@ -397,7 +344,47 @@ function ShowDetail({
               </section>
             )}
 
-            <RelatedSection related={related} />
+            {related.length > 0 && (
+              <section className="mb-4">
+                <div className="eyebrow mb-3">If you liked this</div>
+                <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
+                  {related.slice(0, 8).map((s) => {
+                    const url = tmdbImageUrl(s.poster_path, "w300");
+                    const rTitle = s.name ?? s.original_name ?? "Untitled";
+                    return (
+                      <li key={s.id}>
+                        <Link
+                          href={`/shows/${s.id}`}
+                          className="group block transition hover:-translate-y-0.5"
+                        >
+                          <div className="relative aspect-2/3 overflow-hidden rounded border border-line bg-oat">
+                            {url ? (
+                              <Image
+                                src={url}
+                                alt={rTitle}
+                                fill
+                                sizes="(max-width: 640px) 50vw, 20vw"
+                                className="object-cover transition group-hover:scale-[1.02]"
+                              />
+                            ) : (
+                              <div className="grid h-full place-items-center px-2 text-center text-[10px] text-muted">
+                                {rTitle}
+                              </div>
+                            )}
+                          </div>
+                          <div className="mt-1.5 truncate text-[13px] font-medium">
+                            {rTitle}
+                          </div>
+                          <div className="font-mono text-[10px] tracking-[0.06em] text-muted">
+                            {s.first_air_date?.slice(0, 4) ?? "—"}
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            )}
           </div>
         </div>
       </div>
@@ -445,59 +432,6 @@ function EpisodeCard({ episode }: { episode: Episode }) {
   );
 }
 
-function RelatedSection({
-  related,
-}: {
-  related: import("@/types/api").Resource<RelatedResp>;
-}) {
-  const isLoading = related.status === "loading";
-  const shows = related.data?.results ?? [];
-  if (!isLoading && shows.length === 0) return null;
-  return (
-    <section className="mb-4">
-      <div className="eyebrow mb-3">If you liked this</div>
-      <Skeleton name="show-related" loading={isLoading} {...BONE_PROPS}>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          {shows.slice(0, 8).map((s) => {
-            const url = tmdbImageUrl(s.poster_path, "w300");
-            const title = s.name ?? s.original_name ?? "Untitled";
-            return (
-              <li key={s.id}>
-                <Link
-                  href={`/shows/${s.id}`}
-                  className="group block transition hover:-translate-y-0.5"
-                >
-                  <div className="relative aspect-2/3 overflow-hidden rounded border border-line bg-oat">
-                    {url ? (
-                      <Image
-                        src={url}
-                        alt={title}
-                        fill
-                        sizes="(max-width: 640px) 50vw, 20vw"
-                        className="object-cover transition group-hover:scale-[1.02]"
-                      />
-                    ) : (
-                      <div className="grid h-full place-items-center px-2 text-center text-[10px] text-muted">
-                        {title}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-1.5 truncate text-[13px] font-medium">
-                    {title}
-                  </div>
-                  <div className="font-mono text-[10px] tracking-[0.06em] text-muted">
-                    {s.first_air_date?.slice(0, 4) ?? "—"}
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </Skeleton>
-    </section>
-  );
-}
-
 function Stat({
   label,
   value,
@@ -517,131 +451,6 @@ function Stat({
       >
         {value}
       </div>
-    </div>
-  );
-}
-
-const STATUS_OPTIONS: { status: WatchStatus; label: string }[] = [
-  { status: "Want to Watch", label: "Add to queue" },
-  { status: "In Progress", label: "Watching" },
-  { status: "Watched", label: "Mark watched" },
-];
-
-function ActionBar({ showId }: { showId: number }) {
-  const [authed, setAuthed] = useState<boolean | null>(null);
-  const [status, setStatus] = useState<WatchStatus | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
-  const me = useApiResource<{ status: WatchStatus | null }>(
-    authed ? `user/shows/${showId}` : null,
-    { requireAuth: true },
-  );
-
-  useEffect(() => {
-    setAuthed(isAuthenticated());
-  }, []);
-
-  useEffect(() => {
-    if (me.data) setStatus(me.data.status);
-  }, [me.data]);
-
-  if (authed === false) {
-    return (
-      <a
-        href="/login"
-        className="block w-full rounded-full bg-ink px-4 py-3 text-center text-sm font-medium text-paper transition hover:bg-black"
-      >
-        Sign in to track this show
-      </a>
-    );
-  }
-
-  async function setShowStatus(next: WatchStatus) {
-    setBusy(true);
-    setErr(null);
-    const previous = status;
-    setStatus(next);
-    try {
-      if (previous) {
-        await apiFetch(`user/shows/${showId}`, {
-          method: "PATCH",
-          body: JSON.stringify({ status: next }),
-        });
-      } else {
-        await apiFetch("user/shows", {
-          method: "POST",
-          body: JSON.stringify({ show_id: showId, status: next }),
-        });
-      }
-      clearApiResourceCache("user/");
-    } catch (e) {
-      setStatus(previous);
-      const msg = e instanceof ApiError ? e.message : "Could not update.";
-      setErr(msg);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function remove() {
-    if (!status) return;
-    setBusy(true);
-    setErr(null);
-    const previous = status;
-    setStatus(null);
-    try {
-      await apiFetch(`user/shows/${showId}`, { method: "DELETE" });
-      clearApiResourceCache("user/");
-    } catch (e) {
-      setStatus(previous);
-      const msg = e instanceof ApiError ? e.message : "Could not remove.";
-      setErr(msg);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <div className="space-y-2">
-      {STATUS_OPTIONS.map((opt) => {
-        const active = status === opt.status;
-        return (
-          <button
-            key={opt.status}
-            type="button"
-            disabled={busy}
-            onClick={() => setShowStatus(opt.status)}
-            className={`flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-              active
-                ? "border-(--accent) bg-(--accent) text-paper"
-                : "border-line bg-oat text-ink-2 hover:border-ink hover:text-ink"
-            }`}
-          >
-            <span>{active ? `✓ ${opt.label}` : opt.label}</span>
-            <span className="font-mono text-[10px] tracking-[0.14em] opacity-75">
-              {opt.status === "Want to Watch" ? "QUEUE" : "LOG"}
-            </span>
-          </button>
-        );
-      })}
-
-      {status && (
-        <button
-          type="button"
-          disabled={busy}
-          onClick={remove}
-          className="w-full rounded-lg border border-line px-4 py-2 text-xs text-muted transition hover:border-ink hover:text-ink disabled:opacity-60"
-        >
-          Remove from your list
-        </button>
-      )}
-
-      {err && (
-        <p className="text-xs text-[#a13b2a]" role="alert">
-          {err}
-        </p>
-      )}
     </div>
   );
 }

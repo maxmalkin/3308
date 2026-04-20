@@ -9,10 +9,7 @@ import ErrorBanner from "@/components/ErrorBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ShowCard from "@/components/ShowCard";
-import {
-  clearApiResourceCache,
-  useApiResource,
-} from "@/hooks/useApiResource";
+import { clearApiResourceCache, useApiResource } from "@/hooks/useApiResource";
 import type { Profile, RecsResp, ShowsResp } from "@/types/api";
 import type { Show, UserShow } from "@/types/show";
 import type { SortKey } from "@/types/ui";
