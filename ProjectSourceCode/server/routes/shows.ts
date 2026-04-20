@@ -103,10 +103,32 @@ shows.get("/recommendations", async (c) => {
   `;
 
   if (userShowRows.length === 0) {
-    return c.json({
-      results: [],
-      message: "Add shows to your list to get recommendations",
-    });
+    const fallback = await sql`
+      SELECT * FROM (
+        SELECT
+          s.id, s.name, s.original_name, s.overview, s.poster_path,
+          s.backdrop_path, s.first_air_date, s.vote_average, s.genres,
+          s.networks, s.watch_providers_us
+        FROM public.shows s
+        WHERE s.poster_path IS NOT NULL
+          AND (
+            ${!hasOwnedFilter}::boolean
+            OR s.watch_providers_us IS NULL
+            OR EXISTS (
+              SELECT 1
+              FROM jsonb_array_elements(
+                COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+              ) p
+              WHERE p->>'provider_name' = ANY(${owned}::text[])
+            )
+          )
+        ORDER BY popularity DESC NULLS LAST
+        LIMIT 100
+      ) pool
+      ORDER BY random()
+      LIMIT ${RECOMMENDATION_LIMIT}
+    `;
+    return c.json({ results: fallback, source: "popular" });
   }
 
   const excludeIds = userShowRows.map((r) => r.id as number);
@@ -142,7 +164,7 @@ shows.get("/recommendations", async (c) => {
     LIMIT ${RECOMMENDATION_LIMIT}
   `;
 
-  return c.json({ results });
+  return c.json({ results, source: "embedding" });
 });
 
 shows.get("/showcase", async (c) => {
