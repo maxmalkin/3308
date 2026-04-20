@@ -91,11 +91,7 @@ export default function LoggedInHome() {
             />
           )}
 
-          <SectionHead
-            eyebrow={recsEyebrow}
-            title={recsTitle}
-            meta={`${recShows.length} shows · sorted by relevance`}
-          />
+          <SectionHead eyebrow={recsEyebrow} title={recsTitle} />
 
           <RecsBlock
             shows={recRail.length > 0 ? recRail : recShows}
