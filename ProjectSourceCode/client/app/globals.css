@@ -50,7 +50,9 @@ body {
 .font-display {
   font-family: var(--font-fraunces), ui-serif, Georgia, serif;
   font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 50, "WONK" 0;
+  font-variation-settings:
+    "SOFT" 50,
+    "WONK" 0;
   letter-spacing: -0.01em;
 }
 
@@ -96,7 +98,9 @@ body {
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.02em;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 .btn-primary:hover {
   background: var(--rust);
@@ -118,7 +122,9 @@ body {
   border: 1px solid var(--ink);
   font-weight: 500;
   font-size: 0.875rem;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 .btn-ghost:hover {
   background: var(--ink);
@@ -133,7 +139,9 @@ body {
   padding: 0.85rem 1rem;
   color: var(--ink);
   font-size: 0.95rem;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 .field::placeholder {
   color: var(--mute);
@@ -194,15 +202,29 @@ body {
   opacity: 0;
   animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.1, 1) forwards;
 }
-.rise-1 { animation-delay: 0.05s; }
-.rise-2 { animation-delay: 0.18s; }
-.rise-3 { animation-delay: 0.32s; }
-.rise-4 { animation-delay: 0.46s; }
-.rise-5 { animation-delay: 0.6s; }
+.rise-1 {
+  animation-delay: 0.05s;
+}
+.rise-2 {
+  animation-delay: 0.18s;
+}
+.rise-3 {
+  animation-delay: 0.32s;
+}
+.rise-4 {
+  animation-delay: 0.46s;
+}
+.rise-5 {
+  animation-delay: 0.6s;
+}
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 .marquee-track {
   display: inline-flex;
