@@ -17,17 +17,30 @@ import {
 import { apiFetch } from "@/utils/api";
 import { tmdbImageUrl } from "@/utils/show";
 
-type Profile = { user: { id: string; username: string; email: string; owned_services: StreamingService[] } };
+type Profile = {
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    owned_services: StreamingService[];
+  };
+};
 type ShowsResp = { shows: UserShow[] };
 type RecsResp = { results: Show[]; message?: string };
 
 type SortKey = "rec" | "rating" | "newest";
 
 export default function LoggedInHome() {
-  const profile = useApiResource<Profile>("user/profile", { requireAuth: true });
-  const watchlist = useApiResource<ShowsResp>("user/watchlist", { requireAuth: true });
+  const profile = useApiResource<Profile>("user/profile", {
+    requireAuth: true,
+  });
+  const watchlist = useApiResource<ShowsResp>("user/watchlist", {
+    requireAuth: true,
+  });
   const log = useApiResource<ShowsResp>("user/log", { requireAuth: true });
-  const recs = useApiResource<RecsResp>("shows/recommendations", { requireAuth: true });
+  const recs = useApiResource<RecsResp>("shows/recommendations", {
+    requireAuth: true,
+  });
 
   const username = profile.data?.user.username ?? "friend";
   const ownedServices = profile.data?.user.owned_services ?? [];
@@ -122,10 +135,14 @@ function Greeter({
   recCount: number;
 }) {
   const now = new Date();
-  const day = now.toLocaleDateString(undefined, { weekday: "long" }).toLowerCase();
+  const day = now
+    .toLocaleDateString(undefined, { weekday: "long" })
+    .toLowerCase();
   const time = now.getHours();
   const period = time < 12 ? "morning" : time < 17 ? "afternoon" : "evening";
-  const date = now.toLocaleDateString(undefined, { month: "short", day: "numeric" }).toLowerCase();
+  const date = now
+    .toLocaleDateString(undefined, { month: "short", day: "numeric" })
+    .toLowerCase();
 
   return (
     <section className="grid items-end gap-8 pb-3.5 pt-7 lg:grid-cols-[1.3fr_1fr] lg:gap-12">
@@ -141,13 +158,11 @@ function Greeter({
           <b className="text-ink">
             {queueCount} {queueCount === 1 ? "show" : "shows"} in your queue
           </b>{" "}
-          and we've lined up {recCount} new recommendations based on your
-          watch history. Your sofa awaits.
+          and we've lined up {recCount} new recommendations based on your watch
+          history. Your sofa awaits.
         </p>
       </div>
-      <div
-        className="grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-line bg-line md:grid-cols-4"
-      >
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[10px] border border-line bg-line md:grid-cols-4">
         {stats.map((s) => (
           <div key={s.l} className="bg-paper px-4 py-4">
             <div className="font-display text-[28px] font-medium leading-none tracking-[-0.02em]">
@@ -197,9 +212,17 @@ function FeaturedCard({ show }: { show: Show }) {
     <section className="relative my-7 grid grid-cols-1 gap-6 overflow-hidden rounded-[14px] border border-line bg-paper p-5 lg:grid-cols-[160px_1fr_220px]">
       <div className="relative aspect-[2/3] w-full max-w-[160px] self-start overflow-hidden rounded-md bg-oat shadow-[0_1px_2px_rgba(43,38,32,0.04),0_1px_0_rgba(43,38,32,0.06)]">
         {posterUrl ? (
-          <Image src={posterUrl} alt={title} fill sizes="160px" className="object-cover" />
+          <Image
+            src={posterUrl}
+            alt={title}
+            fill
+            sizes="160px"
+            className="object-cover"
+          />
         ) : (
-          <div className="grid h-full place-items-center text-xs text-muted">No poster</div>
+          <div className="grid h-full place-items-center text-xs text-muted">
+            No poster
+          </div>
         )}
       </div>
       <div className="px-1">
@@ -426,7 +449,11 @@ function RecsBlock({
 
   const allGenres = useMemo(() => {
     const set = new Set<string>();
-    shows.forEach((s) => s.genres?.forEach((g) => g.name && set.add(g.name)));
+    for (const s of shows) {
+      for (const g of s.genres ?? []) {
+        if (g.name) set.add(g.name);
+      }
+    }
     return ["All", ...Array.from(set).sort()];
   }, [shows]);
 
@@ -458,7 +485,10 @@ function RecsBlock({
     return (
       <div className="mb-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="aspect-[2/3] animate-pulse rounded-2xl bg-paper" />
+          <div
+            key={i}
+            className="aspect-[2/3] animate-pulse rounded-2xl bg-paper"
+          />
         ))}
       </div>
     );
@@ -572,11 +602,11 @@ function DiaryBlock({
 
   const genreBreakdown = useMemo(() => {
     const counts = new Map<string, number>();
-    log.forEach((s) =>
-      s.genres?.forEach((g) => {
+    for (const s of log) {
+      for (const g of s.genres ?? []) {
         if (g.name) counts.set(g.name, (counts.get(g.name) ?? 0) + 1);
-      }),
-    );
+      }
+    }
     const total = Array.from(counts.values()).reduce((a, b) => a + b, 0) || 1;
     return Array.from(counts.entries())
       .sort((a, b) => b[1] - a[1])
@@ -604,7 +634,9 @@ function DiaryBlock({
             {recent.map((s) => {
               const url = tmdbImageUrl(s.poster_path, "w300");
               const title = s.name ?? s.original_name ?? "Untitled";
-              const date = s.user_updated_at ? new Date(s.user_updated_at) : null;
+              const date = s.user_updated_at
+                ? new Date(s.user_updated_at)
+                : null;
               const day = date?.getDate() ?? "—";
               const month = date
                 ?.toLocaleDateString(undefined, { month: "short" })
@@ -662,7 +694,8 @@ function DiaryBlock({
             Your taste, mostly.
           </h3>
           <div className="mt-1 mb-3.5 text-xs text-muted">
-            Based on the {log.length} {log.length === 1 ? "show" : "shows"} in your log.
+            Based on the {log.length} {log.length === 1 ? "show" : "shows"} in
+            your log.
           </div>
           {genreBreakdown.length === 0 ? (
             <p className="text-sm text-muted">
@@ -689,7 +722,10 @@ function DiaryBlock({
           )}
         </div>
         {suggestion && (
-          <div className="card p-5" style={{ background: "var(--ink)", color: "var(--paper)" }}>
+          <div
+            className="card p-5"
+            style={{ background: "var(--ink)", color: "var(--paper)" }}
+          >
             <div className="eyebrow mb-2" style={{ color: "var(--clay-soft)" }}>
               this week's suggestion
             </div>
@@ -706,7 +742,9 @@ function DiaryBlock({
             >
               {suggestion.overview?.slice(0, 180) ??
                 "A pick from your recommendations you haven't started yet."}
-              {suggestion.overview && suggestion.overview.length > 180 ? "…" : ""}
+              {suggestion.overview && suggestion.overview.length > 180
+                ? "…"
+                : ""}
             </p>
             <Link
               href={`/shows/${suggestion.id}`}
@@ -721,4 +759,3 @@ function DiaryBlock({
     </section>
   );
 }
-
