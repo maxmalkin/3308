@@ -2,6 +2,24 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ showId: string }> },
+) {
+  const { showId } = await params;
+  const token = req.headers.get("Authorization");
+
+  const res = await fetch(`${API_URL}/api/user/shows/${showId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: token } : {}),
+    },
+  });
+
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ showId: string }> },
