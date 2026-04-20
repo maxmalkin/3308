@@ -61,8 +61,8 @@ export default function Navbar({ active }: { active?: string } = {}) {
           {isLoggedIn ? (
             <>
               <Link
-                href="/account"
-                aria-label="Account"
+                href="/"
+                aria-label="Home"
                 className="grid h-9 w-9 place-items-center rounded-full border border-line bg-gradient-to-br from-[var(--plum)] to-[var(--olive)] font-display text-lg text-paper"
               >
                 M
@@ -84,7 +84,7 @@ export default function Navbar({ active }: { active?: string } = {}) {
                 Sign in
               </Link>
               <Link href="/register" className="btn px-4 py-2 text-xs">
-                Get PillarBoxd
+                Sign up
               </Link>
             </>
           )}
