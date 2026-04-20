@@ -620,8 +620,8 @@ function DiaryBlock({
         <SectionHead eyebrow="your log" title="Recently watched" />
         {loading ? (
           <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 animate-pulse rounded-md bg-paper" />
+            {["a", "b", "c", "d"].map((k) => (
+              <div key={k} className="h-20 animate-pulse rounded-md bg-paper" />
             ))}
           </div>
         ) : recent.length === 0 ? (
