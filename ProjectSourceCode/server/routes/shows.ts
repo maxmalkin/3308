@@ -18,7 +18,7 @@ const shows = new Hono<AuthEnv>();
 
 const SEMANTIC_LIMIT = 200;
 const SEARCH_DEFAULT_LIMIT = 20;
-const RECOMMENDATION_LIMIT = 20;
+const RECOMMENDATION_LIMIT = 60;
 
 async function getOwnedServices(userId: string): Promise<string[]> {
   const [row] = await sql`
@@ -138,6 +138,7 @@ shows.get("/recommendations", async (c) => {
   `;
 
   if (userShowRows.length === 0) {
+    const poolSize = Math.max(RECOMMENDATION_LIMIT * 4, 200);
     let fallback = await sql`
       SELECT * FROM (
         SELECT
@@ -148,7 +149,6 @@ shows.get("/recommendations", async (c) => {
         WHERE s.poster_path IS NOT NULL
           AND (
             ${!hasOwnedFilter}::boolean
-            OR s.watch_providers_us IS NULL
             OR EXISTS (
               SELECT 1
               FROM jsonb_array_elements(
@@ -158,12 +158,12 @@ shows.get("/recommendations", async (c) => {
             )
           )
         ORDER BY popularity DESC NULLS LAST
-        LIMIT 100
+        LIMIT ${poolSize}
       ) pool
       ORDER BY random()
       LIMIT ${RECOMMENDATION_LIMIT}
     `;
-    if (fallback.length === 0) {
+    if (fallback.length === 0 && !hasOwnedFilter) {
       fallback = await sql`
         SELECT * FROM (
           SELECT
@@ -173,7 +173,7 @@ shows.get("/recommendations", async (c) => {
           FROM public.shows s
           WHERE s.poster_path IS NOT NULL
           ORDER BY popularity DESC NULLS LAST
-          LIMIT 100
+          LIMIT ${poolSize}
         ) pool
         ORDER BY random()
         LIMIT ${RECOMMENDATION_LIMIT}
@@ -203,7 +203,6 @@ shows.get("/recommendations", async (c) => {
         AND NOT (s.id = ANY(${excludeIds}::int[]))
         AND (
           ${!hasOwnedFilter}::boolean
-          OR s.watch_providers_us IS NULL
           OR EXISTS (
             SELECT 1
             FROM jsonb_array_elements(
@@ -221,6 +220,7 @@ shows.get("/recommendations", async (c) => {
     return c.json({ results, source: "embedding" });
   }
 
+  const poolSize = Math.max(RECOMMENDATION_LIMIT * 4, 200);
   const popular = await sql`
     SELECT * FROM (
       SELECT
@@ -230,8 +230,18 @@ shows.get("/recommendations", async (c) => {
       FROM public.shows s
       WHERE s.poster_path IS NOT NULL
         AND NOT (s.id = ANY(${excludeIds}::int[]))
+        AND (
+          ${!hasOwnedFilter}::boolean
+          OR EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements(
+              COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+            ) p
+            WHERE p->>'provider_name' ILIKE ANY(${ownedLikePatterns(owned)}::text[])
+          )
+        )
       ORDER BY popularity DESC NULLS LAST
-      LIMIT 100
+      LIMIT ${poolSize}
     ) pool
     ORDER BY random()
     LIMIT ${RECOMMENDATION_LIMIT}
