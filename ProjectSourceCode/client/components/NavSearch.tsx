@@ -19,7 +19,7 @@ export default function NavSearch() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Show[]>([]);
   const [err, setErr] = useState<string | null>(null);
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -63,8 +63,8 @@ export default function NavSearch() {
           setResults([]);
         } else {
           setErr(null);
-          setResults(data.results ?? []);
-          setActive(0);
+          setResults((data.results ?? []).slice(0, 5));
+          setActive(-1);
         }
       } catch {
         if (myReq !== reqIdRef.current) return;
@@ -93,7 +93,7 @@ export default function NavSearch() {
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (open && results.length > 0 && active < results.length) {
+      if (open && active >= 0 && active < results.length) {
         pickResult(results[active]);
       } else {
         submitSearch();
@@ -106,7 +106,7 @@ export default function NavSearch() {
       setActive((i) => Math.min(i + 1, results.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActive((i) => Math.max(i - 1, 0));
+      setActive((i) => Math.max(i - 1, -1));
     }
   }
 

@@ -1,11 +1,9 @@
 "use client";
 
-import { Skeleton } from "boneyard-js/react";
 import Image from "next/image";
 import { useState } from "react";
 import type { Show } from "@/types/show";
 import { type TMDBImageSize, tmdbImageUrl } from "@/utils/show";
-import { BONE_PROPS } from "@/utils/skeleton";
 
 export default function Poster({
   show,
@@ -28,7 +26,7 @@ export default function Poster({
   if (!url) {
     return (
       <div
-        className={`flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-500 ${cls}`}
+        className={`flex h-full w-full items-center justify-center bg-oat text-xs text-muted ${cls}`}
       >
         No poster
       </div>
@@ -36,16 +34,14 @@ export default function Poster({
   }
 
   return (
-    <Skeleton name="poster" loading={!loaded} {...BONE_PROPS}>
-      <Image
-        src={url}
-        alt={alt}
-        fill
-        sizes={sizes ?? "25vw"}
-        priority={priority}
-        onLoad={() => setLoaded(true)}
-        className={`object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"} ${cls}`}
-      />
-    </Skeleton>
+    <Image
+      src={url}
+      alt={alt}
+      fill
+      sizes={sizes ?? "25vw"}
+      priority={priority}
+      onLoad={() => setLoaded(true)}
+      className={`object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"} ${cls}`}
+    />
   );
 }

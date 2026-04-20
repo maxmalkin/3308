@@ -16,7 +16,8 @@ type AuthEnv = {
 
 const shows = new Hono<AuthEnv>();
 
-const SEMANTIC_LIMIT = 20;
+const SEMANTIC_LIMIT = 200;
+const SEARCH_DEFAULT_LIMIT = 20;
 const RECOMMENDATION_LIMIT = 20;
 
 async function getOwnedServices(userId: string): Promise<string[]> {
@@ -38,10 +39,11 @@ shows.get("/search", async (c) => {
 
   const userId = c.get("userId") as string | undefined;
   const { query, page } = parsed.data;
-  const limitParam = Number(c.req.query("limit") ?? SEMANTIC_LIMIT);
+  const limitParam = Number(c.req.query("limit") ?? SEARCH_DEFAULT_LIMIT);
   const limit = Number.isFinite(limitParam)
     ? Math.min(Math.max(Math.trunc(limitParam), 1), SEMANTIC_LIMIT)
-    : SEMANTIC_LIMIT;
+    : SEARCH_DEFAULT_LIMIT;
+  const offset = Math.max(0, (page - 1) * limit);
 
   let queryVec: string | null = null;
   try {
@@ -82,6 +84,7 @@ shows.get("/search", async (c) => {
         END,
         s.embedding <=> ${queryVec}::vector
       LIMIT ${limit}
+      OFFSET ${offset}
     `;
   } else if (queryVec) {
     semanticResults = await sql`
@@ -92,16 +95,30 @@ shows.get("/search", async (c) => {
       WHERE s.embedding IS NOT NULL
       ORDER BY s.embedding <=> ${queryVec}::vector
       LIMIT ${limit}
+      OFFSET ${offset}
     `;
   }
 
   if (semanticResults.length > 0) {
-    return c.json({ results: semanticResults, source: "semantic" });
+    return c.json({
+      results: semanticResults,
+      source: "semantic",
+      page,
+      limit,
+      hasMore: semanticResults.length === limit,
+    });
   }
 
   try {
     const data = await searchTMDB(query, page);
-    return c.json({ results: data.results.slice(0, limit), source: "tmdb" });
+    const sliced = data.results.slice(0, limit);
+    return c.json({
+      results: sliced,
+      source: "tmdb",
+      page,
+      limit,
+      hasMore: sliced.length === limit,
+    });
   } catch {
     return c.json({ error: "Failed to fetch from TMDB" }, 502);
   }
