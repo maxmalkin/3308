@@ -9,8 +9,11 @@ import ErrorBanner from "@/components/ErrorBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { ResourceView } from "@/components/ResourceView";
-import { useApiResource } from "@/hooks/useApiResource";
-import type { RelatedResp, ShowResp, UserShowResp } from "@/types/api";
+import {
+  clearApiResourceCache,
+  useApiResource,
+} from "@/hooks/useApiResource";
+import type { RelatedResp, ShowResp } from "@/types/api";
 import type { Show, WatchStatus } from "@/types/show";
 import type { Creator, Episode, Season } from "@/types/tmdb";
 import { ApiError, apiFetch, isAuthenticated } from "@/utils/api";
@@ -571,6 +574,7 @@ function ActionBar({ showId }: { showId: number }) {
           body: JSON.stringify({ show_id: showId, status: next }),
         });
       }
+      clearApiResourceCache("user/");
     } catch (e) {
       setStatus(previous);
       const msg = e instanceof ApiError ? e.message : "Could not update.";
@@ -588,6 +592,7 @@ function ActionBar({ showId }: { showId: number }) {
     setStatus(null);
     try {
       await apiFetch(`user/shows/${showId}`, { method: "DELETE" });
+      clearApiResourceCache("user/");
     } catch (e) {
       setStatus(previous);
       const msg = e instanceof ApiError ? e.message : "Could not remove.";

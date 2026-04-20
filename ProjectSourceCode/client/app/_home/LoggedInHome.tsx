@@ -9,7 +9,10 @@ import ErrorBanner from "@/components/ErrorBanner";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ShowCard from "@/components/ShowCard";
-import { useApiResource } from "@/hooks/useApiResource";
+import {
+  clearApiResourceCache,
+  useApiResource,
+} from "@/hooks/useApiResource";
 import type { Profile, RecsResp, ShowsResp } from "@/types/api";
 import type { Show, UserShow } from "@/types/show";
 import type { SortKey } from "@/types/ui";
@@ -222,6 +225,7 @@ function FeaturedCard({ show }: { show: Show }) {
           status: "Want to Watch",
         }),
       });
+      clearApiResourceCache("user/");
       setAdded(true);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Could not add show.");
@@ -330,6 +334,7 @@ function QueueStrip({
     setItems((prev) => prev.filter((s) => s.id !== id));
     try {
       await apiFetch(`user/shows/${id}`, { method: "DELETE" });
+      clearApiResourceCache("user/");
     } catch {
       setItems(initial);
     }
