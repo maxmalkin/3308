@@ -1,6 +1,8 @@
 "use client";
 
+import { Skeleton } from "boneyard-js/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ErrorBanner from "@/components/ErrorBanner";
@@ -14,11 +16,48 @@ import { tmdbImageUrl, yearRange } from "@/utils/show";
 
 type ShowResp = { show: Show };
 type UserShowResp = { shows: UserShow[] };
+type RelatedResp = { results: Show[] };
+
+type Creator = {
+  id?: number;
+  name?: string;
+  profile_path?: string | null;
+};
+
+type Episode = {
+  id?: number;
+  name?: string | null;
+  overview?: string | null;
+  air_date?: string | null;
+  episode_number?: number | null;
+  season_number?: number | null;
+  runtime?: number | null;
+  still_path?: string | null;
+  vote_average?: number | null;
+};
+
+type Season = {
+  id?: number;
+  name?: string;
+  season_number?: number;
+  episode_count?: number | null;
+  air_date?: string | null;
+  overview?: string | null;
+  poster_path?: string | null;
+  vote_average?: number | null;
+};
+
+const BONE_PROPS = {
+  animate: "shimmer",
+  color: "var(--oat)",
+  shimmerColor: "var(--paper)",
+} as const;
 
 export default function ShowDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? null;
   const resource = useApiResource<ShowResp>(id ? `shows/${id}` : null);
+  const isLoading = resource.status === "loading";
 
   return (
     <main className="flex min-h-screen flex-col bg-cream">
@@ -27,9 +66,9 @@ export default function ShowDetailPage() {
         <ResourceView
           resource={resource}
           loading={
-            <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-12">
-              <div className="h-80 animate-pulse rounded-2xl bg-paper" />
-            </div>
+            <Skeleton name="show-detail" loading={true} {...BONE_PROPS}>
+              <ShowDetailSkeleton />
+            </Skeleton>
           }
           errorView={(err) => (
             <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-12">
@@ -50,7 +89,9 @@ export default function ShowDetailPage() {
         >
           {(data) =>
             data.show ? (
-              <ShowDetail show={data.show} />
+              <Skeleton name="show-detail" loading={isLoading} {...BONE_PROPS}>
+                <ShowDetail show={data.show} />
+              </Skeleton>
             ) : (
               <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-12">
                 <div className="rounded-2xl border border-line bg-paper p-8">
@@ -68,6 +109,40 @@ export default function ShowDetailPage() {
   );
 }
 
+function ShowDetailSkeleton() {
+  return (
+    <>
+      <div className="h-72 w-full bg-paper md:h-96" />
+      <div className="mx-auto -mt-32 max-w-[1200px] px-6 pb-16 md:-mt-44 md:px-12">
+        <div className="grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-12">
+          <div className="space-y-4">
+            <div className="aspect-[2/3] w-full max-w-[260px] rounded-md bg-paper" />
+            <div className="h-10 w-full rounded-lg bg-paper" />
+            <div className="h-10 w-full rounded-lg bg-paper" />
+            <div className="h-10 w-full rounded-lg bg-paper" />
+          </div>
+          <div className="space-y-6">
+            <div className="lg:pt-12">
+              <div className="h-16 w-2/3 rounded bg-paper" />
+              <div className="mt-3 h-4 w-1/2 rounded bg-paper" />
+            </div>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {["a", "b", "c", "d"].map((k) => (
+                <div key={k} className="h-20 rounded bg-paper" />
+              ))}
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 w-full rounded bg-paper" />
+              <div className="h-4 w-11/12 rounded bg-paper" />
+              <div className="h-4 w-10/12 rounded bg-paper" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function ShowDetail({ show }: { show: Show }) {
   const title = show.name ?? show.original_name ?? "Untitled";
   const backdrop = tmdbImageUrl(show.backdrop_path, "w1280");
@@ -79,6 +154,15 @@ function ShowDetail({ show }: { show: Show }) {
       ? show.vote_average.toFixed(1)
       : null;
   const networks = show.networks ?? [];
+  const cast = (show.created_by ?? []) as Creator[];
+  const seasons = (show.seasons ?? []) as Season[];
+  const lastEp = show.last_episode_to_air as Episode | null;
+  const nextEp = show.next_episode_to_air as Episode | null;
+  const popularity =
+    typeof show.popularity === "number" ? Math.round(show.popularity) : null;
+  const voteCount =
+    typeof show.vote_count === "number" ? show.vote_count : null;
+  const runtime = show.episode_run_time?.[0] ?? null;
 
   return (
     <>
@@ -116,6 +200,37 @@ function ShowDetail({ show }: { show: Show }) {
             </div>
 
             <ActionBar showId={show.id} />
+
+            {(popularity !== null ||
+              voteCount !== null ||
+              runtime !== null) && (
+              <div className="rounded-lg border border-line bg-paper px-4 py-3 text-[13px] text-ink-2">
+                {runtime !== null && (
+                  <div className="flex justify-between border-b border-line-soft py-1.5 last:border-0">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                      runtime
+                    </span>
+                    <span>{runtime} min</span>
+                  </div>
+                )}
+                {voteCount !== null && (
+                  <div className="flex justify-between border-b border-line-soft py-1.5 last:border-0">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                      votes
+                    </span>
+                    <span>{voteCount.toLocaleString()}</span>
+                  </div>
+                )}
+                {popularity !== null && (
+                  <div className="flex justify-between py-1.5">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                      popularity
+                    </span>
+                    <span>{popularity}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {networks.length > 0 && (
               <div>
@@ -175,7 +290,7 @@ function ShowDetail({ show }: { show: Show }) {
             </div>
 
             {show.overview && (
-              <section className="mb-8">
+              <section className="mb-10">
                 <div className="eyebrow mb-3">Overview</div>
                 <p className="max-w-[68ch] text-[15px] leading-[1.65] text-ink-2">
                   {show.overview}
@@ -183,8 +298,96 @@ function ShowDetail({ show }: { show: Show }) {
               </section>
             )}
 
+            {(lastEp || nextEp) && (
+              <section className="mb-10">
+                <div className="eyebrow mb-3">Episodes</div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {lastEp && (
+                    <EpisodeCard label="Last aired" episode={lastEp} />
+                  )}
+                  {nextEp && <EpisodeCard label="Next up" episode={nextEp} />}
+                </div>
+              </section>
+            )}
+
+            {seasons.length > 0 && (
+              <section className="mb-10">
+                <div className="eyebrow mb-3">Seasons</div>
+                <ul className="grid gap-2">
+                  {seasons.map((s) => (
+                    <li
+                      key={s.id ?? s.season_number}
+                      className="grid items-center gap-3 rounded-lg border border-line bg-paper px-3 py-2.5"
+                      style={{ gridTemplateColumns: "44px 1fr auto" }}
+                    >
+                      <div className="aspect-[2/3] w-11 overflow-hidden rounded-sm border border-line bg-oat">
+                        {s.poster_path ? (
+                          <Image
+                            src={tmdbImageUrl(s.poster_path, "w300") ?? ""}
+                            alt={s.name ?? `Season ${s.season_number}`}
+                            width={44}
+                            height={66}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : null}
+                      </div>
+                      <div>
+                        <div className="font-display text-[14px] font-medium tracking-[-0.015em]">
+                          {s.name ?? `Season ${s.season_number}`}
+                        </div>
+                        <div className="mt-0.5 font-mono text-[10px] tracking-[0.06em] text-muted">
+                          {s.episode_count
+                            ? `${s.episode_count} episodes`
+                            : "—"}
+                          {s.air_date ? ` · ${s.air_date.slice(0, 4)}` : ""}
+                        </div>
+                      </div>
+                      {typeof s.vote_average === "number" &&
+                        s.vote_average > 0 && (
+                          <span className="font-mono text-[11px] text-[var(--mustard)]">
+                            ★ {s.vote_average.toFixed(1)}
+                          </span>
+                        )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {cast.length > 0 && (
+              <section className="mb-10">
+                <div className="eyebrow mb-3">Created by</div>
+                <ul className="flex flex-wrap gap-3">
+                  {cast.map((c) => (
+                    <li
+                      key={c.id ?? c.name}
+                      className="flex items-center gap-2.5 rounded-full border border-line bg-paper py-1 pl-1 pr-3"
+                    >
+                      <span
+                        className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-oat font-display text-sm text-ink-2"
+                        aria-hidden
+                      >
+                        {c.profile_path ? (
+                          <Image
+                            src={tmdbImageUrl(c.profile_path, "w300") ?? ""}
+                            alt={c.name ?? ""}
+                            width={32}
+                            height={32}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          (c.name?.[0]?.toUpperCase() ?? "·")
+                        )}
+                      </span>
+                      <span className="text-sm">{c.name ?? "Unknown"}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             {show.genres && show.genres.length > 0 && (
-              <section className="mb-8">
+              <section className="mb-10">
                 <div className="eyebrow mb-3">Genres</div>
                 <div className="flex flex-wrap gap-2">
                   {show.genres.map((g) => (
@@ -200,15 +403,110 @@ function ShowDetail({ show }: { show: Show }) {
             )}
 
             {show.status && (
-              <section>
+              <section className="mb-10">
                 <div className="eyebrow mb-1">Status</div>
                 <p className="text-sm text-ink-2">{show.status}</p>
               </section>
             )}
+
+            <RelatedSection showId={show.id} />
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+function EpisodeCard({ label, episode }: { label: string; episode: Episode }) {
+  const still = episode.still_path
+    ? tmdbImageUrl(episode.still_path, "w780")
+    : null;
+  return (
+    <div className="overflow-hidden rounded-[10px] border border-line bg-paper">
+      {still && (
+        <div className="relative aspect-[16/9] w-full bg-oat">
+          <Image
+            src={still}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
+      )}
+      <div className="p-4">
+        <div className="eyebrow mb-1">{label}</div>
+        <div className="font-display text-[16px] font-medium tracking-[-0.02em]">
+          {episode.name ?? "Untitled episode"}
+          <span className="ml-2 font-mono text-[11px] font-normal text-muted">
+            S{episode.season_number ?? "?"}·E{episode.episode_number ?? "?"}
+          </span>
+        </div>
+        <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.1em] text-muted">
+          {episode.air_date ?? "TBA"}
+          {episode.runtime ? ` · ${episode.runtime} min` : ""}
+        </div>
+        {episode.overview && (
+          <p className="mt-2 text-[13px] leading-[1.55] text-ink-2">
+            {episode.overview.length > 240
+              ? `${episode.overview.slice(0, 240)}…`
+              : episode.overview}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RelatedSection({ showId }: { showId: number }) {
+  const related = useApiResource<RelatedResp>(
+    `shows/${showId}/related?limit=8`,
+  );
+  const isLoading = related.status === "loading";
+  const shows = related.data?.results ?? [];
+  if (!isLoading && shows.length === 0) return null;
+  return (
+    <section className="mb-4">
+      <div className="eyebrow mb-3">If you liked this</div>
+      <Skeleton name="show-related" loading={isLoading} {...BONE_PROPS}>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
+          {shows.slice(0, 8).map((s) => {
+            const url = tmdbImageUrl(s.poster_path, "w300");
+            const title = s.name ?? s.original_name ?? "Untitled";
+            return (
+              <li key={s.id}>
+                <Link
+                  href={`/shows/${s.id}`}
+                  className="group block transition hover:-translate-y-0.5"
+                >
+                  <div className="relative aspect-[2/3] overflow-hidden rounded border border-line bg-oat">
+                    {url ? (
+                      <Image
+                        src={url}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 20vw"
+                        className="object-cover transition group-hover:scale-[1.02]"
+                      />
+                    ) : (
+                      <div className="grid h-full place-items-center px-2 text-center text-[10px] text-muted">
+                        {title}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-1.5 truncate text-[13px] font-medium">
+                    {title}
+                  </div>
+                  <div className="font-mono text-[10px] tracking-[0.06em] text-muted">
+                    {s.first_air_date?.slice(0, 4) ?? "—"}
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </Skeleton>
+    </section>
   );
 }
 
@@ -338,11 +636,7 @@ function ActionBar({ showId }: { showId: number }) {
           >
             <span>{active ? `✓ ${opt.label}` : opt.label}</span>
             <span className="font-mono text-[10px] tracking-[0.14em] opacity-75">
-              {opt.status === "Want to Watch"
-                ? "QUEUE"
-                : opt.status === "In Progress"
-                  ? "LOG"
-                  : "LOG"}
+              {opt.status === "Want to Watch" ? "QUEUE" : "LOG"}
             </span>
           </button>
         );
