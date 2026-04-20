@@ -154,19 +154,21 @@ describe("GET /api/shows/search", () => {
 });
 
 describe("GET /api/shows/recommendations", () => {
-  /** Should return an empty list with a message when user has no shows. */
-  it("returns empty when user has no shows", async () => {
-    // owned_services, then user_shows lookup
+  /** Should fall back to popular shows when user has no shows. */
+  it("returns popular shows when user has no shows", async () => {
+    // owned_services, user_shows lookup, popular fallback
     mockResults.push([{ owned_services: [] }]);
     mockResults.push([]);
+    mockResults.push([sampleShow]);
 
     const res = await app.request(
       new Request("http://localhost/api/shows/recommendations"),
     );
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.results).toHaveLength(0);
-    expect(body.message).toMatch(/add shows/i);
+    expect(body.source).toBe("popular");
+    expect(body.results).toHaveLength(1);
+    expect(body.results[0].name).toBe("Breaking Bad");
   });
 
   /** Should return nearest shows when the user has a watchlist. */
