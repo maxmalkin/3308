@@ -3,7 +3,11 @@ import userEvent from "@testing-library/user-event";
 import Navbar from "@/components/Navbar";
 
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), prefetch: jest.fn() }),
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+  }),
   useSearchParams: () => new URLSearchParams(),
   usePathname: () => "/",
   useParams: () => ({}),
