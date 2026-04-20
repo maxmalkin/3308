@@ -442,10 +442,11 @@ function EpisodeCard({ episode }: { episode: Episode }) {
   );
 }
 
-function RelatedSection({ showId }: { showId: number }) {
-  const related = useApiResource<RelatedResp>(
-    `shows/${showId}/related?limit=8`,
-  );
+function RelatedSection({
+  related,
+}: {
+  related: import("@/types/api").Resource<RelatedResp>;
+}) {
   const isLoading = related.status === "loading";
   const shows = related.data?.results ?? [];
   if (!isLoading && shows.length === 0) return null;
@@ -529,24 +530,18 @@ function ActionBar({ showId }: { showId: number }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const watchlist = useApiResource<UserShowResp>(
-    authed ? "user/watchlist" : null,
+  const me = useApiResource<{ status: WatchStatus | null }>(
+    authed ? `user/shows/${showId}` : null,
     { requireAuth: true },
   );
-  const log = useApiResource<UserShowResp>(authed ? "user/log" : null, {
-    requireAuth: true,
-  });
 
   useEffect(() => {
     setAuthed(isAuthenticated());
   }, []);
 
   useEffect(() => {
-    if (!watchlist.data && !log.data) return;
-    const all = [...(watchlist.data?.shows ?? []), ...(log.data?.shows ?? [])];
-    const found = all.find((s) => s.id === showId);
-    setStatus(found?.user_status ?? null);
-  }, [watchlist.data, log.data, showId]);
+    if (me.data) setStatus(me.data.status);
+  }, [me.data]);
 
   if (authed === false) {
     return (

@@ -62,6 +62,25 @@ user.get("/log", async (c) => {
   return c.json({ shows: rows });
 });
 
+user.get("/shows/:showId", async (c) => {
+  const userId = c.get("userId");
+  const showId = Number(c.req.param("showId"));
+  if (!Number.isFinite(showId) || showId <= 0) {
+    return c.json({ error: "Invalid show id" }, 400);
+  }
+  const [entry] = await sql`
+    SELECT status, added_at, updated_at
+    FROM public.user_shows
+    WHERE user_id = ${userId} AND show_id = ${showId}
+  `;
+  if (!entry) return c.json({ status: null });
+  return c.json({
+    status: entry.status,
+    added_at: entry.added_at,
+    updated_at: entry.updated_at,
+  });
+});
+
 user.post("/shows", async (c) => {
   const userId = c.get("userId");
   const body = await c.req.json();
