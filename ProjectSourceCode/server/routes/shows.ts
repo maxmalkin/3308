@@ -244,6 +244,37 @@ shows.get("/showcase", async (c) => {
   return c.json({ results });
 });
 
+shows.get("/:id/related", async (c) => {
+  const parsed = ShowIdParamSchema.safeParse({ id: c.req.param("id") });
+  if (!parsed.success) {
+    return c.json({ error: z.treeifyError(parsed.error) }, 400);
+  }
+  const limitParam = Number(c.req.query("limit") ?? 8);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(Math.trunc(limitParam), 1), 24)
+    : 8;
+
+  const [base] = await sql`
+    SELECT embedding FROM public.shows WHERE id = ${parsed.data.id}
+  `;
+  const baseVec = base?.embedding as string | null;
+  if (!baseVec) return c.json({ results: [] });
+
+  const results = await sql`
+    SELECT
+      s.id, s.name, s.original_name, s.poster_path, s.backdrop_path,
+      s.first_air_date, s.vote_average, s.genres, s.networks,
+      s.watch_providers_us,
+      (s.embedding <=> ${baseVec}::vector) AS distance
+    FROM public.shows s
+    WHERE s.embedding IS NOT NULL
+      AND s.id <> ${parsed.data.id}
+    ORDER BY s.embedding <=> ${baseVec}::vector
+    LIMIT ${limit}
+  `;
+  return c.json({ results });
+});
+
 shows.get("/:id", async (c) => {
   const parsed = ShowIdParamSchema.safeParse({ id: c.req.param("id") });
   if (!parsed.success) {
