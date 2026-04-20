@@ -249,9 +249,6 @@ function RecsPanel({ shows }: { shows: Show[] }) {
             </div>
           )}
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgba(20,22,20,0.78)] to-transparent p-3.5 text-paper">
-            <div className="font-mono text-[10px] tracking-[0.15em] text-[var(--olive-soft)]">
-              BECAUSE YOU LOVED OUR SHELF
-            </div>
             <h4 className="mt-1 font-display text-[18px] font-medium tracking-[-0.02em]">
               {title}
             </h4>

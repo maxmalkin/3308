@@ -10,10 +10,6 @@ import Navbar from "@/components/Navbar";
 import ShowCard from "@/components/ShowCard";
 import { useApiResource } from "@/hooks/useApiResource";
 import type { Show, UserShow } from "@/types/show";
-import {
-  type StreamingService,
-  streamingServiceValues,
-} from "@/types/streaming";
 import { apiFetch } from "@/utils/api";
 import { tmdbImageUrl } from "@/utils/show";
 
@@ -22,7 +18,7 @@ type Profile = {
     id: string;
     username: string;
     email: string;
-    owned_services: StreamingService[];
+    owned_services: string[];
   };
 };
 type ShowsResp = { shows: UserShow[] };
@@ -43,7 +39,6 @@ export default function LoggedInHome() {
   });
 
   const username = profile.data?.user.username ?? "friend";
-  const ownedServices = profile.data?.user.owned_services ?? [];
 
   const watchlistShows = watchlist.data?.shows ?? [];
   const logShows = log.data?.shows ?? [];
@@ -115,7 +110,6 @@ export default function LoggedInHome() {
 
           <RecsBlock
             shows={recRail.length > 0 ? recRail : recShows}
-            ownedServices={ownedServices}
             loadingState={recs.status}
             error={recs.error?.message}
           />
@@ -454,17 +448,14 @@ function SectionHead({
 
 function RecsBlock({
   shows,
-  ownedServices,
   loadingState,
   error,
 }: {
   shows: Show[];
-  ownedServices: StreamingService[];
   loadingState: "loading" | "ready" | "error" | "unauth";
   error?: string;
 }) {
   const [genre, setGenre] = useState<string>("All");
-  const [service, setService] = useState<StreamingService | "All">("All");
   const [sort, setSort] = useState<SortKey>("rec");
 
   const allGenres = useMemo(() => {
@@ -482,13 +473,6 @@ function RecsBlock({
     if (genre !== "All") {
       out = out.filter((s) => s.genres?.some((g) => g.name === genre));
     }
-    if (service !== "All") {
-      out = out.filter((s) =>
-        s.watch_providers_us?.flatrate?.some(
-          (p) => p.provider_name === service,
-        ),
-      );
-    }
     if (sort === "rating") {
       out.sort((a, b) => (b.vote_average ?? 0) - (a.vote_average ?? 0));
     } else if (sort === "newest") {
@@ -499,7 +483,7 @@ function RecsBlock({
       });
     }
     return out;
-  }, [shows, genre, service, sort]);
+  }, [shows, genre, sort]);
 
   if (loadingState === "loading") {
     return (
@@ -531,36 +515,6 @@ function RecsBlock({
             {g}
           </button>
         ))}
-        <span className="ml-2 mr-1 eyebrow">Service</span>
-        <button
-          type="button"
-          className={`chip ${service === "All" ? "active" : ""}`}
-          onClick={() => setService("All")}
-        >
-          All
-        </button>
-        {streamingServiceValues.map((s) => {
-          const owned = ownedServices.includes(s);
-          return (
-            <button
-              type="button"
-              key={s}
-              className={`chip ${service === s ? "active" : ""}`}
-              onClick={() => setService(s)}
-              title={owned ? "On your services" : "Not in your services"}
-              style={
-                owned && service !== s
-                  ? {
-                      borderColor: "var(--accent)",
-                      color: "var(--ink)",
-                    }
-                  : undefined
-              }
-            >
-              {s}
-            </button>
-          );
-        })}
         <span className="flex-1" />
         <span className="mr-1 eyebrow">Sort</span>
         <button
