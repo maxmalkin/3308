@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "boneyard-js/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -14,6 +15,7 @@ import type { Show, UserShow } from "@/types/show";
 import type { SortKey } from "@/types/ui";
 import { apiFetch } from "@/utils/api";
 import { tmdbImageUrl } from "@/utils/show";
+import { BONE_PROPS } from "@/utils/skeleton";
 
 export default function LoggedInHome() {
   const profile = useApiResource<Profile>("user/profile", {
@@ -81,7 +83,9 @@ export default function LoggedInHome() {
           {featured ? (
             <FeaturedCard show={featured} />
           ) : recs.status === "loading" ? (
-            <div className="my-7 h-44 animate-pulse rounded-[14px] bg-oat" />
+            <Skeleton name="home-featured" loading={true} {...BONE_PROPS}>
+              <div className="my-7 h-44 rounded-[14px] bg-oat" />
+            </Skeleton>
           ) : null}
 
           {showQueueStrip && (
@@ -331,9 +335,11 @@ function QueueStrip({
 
   if (loading) {
     return (
-      <section className="mb-10 rounded-[14px] border border-line-soft bg-oat px-6 py-5">
-        <div className="h-32 animate-pulse rounded bg-oat/60" />
-      </section>
+      <Skeleton name="home-queue-strip" loading={true} {...BONE_PROPS}>
+        <section className="mb-10 rounded-[14px] border border-line-soft bg-oat px-6 py-5">
+          <div className="h-32 rounded bg-oat/60" />
+        </section>
+      </Skeleton>
     );
   }
 
@@ -472,14 +478,13 @@ function RecsBlock({
 
   if (loadingState === "loading") {
     return (
-      <div className="mb-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        {["a", "b", "c", "d", "e", "f"].map((k) => (
-          <div
-            key={k}
-            className="aspect-2/3 animate-pulse rounded-2xl bg-oat"
-          />
-        ))}
-      </div>
+      <Skeleton name="home-recs" loading={true} {...BONE_PROPS}>
+        <div className="mb-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {["a", "b", "c", "d", "e", "f"].map((k) => (
+            <div key={k} className="aspect-2/3 rounded-2xl bg-oat" />
+          ))}
+        </div>
+      </Skeleton>
     );
   }
   if (loadingState === "error") {
@@ -588,11 +593,13 @@ function DiaryBlock({
       <div>
         <SectionHead eyebrow="your log" title="Recently watched" />
         {loading ? (
-          <div className="space-y-3">
-            {["a", "b", "c", "d"].map((k) => (
-              <div key={k} className="h-20 animate-pulse rounded-md bg-oat" />
-            ))}
-          </div>
+          <Skeleton name="home-diary" loading={true} {...BONE_PROPS}>
+            <div className="space-y-3">
+              {["a", "b", "c", "d"].map((k) => (
+                <div key={k} className="h-20 rounded-md bg-oat" />
+              ))}
+            </div>
+          </Skeleton>
         ) : recent.length === 0 ? (
           <EmptyState
             title="Nothing logged yet"
