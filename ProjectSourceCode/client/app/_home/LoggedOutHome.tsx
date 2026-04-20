@@ -1,18 +1,26 @@
 "use client";
 
+import { Skeleton } from "boneyard-js/react";
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { ResourceView } from "@/components/ResourceView";
 import { useApiResource } from "@/hooks/useApiResource";
 import type { Show } from "@/types/show";
 import { tmdbImageUrl } from "@/utils/show";
 
 type ShowcaseResp = { results: Show[] };
 
+const BONE_PROPS = {
+  animate: "shimmer",
+  color: "var(--oat)",
+  shimmerColor: "var(--paper)",
+} as const;
+
 export default function LoggedOutHome() {
   const showcase = useApiResource<ShowcaseResp>("shows/showcase?limit=12");
+  const isLoading = showcase.status === "loading";
+  const shows = showcase.data?.results ?? [];
 
   return (
     <>
@@ -40,32 +48,20 @@ export default function LoggedOutHome() {
             </div>
           </div>
 
-          <ResourceView
-            resource={showcase}
-            loading={
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 lg:grid-cols-8">
-                {["a", "b", "c", "d", "e", "f", "g", "h"].map((k) => (
-                  <div
-                    key={k}
-                    className="aspect-[2/3] animate-pulse rounded-md bg-paper"
-                  />
-                ))}
-              </div>
-            }
-          >
-            {(data) => <ShowcaseStrip shows={data.results} />}
-          </ResourceView>
+          <Skeleton name="showcase-strip" loading={isLoading} {...BONE_PROPS}>
+            <ShowcaseStrip shows={shows} />
+          </Skeleton>
 
           <div className="mt-14 grid gap-6 md:grid-cols-2">
-            <ResourceView resource={showcase} loading={<PanelSkeleton />}>
-              {(data) => <QueuePanel shows={data.results} />}
-            </ResourceView>
-            <ResourceView resource={showcase} loading={<PanelSkeleton />}>
-              {(data) => <RecsPanel shows={data.results} />}
-            </ResourceView>
-            <ResourceView resource={showcase} loading={<PanelSkeleton />}>
-              {(data) => <LogPanel shows={data.results} />}
-            </ResourceView>
+            <Skeleton name="queue-panel" loading={isLoading} {...BONE_PROPS}>
+              <QueuePanel shows={shows} />
+            </Skeleton>
+            <Skeleton name="recs-panel" loading={isLoading} {...BONE_PROPS}>
+              <RecsPanel shows={shows} />
+            </Skeleton>
+            <Skeleton name="log-panel" loading={isLoading} {...BONE_PROPS}>
+              <LogPanel shows={shows} />
+            </Skeleton>
             <TastePanel />
           </div>
         </section>
@@ -95,10 +91,6 @@ export default function LoggedOutHome() {
       <Footer />
     </>
   );
-}
-
-function PanelSkeleton() {
-  return <div className="h-[360px] animate-pulse rounded-[12px] bg-paper" />;
 }
 
 function PanelShell({
