@@ -27,7 +27,7 @@ export function useApiResource<T>(
 ): Resource<T> {
   const requireAuth = options.requireAuth ?? false;
   const cached = path ? (cache.get(path) as Entry | undefined) : undefined;
-  const fresh = cached && Date.now() - cached.ts < CACHE_TTL_MS;
+  const _fresh = cached && Date.now() - cached.ts < CACHE_TTL_MS;
   const [data, setData] = useState<T | null>(
     cached ? (cached.data as T) : null,
   );

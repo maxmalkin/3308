@@ -87,7 +87,8 @@ export default function Dropdown(props: SingleProps | MultiProps) {
           </span>
         )}
         <svg
-          aria-hidden
+          role="img"
+          aria-label="Toggle"
           width="10"
           height="10"
           viewBox="0 0 10 10"
@@ -96,6 +97,7 @@ export default function Dropdown(props: SingleProps | MultiProps) {
           stroke="currentColor"
           strokeWidth="1.5"
         >
+          <title>Toggle</title>
           <path d="M2 4l3 3 3-3" />
         </svg>
       </button>
@@ -150,6 +152,8 @@ export default function Dropdown(props: SingleProps | MultiProps) {
                     >
                       {selected && (
                         <svg
+                          role="img"
+                          aria-label="Selected"
                           width="10"
                           height="10"
                           viewBox="0 0 10 10"
@@ -157,6 +161,7 @@ export default function Dropdown(props: SingleProps | MultiProps) {
                           stroke="currentColor"
                           strokeWidth="2"
                         >
+                          <title>Selected</title>
                           <path d="M2 5l2 2 4-4" />
                         </svg>
                       )}
