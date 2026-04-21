@@ -285,6 +285,155 @@ shows.get("/showcase", async (c) => {
   return c.json({ results });
 });
 
+shows.get("/browse", async (c) => {
+  const userId = c.get("userId") as string | undefined;
+  const limitParam = Number(c.req.query("limit") ?? 30);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(Math.trunc(limitParam), 1), 60)
+    : 30;
+  const pageParam = Number(c.req.query("page") ?? 1);
+  const page = Number.isFinite(pageParam)
+    ? Math.max(Math.trunc(pageParam), 1)
+    : 1;
+  const offset = (page - 1) * limit;
+  const sort = (c.req.query("sort") ?? "popular").toLowerCase();
+  const genres = (c.req.query("genre") ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const providerQuery = (c.req.query("provider") ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const hasGenreFilter = genres.length > 0;
+
+  const owned = userId ? await getOwnedServices(userId) : [];
+  const serviceList =
+    providerQuery.length > 0 ? providerQuery : userId ? owned : [];
+  const hasServiceFilter = serviceList.length > 0;
+  const servicePatterns = ownedLikePatterns(serviceList);
+
+  let results: Array<Record<string, unknown>>;
+  if (sort === "rating") {
+    results = await sql`
+      SELECT
+        s.id, s.name, s.original_name, s.overview, s.poster_path,
+        s.backdrop_path, s.first_air_date, s.vote_average, s.vote_count,
+        s.popularity, s.genres, s.networks, s.watch_providers_us
+      FROM public.shows s
+      WHERE s.poster_path IS NOT NULL
+        AND (
+          ${!hasGenreFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(COALESCE(s.genres, '[]'::jsonb)) g
+            WHERE g->>'name' = ANY(${genres}::text[])
+          )
+        )
+        AND (
+          ${!hasServiceFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(
+              COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+            ) p
+            WHERE p->>'provider_name' ILIKE ANY(${servicePatterns}::text[])
+          )
+        )
+      ORDER BY s.vote_average DESC NULLS LAST, s.vote_count DESC NULLS LAST
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  } else if (sort === "az") {
+    results = await sql`
+      SELECT
+        s.id, s.name, s.original_name, s.overview, s.poster_path,
+        s.backdrop_path, s.first_air_date, s.vote_average, s.vote_count,
+        s.popularity, s.genres, s.networks, s.watch_providers_us
+      FROM public.shows s
+      WHERE s.poster_path IS NOT NULL
+        AND (
+          ${!hasGenreFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(COALESCE(s.genres, '[]'::jsonb)) g
+            WHERE g->>'name' = ANY(${genres}::text[])
+          )
+        )
+        AND (
+          ${!hasServiceFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(
+              COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+            ) p
+            WHERE p->>'provider_name' ILIKE ANY(${servicePatterns}::text[])
+          )
+        )
+      ORDER BY COALESCE(s.name, s.original_name) ASC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  } else if (sort === "newest") {
+    results = await sql`
+      SELECT
+        s.id, s.name, s.original_name, s.overview, s.poster_path,
+        s.backdrop_path, s.first_air_date, s.vote_average, s.vote_count,
+        s.popularity, s.genres, s.networks, s.watch_providers_us
+      FROM public.shows s
+      WHERE s.poster_path IS NOT NULL
+        AND (
+          ${!hasGenreFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(COALESCE(s.genres, '[]'::jsonb)) g
+            WHERE g->>'name' = ANY(${genres}::text[])
+          )
+        )
+        AND (
+          ${!hasServiceFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(
+              COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+            ) p
+            WHERE p->>'provider_name' ILIKE ANY(${servicePatterns}::text[])
+          )
+        )
+      ORDER BY s.first_air_date DESC NULLS LAST
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  } else {
+    results = await sql`
+      SELECT
+        s.id, s.name, s.original_name, s.overview, s.poster_path,
+        s.backdrop_path, s.first_air_date, s.vote_average, s.vote_count,
+        s.popularity, s.genres, s.networks, s.watch_providers_us
+      FROM public.shows s
+      WHERE s.poster_path IS NOT NULL
+        AND (
+          ${!hasGenreFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(COALESCE(s.genres, '[]'::jsonb)) g
+            WHERE g->>'name' = ANY(${genres}::text[])
+          )
+        )
+        AND (
+          ${!hasServiceFilter}::boolean
+          OR EXISTS (
+            SELECT 1 FROM jsonb_array_elements(
+              COALESCE(s.watch_providers_us->'flatrate', '[]'::jsonb)
+            ) p
+            WHERE p->>'provider_name' ILIKE ANY(${servicePatterns}::text[])
+          )
+        )
+      ORDER BY s.popularity DESC NULLS LAST
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  }
+
+  c.header("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+  return c.json({
+    results,
+    page,
+    limit,
+    sort,
+    hasMore: results.length === limit,
+  });
+});
+
 shows.get("/:id/related", async (c) => {
   const parsed = ShowIdParamSchema.safeParse({ id: c.req.param("id") });
   if (!parsed.success) {

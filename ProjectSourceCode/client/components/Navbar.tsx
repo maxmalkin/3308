@@ -9,12 +9,16 @@ import { clearSession, isAuthenticated } from "@/utils/api";
 
 const LOGGED_IN_LINKS: NavLink[] = [
   { href: "/", label: "Home", key: "home" },
+  { href: "/browse", label: "Browse", key: "browse" },
   { href: "/queue", label: "Queue", key: "queue" },
   { href: "/log", label: "Log", key: "log" },
   { href: "/recommendations", label: "Recs", key: "recs" },
 ];
 
-const LOGGED_OUT_LINKS: NavLink[] = [{ href: "/", label: "Home", key: "home" }];
+const LOGGED_OUT_LINKS: NavLink[] = [
+  { href: "/", label: "Home", key: "home" },
+  { href: "/browse", label: "Browse", key: "browse" },
+];
 
 export default function Navbar({ active }: { active?: string } = {}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
