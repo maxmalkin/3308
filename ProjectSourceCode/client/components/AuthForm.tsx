@@ -82,7 +82,7 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
       <Navbar />
 
       <div className="flex min-h-[calc(100vh-72px)] items-center justify-center px-7 py-14 sm:px-14">
-        <div className="w-full max-w-[460px]">
+        <div className="w-full max-w-115">
           <div className="mb-6 flex justify-center">
             <div className="inline-flex gap-0.5 rounded-full bg-oat p-1">
               <ModeTab href="/login" active={mode === "login"}>
@@ -164,13 +164,13 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="accent-[var(--accent)]"
+                      className="accent-(--accent)"
                     />
                     Keep me signed in
                   </label>
                   <button
                     type="button"
-                    className="text-ink-2 underline decoration-line underline-offset-[3px] transition hover:text-ink hover:decoration-[var(--accent)]"
+                    className="text-ink-2 underline decoration-line underline-offset-[3px] transition hover:text-ink hover:decoration-(--accent)"
                   >
                     Forgot password?
                   </button>
@@ -214,7 +214,7 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex w-full justify-center rounded-lg border border-ink bg-ink px-[18px] py-3 font-medium text-[15px] text-paper transition hover:bg-black active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex w-full justify-center rounded-lg border border-ink bg-ink px-4.5 py-3 font-medium text-[15px] text-paper transition hover:bg-black active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {loading
                   ? mode === "login"
@@ -226,7 +226,7 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
               </button>
             </div>
 
-            <p className="mt-6 text-xs leading-[1.5] text-muted">
+            <p className="mt-6 text-xs leading-normal text-muted">
               {mode === "login" ? (
                 <>
                   New here?{" "}
@@ -269,7 +269,7 @@ function ModeTab({
 }) {
   if (active) {
     return (
-      <span className="rounded-full bg-cream px-[18px] py-2 font-medium text-[13px] text-ink shadow-[0_1px_0_rgba(43,38,32,0.06),0_1px_2px_rgba(43,38,32,0.04)]">
+      <span className="rounded-full bg-cream px-4.5 py-2 font-medium text-[13px] text-ink shadow-[0_1px_0_rgba(43,38,32,0.06),0_1px_2px_rgba(43,38,32,0.04)]">
         {children}
       </span>
     );
@@ -277,7 +277,7 @@ function ModeTab({
   return (
     <Link
       href={href}
-      className="rounded-full px-[18px] py-2 font-medium text-[13px] text-ink-2 transition hover:text-ink"
+      className="rounded-full px-4.5 py-2 font-medium text-[13px] text-ink-2 transition hover:text-ink"
     >
       {children}
     </Link>

@@ -249,7 +249,7 @@ function FeaturedCard({ show }: { show: Show }) {
         )}
       </div>
       <div className="px-1">
-        <div className="eyebrow !text-(--clay)">
+        <div className="eyebrow text-(--clay)!">
           ◉ Featured today · picked for you
         </div>
         <h2 className="mt-2 font-medium text-[clamp(26px,2.8vw,38px)] leading-[1.05] tracking-[-0.025em]">
@@ -676,7 +676,7 @@ function DiaryBlock({
                       {day}
                     </b>
                   </div>
-                  <div className="aspect-2/3 w-[70px] overflow-hidden rounded-sm border border-line">
+                  <div className="aspect-2/3 w-17.5 overflow-hidden rounded-sm border border-line">
                     {url ? (
                       <Image
                         src={url}
@@ -730,7 +730,7 @@ function DiaryBlock({
                 className="flex items-center justify-between border-b border-dashed border-line-soft py-2 text-sm last:border-0"
               >
                 <span>{gb.g}</span>
-                <span className="mx-3 h-1 max-w-[120px] flex-1 self-center overflow-hidden rounded-full bg-line">
+                <span className="mx-3 h-1 max-w-30 flex-1 self-center overflow-hidden rounded-full bg-line">
                   <i
                     className="block h-full bg-(--accent)"
                     style={{ width: `${gb.p}%` }}

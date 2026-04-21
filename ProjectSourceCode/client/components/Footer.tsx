@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="mt-20 border-t border-line pb-10 pt-14 text-muted text-sm">
-      <div className="mx-auto grid max-w-[1520px] gap-10 px-6 md:grid-cols-[2fr_1fr_1fr_1fr] md:px-12">
+      <div className="mx-auto grid max-w-380 gap-10 px-6 md:grid-cols-[2fr_1fr_1fr_1fr] md:px-12">
         <div>
           <h4 className="font-display text-lg text-ink">
-            pillar<em className="text-[var(--accent)]">boxd</em>
+            pillar<em className="text-(--accent)">boxd</em>
           </h4>
           <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
             © {new Date().getFullYear()} · PillarBoxd · CSCI 3308

@@ -20,7 +20,7 @@ export default function CollectionShell({
   return (
     <main className="flex min-h-screen flex-col bg-cream">
       <Navbar active={active} />
-      <div className="mx-auto w-full max-w-[1520px] flex-1 px-6 pb-16 pt-10 md:px-12 md:pt-14">
+      <div className="mx-auto w-full max-w-380 flex-1 px-6 pb-16 pt-10 md:px-12 md:pt-14">
         <div className="mb-8 flex items-baseline justify-between gap-6 border-b border-line-soft pb-5">
           <div>
             <div className="eyebrow">{eyebrow}</div>

@@ -122,7 +122,7 @@ export default function ActionBar({ showId }: { showId: number }) {
       )}
 
       {err && (
-        <p className="text-xs text-[color:#a13b2a]" role="alert">
+        <p className="text-xs text-[#a13b2a]" role="alert">
           {err}
         </p>
       )}

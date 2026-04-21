@@ -28,7 +28,7 @@ export default function LoggedOutHome() {
       <Navbar active={undefined} />
 
       <main className="flex-1">
-        <section className="mx-auto max-w-[1520px] px-6 md:px-12">
+        <section className="mx-auto max-w-380 px-6 md:px-12">
           <div className="grid items-end gap-8 py-10 md:grid-cols-[1.3fr_auto] md:gap-12 md:py-14">
             <div>
               <h1 className="mt-3 max-w-[16ch] text-[clamp(40px,5vw,72px)] font-medium leading-[0.98] tracking-[-0.03em]">
@@ -69,19 +69,17 @@ export default function LoggedOutHome() {
 
         <Marquee />
 
-        <section className="mx-auto max-w-[1520px] px-6 md:px-12">
+        <section className="mx-auto max-w-380 px-6 md:px-12">
           <div className="mt-9 grid items-center gap-10 rounded-2xl bg-ink px-10 py-14 text-paper md:grid-cols-[1.4fr_auto]">
             <div>
-              <div className="eyebrow !text-[var(--olive-soft)]">
-                ready when you are
-              </div>
+              <div className="eyebrow text-olive-soft!">ready when you are</div>
               <h2 className="mt-2 max-w-[24ch] text-[clamp(26px,2.8vw,40px)] font-medium leading-[1.05] tracking-[-0.03em]">
                 Build a watch life you'll actually <em>remember</em>.
               </h2>
             </div>
             <Link
               href="/register"
-              className="btn whitespace-nowrap !bg-cream !text-ink"
+              className="btn whitespace-nowrap bg-cream! !text-ink"
             >
               Start your queue
             </Link>
@@ -108,9 +106,9 @@ function PanelShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[360px] flex-col gap-4 rounded-[12px] border border-line bg-oat p-6">
+    <div className="flex min-h-[360px] flex-col gap-4 rounded-xl border border-line bg-oat p-6">
       <div className="flex items-baseline gap-3 border-b border-line-soft pb-3">
-        <span className="font-mono text-[10px] tracking-[0.18em] text-[var(--accent)]">
+        <span className="font-mono text-[10px] tracking-[0.18em] text-(--accent)">
           {idx}
         </span>
         <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
@@ -167,7 +165,7 @@ function ShowcaseStrip({ shows }: { shows: Show[] }) {
     >
       <ul className="flex w-max gap-3 pb-3">
         {shows.map((s) => (
-          <li key={s.id} className="w-[140px] shrink-0 sm:w-[160px]">
+          <li key={s.id} className="w-35 shrink-0 sm:w-40">
             <Link
               href={`/shows/${s.id}`}
               className="block transition hover:-translate-y-0.5"
@@ -232,7 +230,7 @@ function RecsPanel({ shows }: { shows: Show[] }) {
       <div className="grid gap-3 md:grid-cols-[1.2fr_1fr]">
         <Link
           href={`/shows/${lead.id}`}
-          className="relative block aspect-[3/2] overflow-hidden rounded-[10px] border border-line"
+          className="relative block aspect-3/2 overflow-hidden rounded-[10px] border border-line"
         >
           {backdrop ? (
             <Image
@@ -247,7 +245,7 @@ function RecsPanel({ shows }: { shows: Show[] }) {
               {title}
             </div>
           )}
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgba(20,22,20,0.78)] to-transparent p-3.5 text-paper">
+          <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-[rgba(20,22,20,0.78)] to-transparent p-3.5 text-paper">
             <h4 className="mt-1 font-display text-[18px] font-medium tracking-[-0.02em]">
               {title}
             </h4>
@@ -275,7 +273,7 @@ function RecsPanel({ shows }: { shows: Show[] }) {
                     {s.first_air_date?.slice(0, 4) ?? "—"}
                   </div>
                 </div>
-                <div className="font-mono text-[11px] tracking-[0.04em] text-[var(--accent)]">
+                <div className="font-mono text-[11px] tracking-[0.04em] text-(--accent)">
                   {92 - i * 3}%
                 </div>
               </Link>
@@ -430,12 +428,12 @@ function Marquee() {
     words.map((w, i) => (
       <span
         key={`${lineIdx}-${i}-${w.text}`}
-        className="inline-flex items-center gap-[60px]"
+        className="inline-flex items-center gap-15"
       >
         <span
           className={
             w.italic
-              ? "font-display italic text-[var(--accent)]"
+              ? "font-display italic text-(--accent)"
               : "font-medium text-ink"
           }
         >
@@ -448,8 +446,8 @@ function Marquee() {
   return (
     <div className="mt-14 overflow-hidden border-y border-line bg-oat">
       <div className="marquee-track py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-        <span className="inline-flex items-center gap-[60px]">{line}</span>
-        <span className="inline-flex items-center gap-[60px]">{line}</span>
+        <span className="inline-flex items-center gap-15">{line}</span>
+        <span className="inline-flex items-center gap-15">{line}</span>
       </div>
     </div>
   );

@@ -37,13 +37,13 @@ export default function Navbar({ active }: { active?: string } = {}) {
 
   return (
     <nav className="sticky top-0 z-40 border-b border-rule bg-cream/85 backdrop-blur-md">
-      <div className="mx-auto grid max-w-[1520px] grid-cols-[auto_1fr_auto] items-center gap-5 px-6 py-4 md:gap-7 md:px-12">
+      <div className="mx-auto grid max-w-380 grid-cols-[auto_1fr_auto] items-center gap-5 px-6 py-4 md:gap-7 md:px-12">
         <Link href="/" className="flex items-center gap-2">
-          <span className="font-mono text-[var(--accent)] text-base">[</span>
+          <span className="font-mono text-(--accent) text-base">[</span>
           <span className="font-display text-2xl font-medium leading-none tracking-tight text-ink">
-            pillar<em className="text-[var(--accent)]">boxd</em>
+            pillar<em className="text-(--accent)">boxd</em>
           </span>
-          <span className="font-mono text-[var(--accent)] text-base">]</span>
+          <span className="font-mono text-(--accent) text-base">]</span>
         </Link>
 
         <div className="flex items-center gap-5 justify-self-center">
@@ -59,7 +59,7 @@ export default function Navbar({ active }: { active?: string } = {}) {
               </li>
             ))}
           </ul>
-          <div className="hidden flex-1 sm:block sm:min-w-[240px] md:min-w-[320px]">
+          <div className="hidden flex-1 sm:block sm:min-w-60 md:min-w-[320px]">
             <NavSearch />
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function Navbar({ active }: { active?: string } = {}) {
               <Link
                 href="/"
                 aria-label="Home"
-                className="grid h-9 w-9 place-items-center rounded-full border border-line bg-gradient-to-br from-[var(--plum)] to-[var(--olive)] font-display text-lg text-paper"
+                className="grid h-9 w-9 place-items-center rounded-full border border-line bg-linear-to-br from-plum to-(--olive) font-display text-lg text-paper"
               >
                 M
               </Link>

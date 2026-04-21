@@ -113,7 +113,7 @@ export default function NavSearch() {
   const showDropdown = open && query.trim().length >= 2;
 
   return (
-    <div ref={wrapRef} className="relative w-full max-w-[420px]">
+    <div ref={wrapRef} className="relative w-full max-w-105">
       <div className="flex items-center gap-2 rounded-full border border-line bg-oat px-3.5 py-1.5 transition focus-within:border-ink">
         <svg
           width="14"
@@ -151,7 +151,7 @@ export default function NavSearch() {
             </div>
           )}
           {!loading && err && (
-            <div className="px-4 py-3 text-sm text-[color:#a13b2a]">{err}</div>
+            <div className="px-4 py-3 text-sm text-[#a13b2a]">{err}</div>
           )}
           {!loading && !err && results.length === 0 && (
             <div className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
@@ -192,7 +192,7 @@ export default function NavSearch() {
                   }`}
                   style={{ gridTemplateColumns: "36px 1fr auto" }}
                 >
-                  <div className="aspect-[2/3] w-9 overflow-hidden rounded-sm border border-line bg-oat">
+                  <div className="aspect-2/3 w-9 overflow-hidden rounded-sm border border-line bg-oat">
                     {url ? (
                       <Image
                         src={url}
@@ -212,7 +212,7 @@ export default function NavSearch() {
                     </div>
                   </div>
                   {typeof s.vote_average === "number" && s.vote_average > 0 && (
-                    <span className="font-mono text-[11px] text-[var(--mustard)]">
+                    <span className="font-mono text-[11px] text-(--mustard)">
                       ★ {s.vote_average.toFixed(1)}
                     </span>
                   )}
