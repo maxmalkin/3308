@@ -84,3 +84,7 @@ pnpm test:server
 ## Live
 
 <https://pillarboxd.malkin.io/>
+
+## License
+
+MIT License
