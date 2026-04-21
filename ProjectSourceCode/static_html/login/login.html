@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <nav class="w-full bg-white shadow-sm px-6 py-4">
+      <h1 class="text-xl font-bold">Navbar</h1>
+    </nav>
+
+    <main>
+      <div class="mx-auto flex max-w-md flex-col px-6 py-12">
+        <div class="rounded-2xl bg-white p-8 shadow-sm">
+          <h1 class="mb-2 text-3xl font-bold">Login</h1>
+          <p class="mb-6 text-sm text-gray-600">
+            Sign in to access your logged shows and watchlist.
+          </p>
+
+          <!-- Replace action with your backend route -->
+          <form class="space-y-5" method="POST" action="/api/auth/login">
+            <div>
+              <label for="email" class="mb-2 block text-sm font-medium">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="Enter your email"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
+              />
+            </div>
+
+            <div>
+              <label for="password" class="mb-2 block text-sm font-medium">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                placeholder="Enter your password"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full rounded-full bg-black px-4 py-3 text-white transition hover:bg-gray-800"
+            >
+              Log In
+            </button>
+          </form>
+
+          <p class="mt-6 text-sm text-gray-600">
+            Don’t have an account?
+            <a href="../register/register.html" class="font-medium text-black underline">
+              Create one
+            </a>
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

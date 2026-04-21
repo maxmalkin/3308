@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Account</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <nav class="w-full bg-white shadow-sm px-6 py-4">
+      <h1 class="text-xl font-bold">Navbar</h1>
+    </nav>
+
+    <main>
+        <div class="mx-auto flex max-w-md flex-col px-6 py-12">
+        <div class="rounded-2xl bg-white p-8 shadow-sm">
+          <h1 class="mb-2 text-3xl font-bold">Register</h1>
+          <p class="mb-6 text-sm text-gray-600">
+            Sign up to be able to log shows and create a watchlist.
+          </p>
+
+          <form class="space-y-5" method="POST" action="/api/auth/login">
+            <div>
+              <label for="email" class="mb-2 block text-sm font-medium">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="Enter your email"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
+              />
+            </div>
+
+            <div>
+              <label for="password" class="mb-2 block text-sm font-medium">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                placeholder="Enter your password"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
+              />
+            </div>
+
+            <div>
+              <label for="password" class="mb-2 block text-sm font-medium">
+                Confirm Password
+              </label>
+              <input
+                id="confirm"
+                name="confirm"
+                type="password"
+                required
+                oninput="this.setCustomValidity(this.value !== document.getElementById('password').value ? 'Passwords must match' : '')"
+                placeholder="Confirm your password"
+                class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
+              />
+            </div>
+
+
+            <button
+              type="submit"
+              class="w-full rounded-full bg-black px-4 py-3 text-white transition hover:bg-gray-800"
+            >
+              Sign up
+            </button>
+          </form>
+
+          <p class="mt-6 text-sm text-gray-600">
+            ALready have an account?
+            <a href="../login/login.html" class="font-medium text-black underline">
+              Log in
+            </a>
+          </p>
+        </div>
+      </div>
+    </main>
+</body>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Queue</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <nav class="w-full bg-white shadow-sm px-6 py-4">
+      <h1 class="text-xl font-bold">Navbar</h1>
+    </nav>
+
+    <main>
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <h1 class="mb-2 text-3xl font-bold">Your Queue</h1>
+        <p class="mb-8 text-sm text-gray-600">
+          Shows that are up next on your list
+        </p>
+
+        <!-- unauthenticated -->
+        <!--
+        <div class="rounded-xl bg-white p-8 shadow-sm">
+          <h2 class="text-xl font-semibold mb-2">Log in to view your queue</h2>
+          <p class="text-gray-600 mb-4">
+            You need to be signed in to see shows you've added.
+          </p>
+          <a
+            href="/login"
+            class="inline-block rounded-full bg-black px-5 py-3 text-white hover:bg-gray-800"
+          >
+            Log In
+          </a>
+        </div>
+        -->
+
+        <!-- empty -->
+        <!--
+        <div class="rounded-xl bg-white p-8 shadow-sm text-center">
+          <h2 class="text-xl font-semibold mb-2">Your queue is empty</h2>
+          <p class="text-gray-600">
+            Add shows to your queue to start tracking what you want to watch.
+          </p>
+        </div>
+        -->
+
+        <!-- actual cards when connected to server will go here -->
+        <!-- Replace with server-rendered loop -->
+
+        <div class="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <!-- Example ShowCard -->
+          <div class="rounded-xl bg-white shadow-sm overflow-hidden">
+            <img
+              src="https://via.placeholder.com/300x400"
+              alt="Show Poster"
+              class="w-full"
+            />
+            <div class="p-4">
+              <h3 class="font-semibold text-lg">Example Show</h3>
+              <p class="text-sm text-gray-600">Status: In Queue</p>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-white shadow-sm overflow-hidden">
+            <img
+              src="https://via.placeholder.com/300x400"
+              alt="Show Poster"
+              class="w-full"
+            />
+            <div class="p-4">
+              <h3 class="font-semibold text-lg">Another Show</h3>
+              <p class="text-sm text-gray-600">Status: In Queue</p>
+            </div>
+          </div>
+

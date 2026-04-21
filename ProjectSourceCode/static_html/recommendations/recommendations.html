@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recommended for You</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <nav class="w-full bg-white shadow-sm px-6 py-4">
+      <h1 class="text-xl font-bold">Navbar</h1>
+    </nav>
+
+    <main>
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <h1 class="mb-2 text-3xl font-bold">Recommended for You</h1>
+        <p class="mb-8 text-sm text-gray-600">Based on what you've watched</p>
+
+        <!-- unauthenticated -->
+        <!--
+        <div class="rounded-xl bg-white p-8 shadow-sm">
+          <h2 class="text-xl font-semibold mb-2">Log in to see recommendations</h2>
+          <p class="text-gray-600 mb-4">
+            Sign in so we can tailor picks to your taste.
+          </p>
+          <a
+            href="/login"
+            class="inline-block rounded-full bg-black px-5 py-3 text-white hover:bg-gray-800"
+          >
+            Log In
+          </a>
+        </div>
+        -->
+
+        <!-- loading -->
+        <!--
+        <p class="text-sm text-gray-500">Finding shows for you…</p>
+        -->
+
+        <!-- unable to find shows to recommend -->
+        <!--
+        <div class="mx-auto max-w-xl rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
+          <p class="text-sm text-gray-700">
+            We couldn't find recommendations. Try adding more shows to your list.
+          </p>
+        </div>
+        -->
+
+        <!-- empty -->
+        <!--
+        <div class="rounded-xl bg-white p-8 shadow-sm text-center">
+          <h2 class="text-xl font-semibold mb-2">No recommendations yet</h2>
+          <p class="text-gray-600">
+            Add shows to your list and we'll start suggesting things you'll love.
+          </p>
+        </div>
+        -->
+
+        <!-- actual grid of recommendations here once connected -->
+        <!-- Replace with server-rendered loop -->
+
+        <div class="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <!-- Example ShowCard -->
+          <div class="rounded-xl bg-white shadow-sm overflow-hidden">
+            <img
+              src="https://via.placeholder.com/300x400"
+              alt="Show Poster"
+              class="w-full"
+            />
+            <div class="p-4">
+              <h3 class="font-semibold text-lg">Example Recommendation</h3>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-white shadow-sm overflow-hidden">
+            <img
+              src="https://via.placeholder.com/300x400"
+              alt="Show Poster"
+              class="w-full"
+            />
+            <div class="p-4">
+              <h3 class="font-semibold text-lg">Another Show</h3>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
