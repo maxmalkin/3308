@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+Disallow: /_home
+Disallow: /queue
+Disallow: /log
+Disallow: /recommendations
