@@ -34,7 +34,7 @@ A large functionality of our application centers around recommendations. We focu
 - **Client:** Next.js
 - **Server:** Node.js
 - **Database / Auth:** Supabase
-- **External APIs:** TMDB
+- **External APIs:** TMDB, Gemini
 - **Testing:** Jest
 - **CI:** GitHub Actions
 
