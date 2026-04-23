@@ -1,7 +1,9 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
+import { createNotification } from "../utils/notifications.ts";
 import { fetchAndCacheShow } from "../utils/tmdb.ts";
+import { UpdateProfileBodySchema } from "../validators/profile.ts";
 import {
   AddUserShowBodySchema,
   UpdateUserShowBodySchema,
@@ -26,6 +28,43 @@ user.get("/profile", async (c) => {
 
   if (!profile) return c.json({ error: "User not found" }, 404);
   return c.json({ user: profile });
+});
+
+user.patch("/profile", async (c) => {
+  const userId = c.get("userId");
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = UpdateProfileBodySchema.safeParse(body);
+  if (!parsed.success) {
+    return c.json({ error: z.treeifyError(parsed.error) }, 400);
+  }
+
+  const { username, owned_services } = parsed.data;
+
+  if (username !== undefined) {
+    const clash = await sql`
+      SELECT 1 FROM public."user"
+      WHERE username = ${username} AND id <> ${userId}
+    `;
+    if (clash.length > 0) {
+      return c.json({ error: "Username already taken" }, 409);
+    }
+  }
+
+  try {
+    const [updated] = await sql`
+      UPDATE public."user"
+      SET
+        username       = COALESCE(${username ?? null}, username),
+        owned_services = COALESCE(${owned_services ?? null}::text[], owned_services)
+      WHERE id = ${userId}
+      RETURNING id, username, email, owned_services
+    `;
+    if (!updated) return c.json({ error: "User not found" }, 404);
+    return c.json({ user: updated });
+  } catch (error) {
+    console.error("Failed to update profile:", error);
+    return c.json({ error: "Internal server error" }, 500);
+  }
 });
 
 user.get("/watchlist", async (c) => {
@@ -91,9 +130,11 @@ user.post("/shows", async (c) => {
 
   const { show_id, status } = parsed.data;
 
+  let showName = `show #${show_id}`;
   try {
     const show = await fetchAndCacheShow(show_id);
     if (!show) return c.json({ error: "Show not found on TMDB" }, 404);
+    if (show.name) showName = show.name;
   } catch {
     return c.json({ error: "Failed to fetch show from TMDB" }, 502);
   }
@@ -111,6 +152,11 @@ user.post("/shows", async (c) => {
     VALUES (${userId}, ${show_id}, ${status})
     RETURNING *
   `;
+
+  await createNotification(
+    userId,
+    `Added "${showName}" to your ${status} list`,
+  ).catch((err) => console.error("Notification creation failed:", err));
 
   return c.json({ entry }, 201);
 });
@@ -134,6 +180,13 @@ user.patch("/shows/:showId", async (c) => {
   `;
 
   if (!entry) return c.json({ error: "Entry not found" }, 404);
+
+  const [show] = await sql`SELECT name FROM public.shows WHERE id = ${showId}`;
+  const showName = show?.name ?? `show #${showId}`;
+  await createNotification(userId, `"${showName}" moved to ${status}`).catch(
+    (err) => console.error("Notification creation failed:", err),
+  );
+
   return c.json({ entry });
 });
 

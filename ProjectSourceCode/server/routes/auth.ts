@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import z from "zod";
 import sql from "../db.ts";
+import { createNotification } from "../utils/notifications.ts";
 import { supabase } from "../utils/supabase.ts";
 import { LoginBodySchema, RegisterBodySchema } from "../validators/auth.ts";
 
@@ -40,6 +41,12 @@ auth.post("/register", async (c) => {
       VALUES (${authData.user.id}, ${username}, ${email}, ${sql.array(owned_services)})
       RETURNING id, username, email, owned_services
     `;
+
+    await createNotification(
+      authData.user.id,
+      `Welcome to Pillarboxd, ${username}! Start by adding a show to your queue.`,
+    ).catch((err) => console.error("Welcome notification failed:", err));
+
     return c.json({ user, session: authData.session }, 201);
   } catch {
     await supabase.auth.admin.deleteUser(authData.user.id);

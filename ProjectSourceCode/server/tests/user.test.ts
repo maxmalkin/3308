@@ -25,12 +25,19 @@ const mockSql: any = Object.assign(
 // biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
 const mockFetchAndCacheShow = jest.fn<any>();
 
+// biome-ignore lint/suspicious/noExplicitAny: mock needs flexible typing
+const mockCreateNotification = jest.fn<any>().mockResolvedValue(undefined);
+
 jest.unstable_mockModule("../db.ts", () => ({
   default: mockSql,
 }));
 
 jest.unstable_mockModule("../utils/tmdb.ts", () => ({
   fetchAndCacheShow: mockFetchAndCacheShow,
+}));
+
+jest.unstable_mockModule("../utils/notifications.ts", () => ({
+  createNotification: mockCreateNotification,
 }));
 
 /** Import user routes AFTER mocks are registered. */
@@ -226,5 +233,58 @@ describe("DELETE /api/user/shows/:showId", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.removed).toBe(true);
+  });
+});
+
+describe("PATCH /api/user/profile", () => {
+  it("updates username and owned_services", async () => {
+    // username uniqueness check (no clash), then UPDATE returning row
+    mockResults.push(
+      [],
+      [
+        {
+          id: TEST_USER_ID,
+          username: "new_name",
+          email: "u@example.com",
+          owned_services: ["Netflix", "Disney+"],
+        },
+      ],
+    );
+
+    const res = await app.request(
+      jsonRequest("PATCH", "/api/user/profile", {
+        username: "new_name",
+        owned_services: ["Netflix", "Disney+"],
+      }),
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.user.username).toBe("new_name");
+    expect(body.user.owned_services).toEqual(["Netflix", "Disney+"]);
+  });
+
+  it("rejects an empty payload", async () => {
+    const res = await app.request(
+      jsonRequest("PATCH", "/api/user/profile", {}),
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 409 when the username is already taken", async () => {
+    mockResults.push([{ id: "some-other-user" }]);
+    const res = await app.request(
+      jsonRequest("PATCH", "/api/user/profile", { username: "taken" }),
+    );
+    expect(res.status).toBe(409);
+  });
+
+  it("rejects invalid streaming services", async () => {
+    const res = await app.request(
+      jsonRequest("PATCH", "/api/user/profile", {
+        owned_services: ["NotAService"],
+      }),
+    );
+    expect(res.status).toBe(400);
   });
 });
