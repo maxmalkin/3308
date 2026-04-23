@@ -130,12 +130,21 @@ describe("GET /api/shows/search", () => {
     mockResults.push([{ owned_services: [] }]);
     mockSearchTMDB.mockResolvedValue({ page: 1, results: [sampleShow] });
 
-    const res = await app.request(
-      new Request("http://localhost/api/shows/search?query=test"),
-    );
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.source).toBe("tmdb");
+    const errSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const res = await app.request(
+        new Request("http://localhost/api/shows/search?query=test"),
+      );
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.source).toBe("tmdb");
+      expect(errSpy).toHaveBeenCalledWith(
+        "Embedding query failed:",
+        expect.any(Error),
+      );
+    } finally {
+      errSpy.mockRestore();
+    }
   });
 
   /** Should return 502 when the TMDB fallback fails. */
