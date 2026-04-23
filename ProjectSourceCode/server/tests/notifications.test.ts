@@ -122,3 +122,115 @@ describe("PATCH /api/notifications/:id/read", () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe("POST /api/notifications/mark-all-read", () => {
+  it("marks every unread notification for the user as read", async () => {
+    mockResults.push([{ id: "a" }, { id: "b" }, { id: "c" }]);
+    const res = await app.request(
+      jsonRequest("POST", "/api/notifications/mark-all-read"),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.updated).toBe(3);
+  });
+});
+
+describe("DELETE /api/notifications/:id", () => {
+  it("returns 200 when a notification is deleted", async () => {
+    mockResults.push([{ id: "notif-123" }]);
+    const res = await app.request(
+      jsonRequest("DELETE", "/api/notifications/notif-123"),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.removed).toBe(true);
+  });
+
+  it("returns 404 when the notification does not belong to the user", async () => {
+    mockResults.push([]);
+    const res = await app.request(
+      jsonRequest("DELETE", "/api/notifications/notif-missing"),
+    );
+    expect(res.status).toBe(404);
+  });
+});
+
+describe("DELETE /api/notifications", () => {
+  it("clears all notifications for the user", async () => {
+    mockResults.push([{ id: "a" }, { id: "b" }]);
+    const res = await app.request(jsonRequest("DELETE", "/api/notifications"));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.removed).toBe(2);
+  });
+});
+
+describe("GET /api/notifications/settings", () => {
+  it("returns existing settings when present", async () => {
+    mockResults.push([
+      {
+        user_id: TEST_USER_ID,
+        episode_alerts: true,
+        reply_alerts: false,
+        updated_at: "2026-04-22T00:00:00Z",
+      },
+    ]);
+    const res = await app.request(
+      new Request("http://localhost/api/notifications/settings"),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.settings.episode_alerts).toBe(true);
+    expect(body.settings.reply_alerts).toBe(false);
+  });
+
+  it("creates default settings when none exist", async () => {
+    mockResults.push(
+      [],
+      [
+        {
+          user_id: TEST_USER_ID,
+          episode_alerts: true,
+          reply_alerts: true,
+          updated_at: "2026-04-22T00:00:00Z",
+        },
+      ],
+    );
+    const res = await app.request(
+      new Request("http://localhost/api/notifications/settings"),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.settings.episode_alerts).toBe(true);
+    expect(body.settings.reply_alerts).toBe(true);
+  });
+});
+
+describe("PATCH /api/notifications/settings", () => {
+  it("upserts notification preferences", async () => {
+    mockResults.push([
+      {
+        user_id: TEST_USER_ID,
+        episode_alerts: false,
+        reply_alerts: true,
+        updated_at: "2026-04-22T00:00:00Z",
+      },
+    ]);
+
+    const res = await app.request(
+      jsonRequest("PATCH", "/api/notifications/settings", {
+        episode_alerts: false,
+      }),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.settings.episode_alerts).toBe(false);
+  });
+
+  it("rejects empty payloads with a 400", async () => {
+    const res = await app.request(
+      jsonRequest("PATCH", "/api/notifications/settings", {}),
+    );
+    expect(res.status).toBe(400);
+  });
+});

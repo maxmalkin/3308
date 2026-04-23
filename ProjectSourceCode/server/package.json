@@ -8,6 +8,7 @@
     "dev": "node --env-file=.env --import=tsx index.ts",
     "migrate": "node --env-file=.env --import=tsx migrations/migrate.ts",
     "migrate:create": "node --import=tsx migrations/create.ts",
+    "seed:notifications": "node --env-file=.env --import=tsx scripts/seed-notifications.ts",
     "test": "NODE_OPTIONS='--experimental-vm-modules' pnpx jest"
   },
   "keywords": [],
